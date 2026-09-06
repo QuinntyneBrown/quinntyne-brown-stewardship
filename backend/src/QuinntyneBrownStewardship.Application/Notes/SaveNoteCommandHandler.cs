@@ -33,7 +33,7 @@ public sealed class SaveNoteCommandHandler(IProgrammeStore store, ProgrammeReade
                     if (request.PromptId != null && !module.PreparationPrompts.Any(x => x.Id == request.PromptId)) throw new ProgrammeException(404, "Prompt not found.");
                 }
                 else if (!bookings.Any(x => x.Id == request.SessionId)) throw new ProgrammeException(404, "Session not found.");
-                if (request.PromptId != null && (await store.Notes(enrollment.Id, token)).Any(x => x.PromptId == request.PromptId)) throw new ProgrammeException(409, "This prompt already has an answer. Edit the existing note.");
+                if (request.PromptId is { } promptId && await store.HasPromptAnswer(enrollment.Id, promptId, token)) throw new ProgrammeException(409, "This prompt already has an answer. Edit the existing note.");
                 note = new() { EnrollmentId = enrollment.Id, ModuleId = request.ModuleId, SessionId = request.SessionId, PromptId = request.PromptId, CreatedAt = clock.UtcNow };
                 store.Add(note);
             }

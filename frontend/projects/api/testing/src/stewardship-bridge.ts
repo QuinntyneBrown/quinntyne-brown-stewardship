@@ -1,9 +1,11 @@
 import { MockState } from "./mock-state";
+import { ProgrammeMockData } from './programme-mock-data';
 
 // The seam Playwright drives the mocked services through. `seed` is written before
 // the application bootstraps; `configure` is installed by the acceptance host once
 // the mock state store exists, so a running application can be steered mid-test.
 export interface StewardshipBridge {
+  programmeSeed?: Partial<ProgrammeMockData>;
   seed?: Partial<MockState>;
   configure?(changes: Partial<MockState>): void;
 }

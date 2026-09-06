@@ -39,4 +39,7 @@ as an independent flag. Historical module resolution uses completion timestamps.
 
 ## Verification evidence
 
-Results are recorded here as each acceptance slice is completed.
+See [the requirement audit](requirements-audit.md) for inspected implementation,
+behavioral checks, corrections and remaining evidence. The local SQL helper resolves
+the Windows ARM64/LocalDB architecture mismatch through its named pipe. API and
+browser performance checks are now runnable from the root package scripts.

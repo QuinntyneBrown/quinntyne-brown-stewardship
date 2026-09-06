@@ -12,7 +12,7 @@ public sealed class GetCurriculumQueryHandler(IProgrammeStore store, ICurrentPar
     {
         var enrollment = await store.Enrollment(participant.Id, ct);
         if (enrollment == null) return new(false, null, [], 0, 0, 0, null, null);
-        var modules = await store.Modules(enrollment.Cohort.CurriculumKey, ct);
+        var modules = await store.ProgressModules(enrollment.Cohort.CurriculumKey, ct);
         var completions = await store.Completions(enrollment.Id, ct);
         var current = Progress.Current(modules, completions);
         var items = modules.Select(x => new ModulePathItem(x.Id, x.Ordinal, x.Title, x.Summary, Progress.Complete(x, completions) ? "Complete" : x.Ordinal == current ? "Current" : "Locked")).ToList();

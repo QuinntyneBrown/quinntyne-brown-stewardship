@@ -7,9 +7,22 @@ import { ProgrammeMockData } from './programme-mock-data';
 @Injectable({ providedIn: 'root' })
 export class ProgrammeMockStore {
   private readonly flags = inject(MockStateStore);
-  readonly data = signal<ProgrammeMockData>(JSON.parse(sessionStorage.getItem(key) ?? 'null') ?? { completed: [], booking: null, past: [], notes: [], taken: [] });
+  readonly data = signal<ProgrammeMockData>(JSON.parse(sessionStorage.getItem(key) ?? 'null') ?? { completed: [], booking: null, past: [], notes: [], taken: [], ...window.__stewardship?.programmeSeed });
   readonly cohort = { id: 'cohort', mentorName: 'Quinntyne Brown', timeZone: 'America/Toronto', startDate: '2026-09-07', endDate: '2026-11-30', currentWeek: 1, hasEnded: false, sessionAllowance: 6 };
   update(changes: Partial<ProgrammeMockData>) { this.data.update(s => ({ ...s, ...changes })); sessionStorage.setItem(key, JSON.stringify(this.data())); }
+  waitForResponse() { return this.flags.waitForResponse(); }
+  notePage(moduleId?: string, sessionId?: string, cursor?: string, generalOnly = false) {
+    const candidates = this.data().notes.filter(n => (!moduleId || n.moduleId === moduleId) && (!sessionId || n.sessionId === sessionId) && (!generalOnly || n.promptId === null));
+    const index = cursor ? candidates.findIndex(n => n.id === cursor) + 1 : 0;
+    if (cursor && index === 0) throw new ServiceError(400, undefined, 'The notes cursor is invalid.');
+    const notes: NoteResult[] = []; let bytes = 0;
+    for (const note of candidates.slice(index)) {
+      const size = new TextEncoder().encode(JSON.stringify(note)).length;
+      if (notes.length && (notes.length === 20 || bytes + size > 16000)) break;
+      notes.push(note); bytes += size;
+    }
+    return { notes, nextCursor: index + notes.length < candidates.length ? notes.at(-1)!.id : null };
+  }
   check() {
     if (!this.flags.current().signedIn) throw new ServiceError(401);
     if (this.flags.current().programmeFailure) throw new ServiceError(503, undefined, 'The programme is temporarily unavailable. Please try again.');
@@ -17,7 +30,8 @@ export class ProgrammeMockStore {
   module(ordinal: number): ModuleResult {
     const sections = Array.from({ length: 5 }, (_, i) => ({ id: `section-${ordinal}-${i + 1}`, ordinal: i + 1, title: ['Notice the responsibility', 'Listen to experience', 'Examine the default', 'Try a repair', 'Reflect and prepare'][i], reading: 'Stewardship begins with attention to the people affected by a technical decision. Describe an ordinary task, ask who experiences difficulty, and listen before proposing a solution. Record what would change your view.\n\nChoose a small, reversible improvement. Explain its benefit and its possible cost to the person who will maintain it. Return to the people affected and check whether the improvement serves their actual needs.', isComplete: this.data().completed.includes(`section-${ordinal}-${i + 1}`) }));
     const count = sections.filter(s => s.isComplete).length;
-    return { notes: this.data().notes.filter(n => n.moduleId === `module-${ordinal}`), id: `module-${ordinal}`, ordinal, title: titles[ordinal - 1], summary: 'Learn to serve people through deliberate, responsible technical choices.', effortEstimate: '45–60 minutes', practiceSteps: ['Observe a real task with permission.', 'Identify a cost carried by someone else.', 'Try a small change and record what happened.'], sections, preparationPrompts: [{ id: `prompt-${ordinal}`, text: 'Whose experience changed your decision?', answer: this.data().notes.find(n => n.promptId === `prompt-${ordinal}`) ?? null }], completedSections: count, percent: count * 20, resumeSectionId: (sections.find(s => !s.isComplete) ?? sections[4]).id, isComplete: count === 5 };
+    const page = this.notePage(`module-${ordinal}`, undefined, undefined, true);
+    return { notes: page.notes, notesCursor: page.nextCursor, id: `module-${ordinal}`, ordinal, title: titles[ordinal - 1], summary: 'Learn to serve people through deliberate, responsible technical choices.', effortEstimate: '45–60 minutes', practiceSteps: ['Observe a real task with permission.', 'Identify a cost carried by someone else.', 'Try a small change and record what happened.'], sections, preparationPrompts: [{ id: `prompt-${ordinal}`, text: 'Whose experience changed your decision?', answer: this.data().notes.find(n => n.promptId === `prompt-${ordinal}`) ?? null }], completedSections: count, percent: count * 20, resumeSectionId: (sections.find(s => !s.isComplete) ?? sections[4]).id, isComplete: count === 5 };
   }
   curriculum(): CurriculumResult {
     this.check();

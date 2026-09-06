@@ -9,4 +9,5 @@ export interface MockState {
   enrollmentExpired: boolean;
   enrollmentFailsOnce: boolean;
   enrollmentDelayMs: number;
+  responseDelayMs?: number;
 }

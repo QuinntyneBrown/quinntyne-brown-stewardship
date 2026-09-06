@@ -49,6 +49,6 @@ public sealed class BookingOperations(IProgrammeStore store, ICurrentParticipant
             }
         }
         if (changed) store.Add(new BookingAudit { BookingId = booking.Id, ActorId = participant.Id, Action = slotId == null ? "Cancelled" : bookingId == null ? "Booked" : "Rescheduled", PreviousSlotId = previousSlot, SlotId = slotId, At = clock.UtcNow, CorrelationId = correlation.Id });
-        return reader.Booking(booking, cohort, await store.Modules(cohort.CurriculumKey, token), await store.Completions(enrollment.Id, token));
+        return reader.Booking(booking, cohort, await store.ProgressModules(cohort.CurriculumKey, token), await store.Completions(enrollment.Id, token));
     }, ct);
 }

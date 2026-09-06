@@ -35,6 +35,11 @@ export class MockStateStore {
     this.persist();
   }
 
+  async waitForResponse() {
+    const delay = this.current().responseDelayMs;
+    if (delay) await new Promise(resolve => setTimeout(resolve, delay));
+  }
+
   private restore(): Partial<MockState> {
     const stored = sessionStorage.getItem(STORAGE_KEY);
     return stored ? (JSON.parse(stored) as Partial<MockState>) : {};

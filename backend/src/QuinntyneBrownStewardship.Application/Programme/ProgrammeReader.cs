@@ -4,6 +4,7 @@ using QuinntyneBrownStewardship.Domain.Enrollment;
 using QuinntyneBrownStewardship.Domain.Learning;
 using QuinntyneBrownStewardship.Domain.Scheduling;
 using QuinntyneBrownStewardship.Domain.Notes;
+using QuinntyneBrownStewardship.Application.Notes;
 namespace QuinntyneBrownStewardship.Application.Programme;
 
 public sealed class ProgrammeReader(IProgrammeStore store, ICurrentParticipant participant, ISystemClock clock)
@@ -27,11 +28,12 @@ public sealed class ProgrammeReader(IProgrammeStore store, ICurrentParticipant p
             throw new ProgrammeException(409, "Complete the current module to unlock this module.");
         var sections = module.Sections.OrderBy(x => x.Ordinal).Select(x => new SectionResponse(x.Id, x.Ordinal, x.Title, x.Reading, completions.Any(c => c.SectionId == x.Id))).ToList();
         var count = sections.Count(x => x.IsComplete);
-        var notes = await store.Notes(enrollment.Id, ct);
+        var notes = await store.PromptAnswers(enrollment.Id, module.Id, ct);
+        var page = NotePagination.Page(await store.NotesPage(enrollment.Id, module.Id, null, null, true, ct), x => Note(x, module.Title, true));
         return new(module.Id, module.Ordinal, module.Title, module.Summary, module.EffortEstimate, module.PracticeSteps, sections,
             module.PreparationPrompts.OrderBy(x => x.Ordinal).Select(p => new PromptResponse(p.Id, p.Text, notes.FirstOrDefault(n => n.PromptId == p.Id) is { } n ? Note(n, module.Title, true) : null)).ToList(),
             count, Progress.Percent(count, sections.Count), (sections.FirstOrDefault(x => !x.IsComplete) ?? sections.Last()).Id, count == sections.Count,
-            notes.Where(x => x.ModuleId == module.Id).Select(x => Note(x, module.Title, true)).ToList());
+            page.Notes, page.NextCursor);
     }
     public BookingResponse Booking(Booking booking, Cohort cohort, List<CurriculumModule> modules, List<SectionCompletion> completions)
     {

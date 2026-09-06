@@ -254,7 +254,133 @@ public sealed class ProgrammeAcceptanceTests(ApiFixture fixture) : IClassFixture
         Assert.Equal("Private reflection", (await owner.GetFromJsonAsync<JsonElement>($"/notes/{id}")).GetProperty("body").GetString());
     }
 
+    // Traces to: L2-020 AC2–4. Given a held session at the stated cutoff,
+    // when rescheduling, then only a start more than 24 hours away can move.
+    [Theory]
+    [InlineData(1441, HttpStatusCode.OK)]
+    [InlineData(1440, HttpStatusCode.Conflict)]
+    [InlineData(1380, HttpStatusCode.Conflict)]
+    public async Task Given_a_session_at_the_change_cutoff_when_rescheduled_then_the_window_is_exact(int minutes, HttpStatusCode expected)
+    {
+        var setup = await BookingSetup(); using var client = fixture.Browser(); await ApiFixture.SignIn(client);
+        var response = await ApiFixture.Post(client, "/sessions", new { SlotId = setup.Slot });
+        var booking = await response.Content.ReadFromJsonAsync<JsonElement>(); var id = booking.GetProperty("id").GetGuid();
+        fixture.Clock.UtcNow = booking.GetProperty("startsAt").GetDateTimeOffset().AddMinutes(-minutes);
+        Assert.Equal(expected, (await Change(client, HttpMethod.Put, $"/sessions/{id}/slot", new { SlotId = setup.OtherSlot })).StatusCode);
+        var current = await client.GetFromJsonAsync<JsonElement>($"/sessions/{id}");
+        Assert.Equal(expected == HttpStatusCode.OK ? setup.OtherSlot : setup.Slot, current.GetProperty("slotId").GetGuid());
+        if (expected != HttpStatusCode.OK)
+        {
+            Assert.False(current.GetProperty("canChange").GetBoolean());
+            Assert.Contains("24 hours", current.GetProperty("changeReason").GetString());
+        }
+    }
+
+    // Traces to: L2-005 AC2, L2-035 AC1–4, L2-036 AC4. Given participants in
+    // different curricula, when a caller supplies foreign identifiers, then no
+    // foreign reading, completion, booking or notes can be read or changed.
+    [Fact]
+    public async Task Given_another_cohort_when_identifiers_are_forged_then_every_programme_resource_stays_private()
+    {
+        var setup = await BookingSetup(); using var owner = fixture.Browser(); await ApiFixture.SignIn(owner);
+        var bookingResponse = await ApiFixture.Post(owner, "/sessions", new { SlotId = setup.Slot });
+        var bookingId = (await bookingResponse.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("id").GetGuid();
+        using var scope = fixture.Services.CreateScope(); var db = scope.ServiceProvider.GetRequiredService<StewardshipDbContext>();
+        var participant = await db.Participants.SingleAsync(x => x.EmailAddress == ApiFixture.Email);
+        var foreign = new QuinntyneBrownStewardship.Domain.Access.Participant { EmailAddress = "separate@example.com", NormalizedEmail = "SEPARATE@EXAMPLE.COM", PasswordHash = participant.PasswordHash };
+        db.Participants.Add(foreign);
+        var foreignModule = new QuinntyneBrownStewardship.Domain.Learning.CurriculumModule
+        {
+            CurriculumKey = "separate", Ordinal = 1, Title = "Another cohort's reading", Summary = "Private curriculum", EffortEstimate = "30 minutes", PracticeSteps = ["Listen"],
+            Sections = [new() { Ordinal = 1, Title = "Other section", Reading = "Other cohort content", CreatedAt = fixture.Clock.UtcNow }]
+        };
+        db.Modules.Add(foreignModule);
+        db.Enrollments.Add(new() { ParticipantId = foreign.Id, Cohort = new() { CurriculumKey = "separate", MentorName = "Other mentor", StartDate = DateOnly.FromDateTime(fixture.Clock.UtcNow.UtcDateTime) } });
+        await db.SaveChangesAsync();
+        Assert.Equal(HttpStatusCode.NotFound, (await ApiFixture.Post(owner, $"/sections/{foreignModule.Sections[0].Id}/completion", new { ParticipantId = foreign.Id })).StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, (await ApiFixture.Post(owner, "/notes", new { ModuleId = foreignModule.Id, Body = "Foreign note" })).StatusCode);
+        var curriculum = await owner.GetFromJsonAsync<JsonElement>($"/curriculum?participantId={foreign.Id}");
+        Assert.Equal("Module 1", curriculum.GetProperty("modules")[0].GetProperty("title").GetString());
+        using var other = fixture.Browser(); await ApiFixture.Post(other, "/authentication/sign-in", new { EmailAddress = foreign.EmailAddress, ApiFixture.Password });
+        Assert.Equal("Another cohort's reading", (await other.GetFromJsonAsync<JsonElement>("/modules/1")).GetProperty("title").GetString());
+        Assert.Equal(HttpStatusCode.NotFound, (await other.GetAsync($"/sessions/{bookingId}")).StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, (await other.GetAsync($"/sessions/{bookingId}/preparation")).StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, (await Change(other, HttpMethod.Put, $"/sessions/{bookingId}/slot", new { SlotId = setup.OtherSlot, ParticipantId = participant.Id })).StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, (await Change(other, HttpMethod.Delete, $"/sessions/{bookingId}", new { })).StatusCode);
+        Assert.Equal(setup.Slot, (await owner.GetFromJsonAsync<JsonElement>($"/sessions/{bookingId}")).GetProperty("slotId").GetGuid());
+        Assert.Empty(await db.Completions.ToListAsync()); Assert.Empty(await db.Notes.ToListAsync());
+    }
+
+    // Traces to: L2-017–018, L2-021, L2-023, L2-027. Given open mentor times,
+    // when booked and cancelled, then slot state, next-session details and the
+    // derived allowance agree; a module without prompts has no empty prompt list.
+    [Fact]
+    public async Task Given_published_times_when_booking_then_availability_curriculum_and_preparation_agree()
+    {
+        var setup = await BookingSetup(); using var client = fixture.Browser(); await ApiFixture.SignIn(client);
+        using var scope = fixture.Services.CreateScope(); var db = scope.ServiceProvider.GetRequiredService<StewardshipDbContext>();
+        await db.Prompts.ExecuteDeleteAsync();
+        var slot = await db.Availability.SingleAsync(x => x.Id == setup.Slot);
+        var day = DateOnly.FromDateTime(TimeZoneInfo.ConvertTimeBySystemTimeZoneId(slot.StartsAt, "America/Toronto").DateTime);
+        var path = $"/sessions/availability?day={day:yyyy-MM-dd}";
+        var available = await client.GetFromJsonAsync<JsonElement>(path);
+        Assert.Equal(7, available.GetProperty("days").GetArrayLength());
+        Assert.Equal("Open", available.GetProperty("slots")[0].GetProperty("state").GetString());
+        var created = await ApiFixture.Post(client, "/sessions", new { SlotId = setup.Slot });
+        var booking = await created.Content.ReadFromJsonAsync<JsonElement>(); var id = booking.GetProperty("id").GetGuid();
+        var curriculum = await client.GetFromJsonAsync<JsonElement>("/curriculum");
+        foreach (var field in new[] { "startsAt", "durationMinutes", "mentorName" }) Assert.Equal(booking.GetProperty(field).ToString(), curriculum.GetProperty("nextSession").GetProperty(field).ToString());
+        var preparation = await client.GetFromJsonAsync<JsonElement>($"/sessions/{id}/preparation");
+        Assert.Empty(preparation.GetProperty("prompts").EnumerateArray());
+        available = await client.GetFromJsonAsync<JsonElement>(path);
+        Assert.Equal("Taken", available.GetProperty("slots")[0].GetProperty("state").GetString());
+        Assert.Equal(1, available.GetProperty("bookedCount").GetInt32()); Assert.Equal(6, available.GetProperty("allowance").GetInt32());
+        Assert.Equal(HttpStatusCode.NoContent, (await Change(client, HttpMethod.Delete, $"/sessions/{id}", new { })).StatusCode);
+        available = await client.GetFromJsonAsync<JsonElement>(path);
+        Assert.Equal("Open", available.GetProperty("slots")[0].GetProperty("state").GetString());
+        Assert.Equal(0, available.GetProperty("bookedCount").GetInt32());
+        Assert.Equal(JsonValueKind.Null, available.GetProperty("nextSession").ValueKind);
+    }
+
     // Traces to: L2-006, L2-017. Local calendar weeks and DST labels use the cohort zone.
+    // Traces to: L2-025–028, L2-039. Given many long notes, when traversing
+    // the notes destination or an attachment, then pages stay bounded and every
+    // complete body is retrievable once, newest first, including timestamp ties.
+    [Fact]
+    public async Task Given_many_long_notes_when_read_in_pages_then_all_text_remains_reachable()
+    {
+        var setup = await BookingSetup(); using var client = fixture.Browser(); await ApiFixture.SignIn(client);
+        var module = await client.GetFromJsonAsync<JsonElement>("/modules/current"); var moduleId = module.GetProperty("id").GetGuid();
+        var ids = new HashSet<Guid>();
+        for (var i = 0; i < 24; i++)
+        {
+            var response = await ApiFixture.Post(client, "/notes", new { ModuleId = moduleId, Body = $"Note {i:00}: " + new string((char)('a' + i), 9900) });
+            response.EnsureSuccessStatusCode(); ids.Add((await response.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("id").GetGuid());
+        }
+        var seen = new HashSet<Guid>(); string? cursor = null; var pages = 0;
+        do
+        {
+            var result = await client.GetFromJsonAsync<JsonElement>($"/notes?moduleId={moduleId}" + (cursor == null ? "" : "&cursor=" + Uri.EscapeDataString(cursor)));
+            var notes = result.GetProperty("notes");
+            Assert.InRange(notes.GetArrayLength(), 1, 2);
+            foreach (var note in notes.EnumerateArray())
+            {
+                Assert.True(seen.Add(note.GetProperty("id").GetGuid()));
+                Assert.Equal(9909, note.GetProperty("body").GetString()!.Length);
+                Assert.Equal(moduleId, note.GetProperty("moduleId").GetGuid());
+            }
+            cursor = result.GetProperty("nextCursor").GetString();
+            Assert.True(++pages <= 24);
+        } while (cursor != null);
+        Assert.True(ids.SetEquals(seen));
+        module = await client.GetFromJsonAsync<JsonElement>("/modules/current");
+        Assert.InRange(module.GetProperty("notes").GetArrayLength(), 1, 2);
+        Assert.NotNull(module.GetProperty("notesCursor").GetString());
+        var malformed = await client.GetAsync("/notes?cursor=invalid");
+        Assert.Equal(HttpStatusCode.BadRequest, malformed.StatusCode);
+        Assert.Contains("cursor", await malformed.Content.ReadAsStringAsync());
+    }
+
     [Fact]
     public async Task Given_a_cohort_zone_when_utc_has_advanced_a_day_then_the_local_week_is_used()
     {

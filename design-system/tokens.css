@@ -51,7 +51,7 @@
   --qbs-focus-offset: 4px;
   --qbs-full: 100%;
   --qbs-screen-height: 100dvh;
-  --qbs-disabled-opacity: 0.7;
+  --qbs-disabled-opacity: 1;
   --qbs-flex-one: 1;
   --qbs-track: 1fr;
   --qbs-main-track: 1.2fr;

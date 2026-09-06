@@ -12,6 +12,7 @@ export class SignInServiceMock implements ISignInService {
   private readonly state = inject(MockStateStore);
 
   async session(): Promise<SessionResult | null> {
+    await this.state.waitForResponse();
     if (this.state.current().sessionFailure) throw new ServiceError(503);
     return this.state.current().signedIn
       ? { emailAddress: "participant@example.com" }

@@ -25,6 +25,7 @@ test('learn a complete module and resume persisted section progress', async ({ p
   await curriculum.expectProgress(0);
   await curriculum.resume();
   await module.expectSection(1);
+  await module.expectSameAssignmentAcrossViewports();
   await module.completeSection();
   await module.expectSection(2);
   await module.reload();
@@ -103,4 +104,38 @@ test('curriculum loading errors recover through an explicit retry', async ({ pag
   const mocks = new MockBridge(page); await mocks.enrolled(); await mocks.failingProgramme();
   const curriculum = new CurriculumPage(page); await curriculum.open(); await curriculum.expectError('temporarily unavailable');
   await mocks.allowProgramme(); await curriculum.retry(); await curriculum.expectPath();
+});
+
+// Traces to: L2-031 AC1, L2-034 AC1. Given sections not yet started,
+// when their disabled navigation labels render, then their state remains readable
+// at the required 4.5:1 text contrast (including the control's opacity).
+test('not-started section labels retain readable contrast', async ({ page }) => {
+  await new MockBridge(page).enrolled();
+  const curriculum = new CurriculumPage(page);
+  const module = new ModulePage(page);
+  await curriculum.open(); await curriculum.resume(); await module.expectSection(1);
+  await module.expectSectionStateContrast();
+});
+
+// Traces to: L2-018, L2-033 AC1–4. Given a keyboard-only participant,
+// when booking and opening then dismissing cancellation, then controls work,
+// focus enters the dialog, moves between its actions, and returns to its trigger.
+test('book and keep a session using only the keyboard', async ({ page }) => {
+  await new MockBridge(page).enrolled();
+  const sessions = new SessionsPage(page);
+  await sessions.open(); await sessions.expectCanBook();
+  await sessions.bookByKeyboard(); await sessions.expectBooking();
+  await sessions.keepSessionByKeyboard(); await sessions.expectBooking();
+});
+
+// Traces to: L2-025–026, L2-039. Given several long notes, when loading more
+// at the notes destination or inside a module, then every full note is reachable.
+test('long notes load in pages at both their attachment and the notes destination', async ({ page }) => {
+  const mocks = new MockBridge(page); await mocks.enrolled(); await mocks.longNotes();
+  const notes = new NotesPage(page); const module = new ModulePage(page);
+  await notes.open(); await notes.expectVisibleCount(1);
+  for (let count = 2; count <= 4; count++) { await notes.more(); await notes.expectVisibleCount(count); }
+  await notes.expectNoMore(); await notes.editFirst();
+  await new NoteEditorPage(page).expectBody('Reflection 0: ' + 'A'.repeat(9900));
+  await module.open(); await module.expectNoteCount(1); await module.moreNotes(); await module.expectNoteCount(2);
 });

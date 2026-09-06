@@ -2,9 +2,43 @@ import { ScreenPage } from './screen-page';
 import { expect, Page } from '@playwright/test';
 export class ModulePage extends ScreenPage {
   constructor(page: Page) { super(page); }
+  async open() { await this.page.goto('/modules/current'); }
   async completeSection() { await this.page.getByRole('button', { name: 'Mark section complete' }).click(); }
   async expectSection(position: number) { await expect(this.page.getByText(`Section ${position} of 5`, { exact: true })).toBeVisible(); }
   async reload() { await this.page.reload(); }
   async addNote() { await this.page.getByRole('link', { name: 'Add a module note' }).click(); }
+  async moreNotes() { await this.page.getByRole('button', { name: 'More notes', exact: true }).click(); }
+  async expectNoteCount(count: number) { await expect(this.page.getByRole('link', { name: 'Edit note', exact: true })).toHaveCount(count); }
+  async expectSameAssignmentAcrossViewports() {
+    const viewport = this.page.viewportSize();
+    const content = this.page.getByRole('article');
+    await this.page.setViewportSize({ width: 320, height: 900 });
+    const small = await content.innerText();
+    await expect(content.getByRole('listitem')).toHaveCount(3);
+    await this.page.setViewportSize({ width: 1440, height: 900 });
+    expect(await content.innerText()).toBe(small);
+    await expect(content.getByRole('listitem')).toHaveCount(3);
+    if (viewport) await this.page.setViewportSize(viewport);
+  }
+  async expectSectionStateContrast() {
+    const ratios = await this.page.getByRole('navigation', { name: 'Module sections' }).locator('button:disabled span').evaluateAll(labels => {
+      const rgb = (value: string) => value.match(/[\d.]+/g)!.slice(0, 3).map(Number);
+      const luminance = (values: number[]) => values.map(value => {
+        const channel = value / 255;
+        return channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
+      }).reduce((sum, value, index) => sum + value * [0.2126, 0.7152, 0.0722][index], 0);
+      return labels.map(label => {
+        const background = rgb(getComputedStyle(document.body).backgroundColor);
+        const foreground = rgb(getComputedStyle(label).color);
+        let opacity = 1;
+        for (let node: Element | null = label; node; node = node.parentElement) opacity *= Number(getComputedStyle(node).opacity);
+        const text = foreground.map((channel, index) => channel * opacity + background[index] * (1 - opacity));
+        const a = luminance(text), b = luminance(background);
+        return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+      });
+    });
+    expect(ratios.length).toBeGreaterThan(0);
+    for (const ratio of ratios) expect(ratio).toBeGreaterThanOrEqual(4.5);
+  }
 }
 

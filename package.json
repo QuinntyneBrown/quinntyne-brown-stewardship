@@ -6,7 +6,9 @@
     "tokens": "node scripts/mirror-tokens.mjs",
     "test:api": "dotnet test backend/QuinntyneBrownStewardship.sln",
     "test:e2e": "npm --prefix e2e test",
-    "test:adapters": "node scripts/test-adapters.mjs"
+    "test:adapters": "node scripts/test-adapters.mjs",
+    "test:performance:api": "dotnet run --project backend/tests/QuinntyneBrownStewardship.Performance --configuration Release -- .local/api-performance.json",
+    "test:performance:web": "npm --prefix e2e run test:performance"
   },
   "devDependencies": {
     "prettier": "3.8.2"

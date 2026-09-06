@@ -1,0 +1,260 @@
+{
+  "recordedAt": "2026-09-06T18:29:39.2277588+00:00",
+  "scope": "Intermediate verification; L2-039 complete production payload remains unresolved",
+  "build": "Release build passed with zero warnings and errors",
+  "acceptance": {
+    "api": 42,
+    "assignmentViewportRecheck": 2,
+    "browser": 50,
+    "adapters": "passed",
+    "designSystem": 2
+  },
+  "api": {
+    "measuredAt": "2026-09-06T14:26:30.4603312-04:00",
+    "runtime": ".NET 10.0.1",
+    "os": "Microsoft Windows 10.0.26200",
+    "architecture": "Arm64",
+    "processors": 12,
+    "configuration": "Release; real SQL Server; in-process ASP.NET HTTP host; five independently authenticated participants; 15 warm-up requests per operation",
+    "results": [
+      {
+        "operation": "GET /curriculum",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 44.19,
+        "budgetMilliseconds": 300,
+        "passed": true
+      },
+      {
+        "operation": "GET /modules/current",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 141.16,
+        "budgetMilliseconds": 300,
+        "passed": true
+      },
+      {
+        "operation": "GET /sessions/availability",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 70.04,
+        "budgetMilliseconds": 300,
+        "passed": true
+      },
+      {
+        "operation": "GET /sessions/history",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 92.74,
+        "budgetMilliseconds": 300,
+        "passed": true
+      },
+      {
+        "operation": "GET /notes",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 140.91,
+        "budgetMilliseconds": 300,
+        "passed": true
+      },
+      {
+        "operation": "POST /notes",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 377.84,
+        "budgetMilliseconds": 500,
+        "passed": true
+      },
+      {
+        "operation": "GET /notes/{id}",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 138.46,
+        "budgetMilliseconds": 300,
+        "passed": true
+      },
+      {
+        "operation": "POST /notes (revision)",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 411.99,
+        "budgetMilliseconds": 500,
+        "passed": true
+      },
+      {
+        "operation": "POST /sections/{id}/completion",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 93.56,
+        "budgetMilliseconds": 500,
+        "passed": true
+      },
+      {
+        "operation": "POST /sessions",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 309.45,
+        "budgetMilliseconds": 500,
+        "passed": true
+      },
+      {
+        "operation": "GET /sessions/{id}",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 52.46,
+        "budgetMilliseconds": 300,
+        "passed": true
+      },
+      {
+        "operation": "GET /sessions/{id}/preparation",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 109.65,
+        "budgetMilliseconds": 300,
+        "passed": true
+      },
+      {
+        "operation": "PUT /sessions/{id}/slot",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 444.65,
+        "budgetMilliseconds": 500,
+        "passed": true
+      },
+      {
+        "operation": "DELETE /sessions/{id}",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 486.92,
+        "budgetMilliseconds": 500,
+        "passed": true
+      }
+    ],
+    "payloadScenario": "First participant has 20 additional distinct 10,000-character notes on module 1; Brotli fastest, excluding HTTP headers and frontend assets",
+    "payloads": [
+      {
+        "path": "/curriculum",
+        "uncompressedBytes": 3313,
+        "compressedBytes": 1679
+      },
+      {
+        "path": "/modules/1",
+        "uncompressedBytes": 220836,
+        "compressedBytes": 157802
+      },
+      {
+        "path": "/sessions/availability",
+        "uncompressedBytes": 467,
+        "compressedBytes": 305
+      },
+      {
+        "path": "/sessions/history",
+        "uncompressedBytes": 45,
+        "compressedBytes": 49
+      },
+      {
+        "path": "/notes",
+        "uncompressedBytes": 214553,
+        "compressedBytes": 153998
+      }
+    ]
+  },
+  "browser": [
+    {
+      "screen": "sign-in meets its cold-load budget",
+      "interactiveMs": 1939.5999999940395,
+      "transferredBytes": 284394,
+      "profile": {
+        "cpuSlowdown": 4,
+        "latencyMs": 150,
+        "downloadMbps": 4,
+        "uploadMbps": 1,
+        "serviceDelayMs": 150
+      }
+    },
+    {
+      "screen": "not-enrolled meets its cold-load budget",
+      "interactiveMs": 2020.2000000178814,
+      "transferredBytes": 281736,
+      "profile": {
+        "cpuSlowdown": 4,
+        "latencyMs": 150,
+        "downloadMbps": 4,
+        "uploadMbps": 1,
+        "serviceDelayMs": 150
+      }
+    },
+    {
+      "screen": "curriculum meets its cold-load budget",
+      "interactiveMs": 2374.0999999940395,
+      "transferredBytes": 281736,
+      "profile": {
+        "cpuSlowdown": 4,
+        "latencyMs": 150,
+        "downloadMbps": 4,
+        "uploadMbps": 1,
+        "serviceDelayMs": 150
+      }
+    },
+    {
+      "screen": "module meets its cold-load budget",
+      "interactiveMs": 1959.0999999940395,
+      "transferredBytes": 284680,
+      "profile": {
+        "cpuSlowdown": 4,
+        "latencyMs": 150,
+        "downloadMbps": 4,
+        "uploadMbps": 1,
+        "serviceDelayMs": 150
+      }
+    },
+    {
+      "screen": "sessions meets its cold-load budget",
+      "interactiveMs": 1984.699999988079,
+      "transferredBytes": 285415,
+      "profile": {
+        "cpuSlowdown": 4,
+        "latencyMs": 150,
+        "downloadMbps": 4,
+        "uploadMbps": 1,
+        "serviceDelayMs": 150
+      }
+    },
+    {
+      "screen": "notes meets its cold-load budget",
+      "interactiveMs": 2053.4000000059605,
+      "transferredBytes": 283430,
+      "profile": {
+        "cpuSlowdown": 4,
+        "latencyMs": 150,
+        "downloadMbps": 4,
+        "uploadMbps": 1,
+        "serviceDelayMs": 150
+      }
+    },
+    {
+      "screen": "note-editor meets its cold-load budget",
+      "interactiveMs": 2008.800000011921,
+      "transferredBytes": 284635,
+      "profile": {
+        "cpuSlowdown": 4,
+        "latencyMs": 150,
+        "downloadMbps": 4,
+        "uploadMbps": 1,
+        "serviceDelayMs": 150
+      }
+    },
+    {
+      "screen": "session-detail meets its cold-load budget",
+      "interactiveMs": 1986.5,
+      "transferredBytes": 283597,
+      "profile": {
+        "cpuSlowdown": 4,
+        "latencyMs": 150,
+        "downloadMbps": 4,
+        "uploadMbps": 1,
+        "serviceDelayMs": 150
+      }
+    }
+  ]
+}

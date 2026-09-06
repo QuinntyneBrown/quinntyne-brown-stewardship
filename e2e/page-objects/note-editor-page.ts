@@ -2,6 +2,7 @@ import { ScreenPage } from './screen-page';
 import { expect, Page } from '@playwright/test';
 export class NoteEditorPage extends ScreenPage {
   constructor(page: Page) { super(page); }
+  async open() { await this.page.goto('/notes/new'); }
   async write(body: string) { await this.page.getByRole('textbox', { name: 'Your note' }).fill(body); }
   async save() { await this.page.getByRole('button', { name: 'Save note', exact: true }).click(); }
   async expectBody(body: string) { await expect(this.page.getByRole('textbox', { name: 'Your note' })).toHaveValue(body); }

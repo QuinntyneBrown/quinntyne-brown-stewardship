@@ -11,5 +11,21 @@ export class SessionsPage extends ScreenPage {
   async cancel() { await this.page.getByRole('button', { name: 'Cancel session', exact: true }).click(); await this.page.getByRole('dialog').getByRole('button', { name: 'Yes, cancel session' }).click(); }
   async expectCanBook() { await expect(this.page.getByRole('button', { name: 'Confirm booking', exact: true })).toBeVisible(); }
   async prepare() { await this.page.getByRole('link', { name: 'Prepare for your session' }).click(); }
+  async bookByKeyboard() {
+    await this.activateByKeyboard(this.page.getByRole('button', { name: /Open ·/ }).first());
+    await this.activateByKeyboard(this.page.getByRole('button', { name: 'Confirm booking', exact: true }));
+  }
+  async keepSessionByKeyboard() {
+    const trigger = this.page.getByRole('button', { name: 'Cancel session', exact: true });
+    await this.activateByKeyboard(trigger);
+    const dialog = this.page.getByRole('dialog');
+    await expect(dialog.getByRole('button', { name: 'Keep session' })).toBeFocused();
+    await this.page.keyboard.press('Tab');
+    await expect(dialog.getByRole('button', { name: 'Yes, cancel session' })).toBeFocused();
+    await this.page.keyboard.press('Shift+Tab');
+    await expect(dialog.getByRole('button', { name: 'Keep session' })).toBeFocused();
+    await this.page.keyboard.press('Escape');
+    await expect(dialog).not.toBeVisible(); await expect(trigger).toBeFocused();
+  }
 }
 

@@ -13,6 +13,16 @@ export class MockBridge {
   enrolled() {
     return this.seed({ signedIn: true, enrolled: true });
   }
+  async longNotes() {
+    await this.page.addInitScript(() => {
+      const bridge = window.__stewardship ??= {};
+      bridge.programmeSeed = { notes: Array.from({ length: 4 }, (_, i) => ({
+        id: `long-note-${i}`, moduleId: 'module-1', sessionId: null, promptId: null,
+        attachmentTitle: 'Begin with stewardship', body: `Reflection ${i}: ` + 'A'.repeat(9900),
+        revisedAt: new Date(Date.UTC(2026, 8, 10 - i)).toISOString(), revision: `revision-${i}`, canEdit: true,
+      })) };
+    });
+  }
   unavailableSlot() {
     return this.seed({ slotConflict: true });
   }
@@ -39,6 +49,9 @@ export class MockBridge {
   }
   slowEnrollment(milliseconds: number) {
     return this.seed({ enrollmentDelayMs: milliseconds });
+  }
+  slowResponses(milliseconds: number) {
+    return this.seed({ responseDelayMs: milliseconds });
   }
   expireSession() {
     return this.apply({ signedIn: false });

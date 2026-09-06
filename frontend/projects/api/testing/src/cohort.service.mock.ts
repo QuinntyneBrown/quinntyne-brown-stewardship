@@ -7,6 +7,7 @@ export class CohortServiceMock implements ICohortService {
   private readonly state = inject(MockStateStore);
 
   async getEnrollment(): Promise<EnrollmentResult> {
+    await this.state.waitForResponse();
     const delay = this.state.current().enrollmentDelayMs;
     if (delay) await new Promise((resolve) => setTimeout(resolve, delay));
     const state = this.state.current();

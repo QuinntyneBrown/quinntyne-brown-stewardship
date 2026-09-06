@@ -8,12 +8,12 @@
       <p class="lead">{{ current()?.summary ?? 'All twelve modules are complete. Return to your reading, practice and notes whenever you need them.' }}</p>
       @if (current()) { <a class="button" routerLink="/modules/current">Continue module</a> }
       @else { <p class="notice">✓ Curriculum complete</p> }
-      <qbs-progress-summary [completed]="curriculum.completed" [total]="12" [label]="curriculum.completed + ' of 12 complete'" />
+      <qbs-progress-summary [completed]="curriculum.completed" [total]="curriculum.modules.length" [label]="curriculum.completed + ' of ' + curriculum.modules.length + ' complete'" />
       <p class="muted">{{ curriculum.remaining }} modules remain · {{ curriculum.percent }}%</p>
       @if (curriculum.cohort; as cohort) {
         <aside class="panel stack compact" aria-label="Your cohort">
           <h2>Your cohort</h2><p>Mentored by {{ cohort.mentorName }}</p><p>{{ cohort.startDate }} – {{ cohort.endDate }}</p>
-          <p class="muted">12 weeks · 6 sessions · {{ cohort.timeZone }}</p>
+          <p class="muted">12 weeks · {{ cohort.sessionAllowance }} sessions · {{ cohort.timeZone }}</p>
           @if (cohort.hasEnded) { <p>This cohort has ended. Your completed modules remain available.</p> }
         </aside>
       }

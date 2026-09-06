@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuinntyneBrownStewardship.I
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuinntyneBrownStewardship.Cli", "src\QuinntyneBrownStewardship.Cli\QuinntyneBrownStewardship.Cli.csproj", "{E9BF9351-5E42-4A5B-A82C-894BA440ED85}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuinntyneBrownStewardship.Performance", "tests\QuinntyneBrownStewardship.Performance\QuinntyneBrownStewardship.Performance.csproj", "{B221A1AB-2E7B-4521-AF7B-8E6311B57B6F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -101,6 +103,18 @@ Global
 		{E9BF9351-5E42-4A5B-A82C-894BA440ED85}.Release|x64.Build.0 = Release|Any CPU
 		{E9BF9351-5E42-4A5B-A82C-894BA440ED85}.Release|x86.ActiveCfg = Release|Any CPU
 		{E9BF9351-5E42-4A5B-A82C-894BA440ED85}.Release|x86.Build.0 = Release|Any CPU
+		{B221A1AB-2E7B-4521-AF7B-8E6311B57B6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B221A1AB-2E7B-4521-AF7B-8E6311B57B6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B221A1AB-2E7B-4521-AF7B-8E6311B57B6F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B221A1AB-2E7B-4521-AF7B-8E6311B57B6F}.Debug|x64.Build.0 = Debug|Any CPU
+		{B221A1AB-2E7B-4521-AF7B-8E6311B57B6F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B221A1AB-2E7B-4521-AF7B-8E6311B57B6F}.Debug|x86.Build.0 = Debug|Any CPU
+		{B221A1AB-2E7B-4521-AF7B-8E6311B57B6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B221A1AB-2E7B-4521-AF7B-8E6311B57B6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B221A1AB-2E7B-4521-AF7B-8E6311B57B6F}.Release|x64.ActiveCfg = Release|Any CPU
+		{B221A1AB-2E7B-4521-AF7B-8E6311B57B6F}.Release|x64.Build.0 = Release|Any CPU
+		{B221A1AB-2E7B-4521-AF7B-8E6311B57B6F}.Release|x86.ActiveCfg = Release|Any CPU
+		{B221A1AB-2E7B-4521-AF7B-8E6311B57B6F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -112,5 +126,6 @@ Global
 		{8BB8A0E2-46E0-47CB-920B-4282068D7D03} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{D68F4A36-6A78-4350-9B34-ADE963D60C16} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{E9BF9351-5E42-4A5B-A82C-894BA440ED85} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{B221A1AB-2E7B-4521-AF7B-8E6311B57B6F} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 	EndGlobalSection
 EndGlobal

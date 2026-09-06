@@ -4,8 +4,9 @@ import { ProgrammeMockStore } from './programme-mock.store';
 @Injectable()
 export class CurriculumServiceMock implements ICurriculumService {
   private readonly store = inject(ProgrammeMockStore);
-  async getCurriculum() { return this.store.curriculum(); }
+  async getCurriculum() { await this.store.waitForResponse(); return this.store.curriculum(); }
   async getModule(ordinal: number | null) {
+    await this.store.waitForResponse();
     const current = this.store.curriculum().currentOrdinal;
     const module = this.store.module(ordinal ?? current ?? 12);
     if (!module.isComplete && module.ordinal !== current) throw new ServiceError(409, undefined, 'Complete the current module to unlock this module.');

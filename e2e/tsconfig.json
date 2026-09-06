@@ -10,5 +10,10 @@
       "@qbs/api/testing": ["../frontend/projects/api/testing/src/public-api.ts"]
     }
   },
-  "include": ["playwright.config.ts", "page-objects/**/*.ts", "specs/**/*.ts"]
+  "include": [
+    "playwright*.config.ts",
+    "page-objects/**/*.ts",
+    "specs/**/*.ts",
+    "performance/**/*.ts"
+  ]
 }
