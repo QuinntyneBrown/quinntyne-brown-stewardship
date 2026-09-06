@@ -1,0 +1,11 @@
+{
+  "name": "@qbs/domain",
+  "version": "0.1.0",
+  "peerDependencies": {
+    "@angular/common": "^21.0.0",
+    "@angular/core": "^21.0.0",
+    "@qbs/api": "^0.1.0",
+    "@qbs/components": "^0.1.0"
+  },
+  "sideEffects": false
+}

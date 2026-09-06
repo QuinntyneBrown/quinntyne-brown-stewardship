@@ -1,0 +1,95 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: var(--qbs-space-none);
+  background: var(--qbs-page);
+  color: var(--qbs-text);
+  font-family: var(--qbs-font-body);
+  font-size: var(--qbs-type-body);
+  line-height: var(--qbs-leading-body);
+}
+a {
+  color: var(--qbs-accent);
+  text-underline-offset: var(--qbs-focus-offset);
+}
+a:hover {
+  color: var(--qbs-accent-hover);
+}
+button,
+input {
+  font: inherit;
+}
+button,
+.button {
+  min-height: var(--qbs-control-min);
+  padding: var(--qbs-space-sm) var(--qbs-space-lg);
+  border: var(--qbs-border-width) solid var(--qbs-accent);
+  border-radius: var(--qbs-radius);
+  background: var(--qbs-accent);
+  color: var(--qbs-on-accent);
+  cursor: pointer;
+  font-weight: var(--qbs-weight-strong);
+}
+button:hover {
+  background: var(--qbs-accent-hover);
+}
+button:disabled {
+  cursor: wait;
+  opacity: var(--qbs-disabled-opacity);
+}
+input {
+  width: var(--qbs-full);
+  min-width: var(--qbs-space-none);
+  min-height: var(--qbs-control-min);
+  border: var(--qbs-border-width) solid var(--qbs-control-border);
+  border-radius: var(--qbs-radius);
+  padding: var(--qbs-space-sm) var(--qbs-space-md);
+  background: var(--qbs-surface);
+  color: var(--qbs-text);
+}
+input[aria-invalid="true"] {
+  border-color: var(--qbs-error);
+}
+:focus-visible {
+  outline: var(--qbs-focus-width) solid var(--qbs-text);
+  outline-offset: var(--qbs-focus-offset);
+}
+h1,
+h2,
+p {
+  margin: var(--qbs-space-none);
+}
+h1 {
+  font-family: var(--qbs-font-heading);
+  font-size: var(--qbs-type-title);
+  font-weight: var(--qbs-weight-light);
+  line-height: var(--qbs-leading-title);
+  letter-spacing: var(--qbs-tracking-title);
+  text-wrap: pretty;
+}
+h2 {
+  font-family: var(--qbs-font-heading);
+  font-weight: var(--qbs-weight-normal);
+}
+.eyebrow {
+  display: block;
+  margin-bottom: var(--qbs-space-lg);
+  color: var(--qbs-subtle);
+  font-size: var(--qbs-type-label);
+  letter-spacing: var(--qbs-tracking-label);
+  text-transform: uppercase;
+}
+.lead {
+  margin-top: var(--qbs-space-xl);
+  color: var(--qbs-body);
+  font-family: var(--qbs-font-heading);
+  font-size: var(--qbs-type-lead);
+}
+.error {
+  color: var(--qbs-error);
+  font-size: var(--qbs-type-small);
+}
+.muted {
+  color: var(--qbs-muted);
+}

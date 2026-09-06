@@ -1,0 +1,14 @@
+**/bin/
+**/obj/
+**/node_modules/
+**/dist/
+**/.angular/
+**/test-results/
+**/playwright-report/
+**/coverage/
+.local/
+backend/src/QuinntyneBrownStewardship.Api/wwwroot/
+*.user
+*.pfx
+*.pem
+*.log

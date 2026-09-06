@@ -1,0 +1,113 @@
+{
+  "version": 1,
+  "newProjectRoot": "projects",
+  "cli": {
+    "analytics": false
+  },
+  "projects": {
+    "quinntyne-brown-stewardship": {
+      "projectType": "application",
+      "root": "projects/quinntyne-brown-stewardship",
+      "sourceRoot": "projects/quinntyne-brown-stewardship/src",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "projects/quinntyne-brown-stewardship/src/main.ts",
+            "tsConfig": "projects/quinntyne-brown-stewardship/tsconfig.app.json",
+            "index": "projects/quinntyne-brown-stewardship/src/index.html",
+            "styles": ["projects/quinntyne-brown-stewardship/src/styles.css"],
+            "outputPath": "dist/stewardship",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "projects/quinntyne-brown-stewardship/public"
+              }
+            ]
+          },
+          "configurations": {
+            "production": {
+              "outputHashing": "all",
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "350kB",
+                  "maximumError": "500kB"
+                }
+              ]
+            },
+            "development": {
+              "optimization": false,
+              "sourceMap": true
+            },
+            "acceptance": {
+              "optimization": false,
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "projects/quinntyne-brown-stewardship/src/app/service-providers.ts",
+                  "with": "projects/quinntyne-brown-stewardship/src/app/service-providers.mock.ts"
+                }
+              ]
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "development": {
+              "buildTarget": "quinntyne-brown-stewardship:build:development"
+            },
+            "acceptance": {
+              "buildTarget": "quinntyne-brown-stewardship:build:acceptance"
+            }
+          },
+          "defaultConfiguration": "development"
+        }
+      }
+    },
+    "api": {
+      "projectType": "library",
+      "root": "projects/api",
+      "sourceRoot": "projects/api/src",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "options": {
+            "project": "projects/api/ng-package.json",
+            "tsConfig": "projects/api/tsconfig.lib.json"
+          }
+        }
+      }
+    },
+    "components": {
+      "projectType": "library",
+      "root": "projects/components",
+      "sourceRoot": "projects/components/src",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "options": {
+            "project": "projects/components/ng-package.json",
+            "tsConfig": "projects/components/tsconfig.lib.json"
+          }
+        }
+      }
+    },
+    "domain": {
+      "projectType": "library",
+      "root": "projects/domain",
+      "sourceRoot": "projects/domain/src",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "options": {
+            "project": "projects/domain/ng-package.json",
+            "tsConfig": "projects/domain/tsconfig.lib.json"
+          }
+        }
+      }
+    }
+  }
+}

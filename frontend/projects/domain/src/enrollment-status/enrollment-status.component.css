@@ -1,0 +1,8 @@
+section {
+  max-width: var(--qbs-reading-max);
+}
+.failure {
+  display: grid;
+  justify-items: start;
+  gap: var(--qbs-space-lg);
+}

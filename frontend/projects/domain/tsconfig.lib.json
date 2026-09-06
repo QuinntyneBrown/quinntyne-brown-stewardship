@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../out-tsc/domain",
+    "declaration": true,
+    "declarationMap": true,
+    "inlineSources": true,
+    "paths": {
+      "@qbs/api": ["dist/api"],
+      "@qbs/components": ["dist/components"]
+    }
+  },
+  "exclude": ["**/*.spec.ts"],
+  "angularCompilerOptions": {
+    "compilationMode": "partial"
+  }
+}

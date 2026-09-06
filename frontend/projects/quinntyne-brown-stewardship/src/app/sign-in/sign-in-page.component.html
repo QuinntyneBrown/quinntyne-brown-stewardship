@@ -1,0 +1,64 @@
+<header>
+  <span class="brand">Stewardship</span
+  ><span class="signature">Quinntyne Brown</span>
+</header>
+<main>
+  <section class="intro">
+    <span class="eyebrow">Participant access</span>
+    <h1>Sign in to continue</h1>
+    <p class="lead">
+      Twelve modules, six sessions, one cohort. Use the email address your
+      invitation was sent to.
+    </p>
+  </section>
+  <form
+    novalidate
+    (submit)="submit($event, emailInput, passwordInput)"
+    [attr.aria-busy]="pending()"
+  >
+    <div class="field">
+      <label for="email">Email address</label
+      ><input
+        #emailInput
+        id="email"
+        name="email"
+        type="email"
+        autocomplete="username"
+        required
+        maxlength="254"
+        [value]="email()"
+        (input)="email.set(emailInput.value)"
+        [attr.aria-invalid]="!!emailError()"
+        [attr.aria-describedby]="emailError() ? 'email-error' : null"
+      />
+      @if (emailError()) {
+        <p id="email-error" class="error">{{ emailError() }}</p>
+      }
+    </div>
+    <div class="field">
+      <label for="password">Password</label
+      ><input
+        #passwordInput
+        id="password"
+        name="password"
+        type="password"
+        autocomplete="current-password"
+        required
+        maxlength="1024"
+        [value]="password()"
+        (input)="password.set(passwordInput.value)"
+        [attr.aria-invalid]="!!passwordError()"
+        [attr.aria-describedby]="passwordError() ? 'password-error' : null"
+      />
+      @if (passwordError()) {
+        <p id="password-error" class="error">{{ passwordError() }}</p>
+      }
+    </div>
+    @if (message()) {
+      <p role="alert" class="error">{{ message() }}</p>
+    }
+    <button type="submit" [disabled]="pending()">
+      {{ pending() ? "Signing in…" : "Sign in" }}
+    </button>
+  </form>
+</main>

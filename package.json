@@ -1,0 +1,16 @@
+{
+  "name": "stewardship-acceptance",
+  "private": true,
+  "scripts": {
+    "test:e2e": "playwright test",
+    "build": "node scripts/build.mjs",
+    "tokens": "node scripts/mirror-tokens.mjs",
+    "test:api": "dotnet test backend/QuinntyneBrownStewardship.sln",
+    "test:adapters": "node scripts/test-adapters.mjs"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.11.1",
+    "@playwright/test": "1.58.2",
+    "prettier": "3.8.2"
+  }
+}

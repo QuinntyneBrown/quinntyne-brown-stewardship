@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+<PropertyGroup><OutputType>Exe</OutputType></PropertyGroup>
+<ItemGroup>
+<ProjectReference Include="../QuinntyneBrownStewardship.Application/QuinntyneBrownStewardship.Application.csproj" />
+<ProjectReference Include="../QuinntyneBrownStewardship.Infrastructure/QuinntyneBrownStewardship.Infrastructure.csproj" />
+<PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.11" />
+</ItemGroup>
+</Project>

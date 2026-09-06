@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Stewardship — Design system</title>
+    <link rel="stylesheet" href="tokens.css" />
+    <link rel="stylesheet" href="fonts.css" />
+    <link rel="stylesheet" href="base.css" />
+    <link rel="stylesheet" href="catalogue.css" />
+  </head>
+  <body>
+    <header>
+      <span class="eyebrow">Stewardship · Design system</span>
+      <h1>A quiet place to learn.</h1>
+      <p class="lead">
+        The visual language for participant access and enrollment. These tokens
+        are the authoritative source for the application.
+      </p>
+    </header>
+    <main>
+      <section aria-labelledby="palette">
+        <h2 id="palette">Colour and type</h2>
+        <p class="muted">
+          Warm dark surfaces, readable neutral text, and amber actions. Karla
+          carries the interface; Newsreader carries the invitation.
+        </p>
+        <div class="swatches">
+          <div class="swatch surface">Surface</div>
+          <div class="swatch text">Text</div>
+          <div class="swatch accent">Action</div>
+        </div>
+      </section>
+      <section aria-labelledby="controls">
+        <h2 id="controls">Controls</h2>
+        <p class="muted">
+          Every action has a minimum 48px target and a visible keyboard focus
+          outline.
+        </p>
+        <form id="preview">
+          <label for="email">Email address</label
+          ><input
+            id="email"
+            name="email"
+            type="email"
+            autocomplete="email"
+            required
+          /><button type="submit">Preview confirmation</button>
+          <p role="status" id="confirmation"></p>
+        </form>
+      </section>
+      <section class="notice" aria-labelledby="notice">
+        <span class="eyebrow">Enrollment notice</span>
+        <h2 id="notice">You are not yet enrolled in a cohort.</h2>
+        <p class="lead">
+          A cohort will be assigned to you before the programme begins, and you
+          will be told when it starts. Until then there is no curriculum to
+          read.
+        </p>
+      </section>
+      <section aria-labelledby="feedback">
+        <h2 id="feedback">Feedback</h2>
+        <p class="error">Email address or password is incorrect</p>
+        <p class="muted">Checking your enrollment…</p>
+        <p>
+          State always has a text label. Errors do not depend on colour alone.
+        </p>
+      </section>
+    </main>
+    <footer>
+      <a href="tokens.css">View design tokens</a> ·
+      <a href="fonts/Karla-OFL.txt">Karla license</a> ·
+      <a href="fonts/Newsreader-OFL.txt">Newsreader license</a>
+    </footer>
+    <script>
+      document.querySelector("#preview").addEventListener("submit", (event) => {
+        event.preventDefault();
+        document.querySelector("#confirmation").textContent =
+          "Confirmation sent to " + document.querySelector("#email").value;
+      });
+    </script>
+  </body>
+</html>
