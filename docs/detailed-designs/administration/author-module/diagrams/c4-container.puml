@@ -1,0 +1,16 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Author a module
+
+Person(admin, "Administrator", "Writes the title, summary, practice assignment, and prompts of a module")
+System_Boundary(stewardship, "Stewardship") {
+  Container(spa, "Stewardship web client", "Angular", "Renders the module editor and its removal dialog")
+  Container(api, "Stewardship API", "ASP.NET Core", "Applies module revisions in one unit of work")
+  ContainerDb(db, "Stewardship database", "SQL Server", "Modules, sections, prompts, and completion records")
+}
+
+Rel(admin, spa, "Authors a module", "HTTPS")
+Rel(spa, api, "Sends the authored module", "JSON/HTTPS")
+Rel(api, db, "Reads and writes modules and prompts", "EF Core")
+@enduml

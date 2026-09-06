@@ -3,7 +3,7 @@
 ## Overview
 
 Stewardship is a responsive web application through which a participant learns to build
-redemptive technology by way of a structured curriculum, twelve learning modules, and
+redemptive technology by way of a structured curriculum, its learning modules, and
 1-on-1 sessions with a mentor. None of that content is reachable by an unidentified
 visitor, so establishing identity is the first thing the system does.
 

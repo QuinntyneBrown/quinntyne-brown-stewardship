@@ -45,7 +45,7 @@ alt L2-007 — no active enrollment
   notice --> actor : State that no cohort has been assigned, with no path, figures, or booking panel
 else An active enrollment resolves
   handler -> cohort : Derive the current week from the start date (L2-006 criterion 1)
-  cohort --> handler : Week number, capped at the 12-week duration
+  cohort --> handler : Week number, capped at the cohort's authored duration
   handler -> cohort : Derive the session allowance from duration and cadence (L2-006 criterion 2)
   cohort --> handler : Allowance of 6
   handler -> cohort : Determine whether the cohort has ended

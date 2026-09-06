@@ -2,7 +2,7 @@
 
 ## Overview
 
-Alongside the twelve modules, a Stewardship cohort includes 1-on-1 sessions with its
+Alongside the modules of its programme, a Stewardship cohort includes 1-on-1 sessions with its
 mentor. Booking one begins with seeing when the mentor is free, and this feature covers
 that view: the days available, the times within a chosen day, and how much of the
 cohort's session allowance remains.
@@ -27,9 +27,10 @@ discloses nothing further. The response carries no identifier, name, or hint of 
 holds it — a participant learns only that the time is unavailable, which is all that
 choosing another time requires.
 
-The allowance is derived rather than authored. A twelve-week cohort meeting every other
-week includes six sessions, and the figure shown is that division, not a number written
-into content. The booked count is likewise counted from the participant's own sessions.
+The allowance is derived rather than authored. A cohort meeting every other week includes
+one session per two weeks of its authored duration, so a twelve-week cohort includes six
+and an eight-week cohort includes four. The figure shown is that division, not a number
+written into content. The booked count is likewise counted from the participant's own sessions.
 Presenting "3 of 6 booked" is therefore a statement about records rather than a caption
 that can drift from them.
 
@@ -95,7 +96,7 @@ refines a level-1 (L1) requirement, cited by identifier. Requirement text is quo
 | L2 ID | Refines (L1) | Requirement |
 |-------|--------------|-------------|
 | `L2-017` | `L1-005` | The booking panel shows a day strip and the time slots for the selected day, each slot in exactly one of three states: open, taken, or selected. |
-| `L2-023` | `L1-005` | The number of sessions a cohort includes is computed, not authored: 12 weeks at one session every other week yields 6. |
+| `L2-023` | `L1-005` | The number of sessions a cohort includes is computed from the cohort's own authored duration and cadence, never from a constant: a 12-week cohort at one session every other week yields 6. |
 
 ## Diagrams
 

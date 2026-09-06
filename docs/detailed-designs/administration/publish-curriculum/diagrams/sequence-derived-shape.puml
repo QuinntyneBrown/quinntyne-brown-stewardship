@@ -1,0 +1,56 @@
+@startuml
+title UML sequence behaviour — Read a derived programme shape
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Participant" as actor
+box "Frontend — Stewardship web client" #E0F2FE
+  participant "CurriculumOverviewComponent" as overview
+  participant "CurriculumService" as client
+end box
+box "Backend — Stewardship API application" #D1FADF
+  participant "CurriculumController" as controller
+end box
+box "Backend — Stewardship Application and Domain" #ECFDF3
+  participant "GetCurriculumQueryHandler" as handler
+  participant "ProgrammeReader" as reader
+  participant "Cohort" as cohort
+  participant "ProgressSummary" as summary
+end box
+box "Backend — Stewardship Infrastructure" #FFF4E5
+  database "Stewardship database" as db
+end box
+
+actor -> overview : Open the curriculum
+overview -> client : Build the typed request
+client -> controller : GET /curriculum
+controller -> handler : Send GetCurriculumQuery
+handler -> reader : Assemble the path for the acting participant
+reader -> db : Read the cohort and the programme it follows
+db --> reader : Cohort with its duration and cadence
+reader -> db : Read the modules of the programme in ordinal order
+db --> reader : Modules with their publication state
+reader -> reader : Filter to published modules only (L2-053)
+reader -> db : Read the section completion records of the participant
+db --> reader : Completion records
+reader -> cohort : Derive the allowance from duration and cadence (L2-057)
+cohort --> reader : Session allowance
+reader -> summary : Derive counts against the published module count (L2-056, L2-058)
+summary --> reader : Completed, remaining, and proportion
+reader --> handler : Path and derived figures
+handler --> controller : CurriculumResponse
+controller --> client : 200 with the curriculum
+client --> overview : Curriculum result held in a signal
+overview --> actor : Present the path and every figure as derived
+@enduml

@@ -1,0 +1,32 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Authorise an administrator
+
+Container_Boundary(spa, "Stewardship web client") {
+  Component(guard, "adminGuard", "Angular CanActivateFn", "Admits a navigation only when the session reports administrator authority")
+  Component(shell, "ProgrammeShellComponent", "Angular routed component", "Composes the navigation link list")
+  Component(safe, "safeDestination", "Angular route helper", "Allows an authoring path to survive a sign-in redirect")
+  Component(signin, "SignInService", "Angular api adapter", "Requests GET /authentication/session")
+}
+
+Container_Boundary(api, "Stewardship API") {
+  Component(policy, "AdministrationPolicy", "ASP.NET Core authorization policy", "Requires the Administrator role claim on every authoring endpoint")
+  Component(authhandler, "SessionAuthenticationHandler", "ASP.NET Core authentication handler", "Issues the role claim from the account record")
+  Component(controller, "AuthenticationController", "ASP.NET Core controller", "Exposes GET /authentication/session")
+  Component(handler, "GetSessionQueryHandler", "MediatR handler", "Reports the authority the session carries")
+  Component(current, "ICurrentParticipant", "Application abstraction", "Exposes the acting identity and its authority to handlers")
+  Component(entity, "Participant", "Domain entity", "Owns the administrator and mentor flags")
+  ComponentDb(db, "Stewardship database", "SQL Server", "Persists the account records")
+}
+
+Rel(shell, guard, "Guards its authoring children with")
+Rel(guard, signin, "Resolves the session through")
+Rel(guard, safe, "Preserves the requested path with")
+Rel(signin, controller, "Requests the session", "JSON/HTTPS")
+Rel(authhandler, entity, "Reads the authority flag from")
+Rel(authhandler, db, "Loads the account record", "EF Core")
+Rel(policy, authhandler, "Requires the claim issued by")
+Rel(controller, handler, "Sends GetSessionQuery")
+Rel(handler, current, "Reads the acting authority from")
+@enduml

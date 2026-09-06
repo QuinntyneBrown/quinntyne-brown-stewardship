@@ -1,0 +1,90 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Author a section
+
+class CurriculumModule {
+  +Guid Id
+  +int Ordinal
+  +string Title
+  +PublicationState State
+}
+
+class ModuleSection {
+  +Guid Id
+  +Guid ModuleId
+  +int Ordinal
+  +string Title
+  +string Reading
+  +DateTimeOffset CreatedAt
+}
+
+class SectionCompletion {
+  +Guid Id
+  +Guid EnrollmentId
+  +Guid SectionId
+  +DateTimeOffset CompletedAt
+}
+
+class AddSectionCommand {
+  +Guid ModuleId
+  +string Title
+  +string Reading
+}
+
+class AddSectionCommandHandler {
+  -ICurriculumStore _store
+  -ISystemClock _clock
+  +Handle(command: AddSectionCommand, token: CancellationToken): Task<Guid>
+}
+
+class ReviseSectionCommand {
+  +Guid SectionId
+  +string Title
+  +string Reading
+}
+
+class RemoveSectionCommand {
+  +Guid SectionId
+}
+
+class RemoveSectionCommandHandler {
+  -ICurriculumStore _store
+  +Handle(command: RemoveSectionCommand, token: CancellationToken): Task<Unit>
+}
+
+class ProgrammeException {
+  +int StatusCode
+  +string Message
+}
+
+interface ICurriculumStore {
+  +Section(id: Guid, token: CancellationToken): Task<ModuleSection?>
+  +CompletionCount(sectionId: Guid, token: CancellationToken): Task<int>
+  +Remove<T>(entity: T): void
+  +Transaction<T>(operation, token: CancellationToken): Task<T>
+}
+
+class OrdinalSequence {
+  +{static} Assign<T>(items: IReadOnlyList<T>, position): void
+}
+
+CurriculumModule "1" *-- "*" ModuleSection : owns
+ModuleSection "1" --> "*" SectionCompletion : completed by
+AddSectionCommandHandler ..> AddSectionCommand : handles
+AddSectionCommandHandler --> ModuleSection : appends
+RemoveSectionCommandHandler ..> RemoveSectionCommand : handles
+RemoveSectionCommandHandler --> SectionCompletion : counts
+RemoveSectionCommandHandler ..> ProgrammeException : raises when dependent
+RemoveSectionCommandHandler ..> OrdinalSequence : closes the gap with
+RemoveSectionCommandHandler --> ICurriculumStore : reads and writes through
+ReviseSectionCommand ..> ModuleSection : revises
+@enduml

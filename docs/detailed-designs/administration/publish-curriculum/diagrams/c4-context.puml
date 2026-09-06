@@ -1,0 +1,12 @@
+@startuml
+!include <C4/C4_Context>
+LAYOUT_WITH_LEGEND()
+title System Context — Publish a curriculum
+
+Person(admin, "Administrator", "Decides when authored curriculum becomes visible")
+Person(participant, "Participant", "Reads the published curriculum of their cohort")
+System(stewardship, "Stewardship", "Curriculum authoring and the participant programme")
+
+Rel(admin, stewardship, "Authors and publishes a programme using", "HTTPS")
+Rel(participant, stewardship, "Reads the published programme from", "HTTPS")
+@enduml

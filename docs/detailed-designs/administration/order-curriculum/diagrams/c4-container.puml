@@ -1,0 +1,16 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Order a curriculum
+
+Person(admin, "Administrator", "Arranges the modules of a programme and the sections of a module")
+System_Boundary(stewardship, "Stewardship") {
+  Container(spa, "Stewardship web client", "Angular", "Offers a move action per item and announces the new arrangement")
+  Container(api, "Stewardship API", "ASP.NET Core", "Reassigns positions in two passes inside one transaction")
+  ContainerDb(db, "Stewardship database", "SQL Server", "Unique index over the parent and the position")
+}
+
+Rel(admin, spa, "Moves an item within its parent", "HTTPS")
+Rel(spa, api, "Sends the ordered identifiers", "JSON/HTTPS")
+Rel(api, db, "Stages and then writes the final positions", "EF Core")
+@enduml

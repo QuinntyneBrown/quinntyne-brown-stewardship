@@ -1,0 +1,59 @@
+@startuml
+title UML sequence behaviour — Reorder modules
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Administrator" as actor
+box "Frontend — Stewardship web client" #E0F2FE
+  participant "OrderListComponent" as order
+  participant "OrderControlComponent" as control
+  participant "AuthoringService" as client
+end box
+box "Backend — Stewardship API application" #D1FADF
+  participant "CurriculaController" as controller
+  participant "ValidationBehavior" as behavior
+end box
+box "Backend — Stewardship Application and Domain" #ECFDF3
+  participant "ReorderModulesCommandValidator" as validator
+  participant "ReorderModulesCommandHandler" as handler
+  participant "OrdinalSequence" as sequence
+end box
+box "Backend — Stewardship Infrastructure" #FFF4E5
+  database "Stewardship database" as db
+end box
+
+actor -> control : Move the fourth module to second place
+control -> order : Emit the move
+order -> order : Apply the new arrangement to the signal
+order -> client : Build the typed request
+client -> controller : PUT /administration/curricula/{id}/order
+controller -> behavior : Send ReorderModulesCommand
+behavior -> validator : Require a permutation of the current children (L2-049 criterion 4)
+validator --> behavior : Valid command
+behavior -> handler : Admit the validated command
+handler -> db : Open one transaction under the programme-write lock
+handler -> db : Load the modules of the programme
+db --> handler : Modules with their current positions
+handler -> sequence : Stage every affected module to a negative position
+sequence -> db : Write the staging positions
+handler -> db : Flush so the unique index sees no collision
+handler -> sequence : Assign final positions from 1 upward (L2-049 criterion 1)
+sequence -> db : Write the final positions
+db --> handler : Commit result
+handler --> controller : New arrangement applied
+controller --> client : 204
+client --> order : Saved
+order -> order : Announce the new arrangement
+order --> actor : Present the modules in the new order
+@enduml

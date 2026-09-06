@@ -73,5 +73,5 @@ ModulePathItem --> ModuleState : carries
 GetCurriculumQueryHandler ..> GetCurriculumQuery : handles
 GetCurriculumQueryHandler --> CurriculumResponse : returns
 CurriculumResponse *-- ProgressSummary : holds
-CurriculumResponse *-- ModulePathItem : holds twelve
+CurriculumResponse *-- ModulePathItem : holds one per published module
 @enduml

@@ -1,0 +1,49 @@
+@startuml
+title UML sequence behaviour — Admit an administrator
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Administrator" as actor
+box "Frontend — Stewardship web client" #E0F2FE
+  participant "adminGuard" as guard
+  participant "SignInService" as client
+end box
+box "Backend — Stewardship API application" #D1FADF
+  participant "SessionAuthenticationHandler" as auth
+  participant "AuthenticationController" as controller
+end box
+box "Backend — Stewardship Application and Domain" #ECFDF3
+  participant "GetSessionQueryHandler" as handler
+  participant "Participant" as entity
+end box
+box "Backend — Stewardship Infrastructure" #FFF4E5
+  database "Stewardship database" as db
+end box
+
+actor -> guard : Request an authoring screen
+guard -> client : Resolve the current session
+client -> auth : GET /authentication/session with the session cookie
+auth -> db : Load the account record for the session
+db --> auth : Account record with its authority flag
+auth -> entity : Read the administrator authority
+entity --> auth : Authority held
+auth -> auth : Issue the Administrator role claim (L2-041)
+auth -> controller : Authenticated principal
+controller -> handler : Send GetSessionQuery
+handler --> controller : SessionResponse reporting the authority (L2-041)
+controller --> client : 200 with the session
+client --> guard : Session reporting administrator authority
+guard -> guard : Admit the navigation (L2-042)
+guard --> actor : Present the authoring screen
+@enduml

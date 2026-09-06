@@ -1,0 +1,45 @@
+@startuml
+title UML sequence behaviour — Refuse a duplicate programme key
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Administrator" as actor
+box "Frontend — Stewardship web client" #E0F2FE
+  participant "ProgrammeFormComponent" as form
+  participant "AuthoringService" as client
+end box
+box "Backend — Stewardship API application" #D1FADF
+  participant "CurriculaController" as controller
+  participant "ProblemDetailsExceptionHandler" as problem
+end box
+box "Backend — Stewardship Application and Domain" #ECFDF3
+  participant "CreateCurriculumCommandHandler" as handler
+end box
+box "Backend — Stewardship Infrastructure" #FFF4E5
+  database "Stewardship database" as db
+end box
+
+actor -> form : Enter a key already in use
+form -> client : Build the typed request
+client -> controller : POST /administration/curricula
+controller -> handler : Send the validated CreateCurriculumCommand
+handler -> db : Insert under the unique key index
+db --> handler : Unique constraint violated
+handler -> handler : Translate to ProgrammeException 409 naming the taken key (L2-044 criterion 2)
+handler -> problem : Raise the programme exception
+problem --> client : 409 ProblemDetails stating the key is taken
+note over db : No programme stored; the list is unchanged
+client --> form : Service error carrying the message
+form --> actor : Present the conflict against the key field
+@enduml

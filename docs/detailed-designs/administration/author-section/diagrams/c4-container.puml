@@ -1,0 +1,16 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Author a section
+
+Person(admin, "Administrator", "Writes the reading content participants read")
+System_Boundary(stewardship, "Stewardship") {
+  Container(spa, "Stewardship web client", "Angular", "Renders the section editor and its removal confirmation")
+  Container(api, "Stewardship API", "ASP.NET Core", "Refuses a removal that recorded completion depends on")
+  ContainerDb(db, "Stewardship database", "SQL Server", "Sections and the completion records recorded against them")
+}
+
+Rel(admin, spa, "Authors a section", "HTTPS")
+Rel(spa, api, "Sends the authored section", "JSON/HTTPS")
+Rel(api, db, "Reads completion records before removing a section", "EF Core")
+@enduml

@@ -1,0 +1,18 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Publish a curriculum
+
+Person(admin, "Administrator", "Publishes a programme when it is ready")
+Person(participant, "Participant", "Reads only what has been published")
+System_Boundary(stewardship, "Stewardship") {
+  Container(spa, "Stewardship web client", "Angular", "Offers the publication action and renders only derived figures")
+  Container(api, "Stewardship API", "ASP.NET Core", "Refuses an incomplete publication and filters reads to published content")
+  ContainerDb(db, "Stewardship database", "SQL Server", "Publication state, module count, and cohort duration and cadence")
+}
+
+Rel(admin, spa, "Publishes a programme", "HTTPS")
+Rel(participant, spa, "Opens the curriculum", "HTTPS")
+Rel(spa, api, "Requests publication and the participant path", "JSON/HTTPS")
+Rel(api, db, "Writes publication state and reads the shape it derives from", "EF Core")
+@enduml

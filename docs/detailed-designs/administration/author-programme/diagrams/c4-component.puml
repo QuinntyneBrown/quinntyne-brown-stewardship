@@ -1,0 +1,39 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Author a programme
+
+Container_Boundary(spa, "Stewardship web client") {
+  Component(listpage, "ProgrammeListPageComponent", "Angular routed component", "Owns the /admin/programmes route")
+  Component(editpage, "ProgrammeEditorPageComponent", "Angular routed component", "Owns the /admin/programmes/:id route")
+  Component(list, "ProgrammeListComponent", "Angular domain component", "Injects AUTHORING_SERVICE and renders one row per programme")
+  Component(form, "ProgrammeFormComponent", "Angular presentational component", "Takes the key and title as inputs and emits the submitted values")
+  Component(pill, "StatePillComponent", "Angular presentational component", "Renders the publication state as text")
+}
+
+Container_Boundary(api, "Stewardship API") {
+  Component(controller, "CurriculaController", "ASP.NET Core controller", "Exposes the /administration/curricula endpoints")
+  Component(validator, "CreateCurriculumCommandValidator", "FluentValidation validator", "Checks the key and title before the handler runs")
+  Component(create, "CreateCurriculumCommandHandler", "MediatR handler", "Inserts the programme in draft")
+  Component(rename, "RenameCurriculumCommandHandler", "MediatR handler", "Revises the programme title")
+  Component(index, "GetCurriculaQueryHandler", "MediatR handler", "Reads every programme with its module count and state")
+  Component(draft, "GetCurriculumDraftQueryHandler", "MediatR handler", "Reads one authored programme whatever its state")
+  Component(entity, "Curriculum", "Domain entity", "Owns the key, the title, the publication state, and the modules")
+  Component(store, "ICurriculumStore", "Application abstraction", "Reads and writes authored curriculum")
+  ComponentDb(db, "Stewardship database", "SQL Server", "Persists programmes under a unique key index")
+}
+
+Rel(listpage, list, "Composes")
+Rel(editpage, form, "Composes")
+Rel(list, pill, "Renders one per programme")
+Rel(list, controller, "Requests the programme list", "JSON/HTTPS")
+Rel(form, controller, "Submits the authored programme", "JSON/HTTPS")
+Rel(controller, validator, "Passes the command through")
+Rel(validator, create, "Admits the validated command to")
+Rel(controller, rename, "Sends RenameCurriculumCommand")
+Rel(controller, index, "Sends GetCurriculaQuery")
+Rel(controller, draft, "Sends GetCurriculumDraftQuery")
+Rel(create, entity, "Creates")
+Rel(create, store, "Persists through")
+Rel(store, db, "Reads and writes", "EF Core")
+@enduml

@@ -2,7 +2,7 @@
 
 ## Overview
 
-A Stewardship cohort runs one module per week for twelve weeks, and the modules build on
+A Stewardship cohort runs one module per week for its authored duration, and the modules build on
 one another. The programme therefore opens them in order: a participant works through
 module N before module N+1 becomes available. This feature owns that rule and the
 related question of where a participant lands when they come back.

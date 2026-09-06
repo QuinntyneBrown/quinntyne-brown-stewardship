@@ -1,0 +1,16 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Author a programme
+
+Person(admin, "Administrator", "Creates and titles the programmes a cohort follows")
+System_Boundary(stewardship, "Stewardship") {
+  Container(spa, "Stewardship web client", "Angular", "Renders the programme index and the programme editor")
+  Container(api, "Stewardship API", "ASP.NET Core", "Validates at the boundary and stores the authored programme")
+  ContainerDb(db, "Stewardship database", "SQL Server", "Programme records under a unique key index")
+}
+
+Rel(admin, spa, "Creates and revises a programme", "HTTPS")
+Rel(spa, api, "Sends the authored programme", "JSON/HTTPS")
+Rel(api, db, "Inserts and reads programme records", "EF Core")
+@enduml

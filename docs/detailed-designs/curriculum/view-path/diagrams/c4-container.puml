@@ -3,9 +3,9 @@
 LAYOUT_WITH_LEGEND()
 title Containers — View the curriculum path
 
-Person(participant, "Participant", "Sees their standing across the twelve modules")
+Person(participant, "Participant", "Sees their standing across the modules of their programme")
 System_Boundary(stewardship, "Stewardship") {
-  Container(spa, "Stewardship web client", "Angular", "Renders the twelve markers and the progress figures")
+  Container(spa, "Stewardship web client", "Angular", "Renders one marker per module and the progress figures")
   Container(api, "Stewardship API", "ASP.NET Core", "Derives every count and proportion from completion records")
   ContainerDb(db, "Stewardship database", "SQL Server", "Curriculum modules and section completion records")
 }

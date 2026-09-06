@@ -1,0 +1,18 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Authorise an administrator
+
+Person(admin, "Administrator", "Authors curriculum through the application")
+Person(participant, "Participant", "Reads the published curriculum")
+System_Boundary(stewardship, "Stewardship") {
+  Container(spa, "Stewardship web client", "Angular", "Guards the authoring routes and hides the authoring destination")
+  Container(api, "Stewardship API", "ASP.NET Core", "Issues the role claim and applies the administration policy")
+  ContainerDb(db, "Stewardship database", "SQL Server", "Account records and their authority flags")
+}
+
+Rel(admin, spa, "Opens an authoring screen", "HTTPS")
+Rel(participant, spa, "Opens the curriculum", "HTTPS")
+Rel(spa, api, "Resolves the session before activating a route", "JSON/HTTPS")
+Rel(api, db, "Reads the account record and its authority", "EF Core")
+@enduml

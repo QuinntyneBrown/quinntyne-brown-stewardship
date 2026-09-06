@@ -12,7 +12,7 @@ Container_Boundary(spa, "Stewardship web client") {
 Container_Boundary(api, "Stewardship API") {
   Component(controller, "CurriculumController", "ASP.NET Core controller", "Exposes GET /curriculum")
   Component(handler, "GetCurriculumQueryHandler", "MediatR handler", "Assembles the path and the progress summary")
-  Component(module, "CurriculumModule", "Domain entity", "One of the twelve ordered modules")
+  Component(module, "CurriculumModule", "Domain entity", "One ordered module of the programme")
   Component(completion, "SectionCompletion", "Domain entity", "One record per section a participant has completed")
   Component(summary, "ProgressSummary", "Domain value object", "Derives completed, remaining, and proportion")
   ComponentDb(db, "Stewardship database", "SQL Server", "Persists modules and completion records")

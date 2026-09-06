@@ -2,7 +2,7 @@
 
 ## Overview
 
-A participant returns to Stewardship over the twelve weeks of a cohort, often from more
+A participant returns to Stewardship over the weeks of a cohort, often from more
 than one device, and neither signs in on every visit nor stays signed in indefinitely.
 This feature governs the life of an authenticated session between the moment sign-in
 creates it and the moment it ends.

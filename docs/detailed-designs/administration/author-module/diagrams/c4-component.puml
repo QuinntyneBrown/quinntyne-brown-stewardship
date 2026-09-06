@@ -1,0 +1,42 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Author a module
+
+Container_Boundary(spa, "Stewardship web client") {
+  Component(page, "ModuleEditorPageComponent", "Angular routed component", "Owns the /admin/modules/:id route and the removal dialog")
+  Component(editor, "ModuleEditorComponent", "Angular domain component", "Injects AUTHORING_SERVICE and saves the module as one form")
+  Component(steps, "PracticeStepsEditorComponent", "Angular presentational component", "Edits the ordered practice steps")
+  Component(prompts, "PromptsEditorComponent", "Angular presentational component", "Edits the ordered preparation prompts")
+  Component(textarea, "TextAreaFieldComponent", "Angular presentational component", "Wraps a textarea with a label and an error message")
+}
+
+Container_Boundary(api, "Stewardship API") {
+  Component(modules, "ModulesController", "ASP.NET Core controller", "Exposes the administration module endpoints")
+  Component(promptctl, "PromptsController", "ASP.NET Core controller", "Exposes the administration prompt endpoints")
+  Component(add, "AddModuleCommandHandler", "MediatR handler", "Appends a module in draft at the next free ordinal")
+  Component(revise, "ReviseModuleCommandHandler", "MediatR handler", "Applies title, summary, effort estimate, and practice steps")
+  Component(remove, "RemoveModuleCommandHandler", "MediatR handler", "Removes a module when nothing recorded depends on it")
+  Component(reviseprompt, "RevisePromptCommandHandler", "MediatR handler", "Changes prompt text and preserves its identifier")
+  Component(module, "CurriculumModule", "Domain entity", "Owns the ordinal, the practice assignment, the sections, and the prompts")
+  Component(prompt, "PreparationPrompt", "Domain entity", "One ordered preparation prompt")
+  Component(store, "ICurriculumStore", "Application abstraction", "Reads and writes authored curriculum")
+  ComponentDb(db, "Stewardship database", "SQL Server", "Persists modules, prompts, and completion records")
+}
+
+Rel(page, editor, "Composes")
+Rel(editor, steps, "Composes")
+Rel(editor, prompts, "Composes")
+Rel(editor, textarea, "Composes")
+Rel(editor, modules, "Saves the authored module", "JSON/HTTPS")
+Rel(prompts, promptctl, "Saves an authored prompt", "JSON/HTTPS")
+Rel(modules, add, "Sends AddModuleCommand")
+Rel(modules, revise, "Sends ReviseModuleCommand")
+Rel(modules, remove, "Sends RemoveModuleCommand")
+Rel(promptctl, reviseprompt, "Sends RevisePromptCommand")
+Rel(revise, module, "Applies the authored values to")
+Rel(reviseprompt, prompt, "Changes the text of")
+Rel(module, prompt, "Owns")
+Rel(revise, store, "Persists through")
+Rel(store, db, "Reads and writes", "EF Core")
+@enduml

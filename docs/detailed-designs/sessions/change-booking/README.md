@@ -2,7 +2,7 @@
 
 ## Overview
 
-Plans change over twelve weeks. A participant who has booked a 1-on-1 session can move
+Plans change over the weeks of a cohort. A participant who has booked a 1-on-1 session can move
 it to another time or give it up altogether, provided they do so far enough ahead that
 the mentor can use the time. This feature owns both actions and the window that bounds
 them.

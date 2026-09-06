@@ -1,0 +1,48 @@
+@startuml
+title UML sequence behaviour — Revise a preparation prompt
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Administrator" as actor
+box "Frontend — Stewardship web client" #E0F2FE
+  participant "PromptsEditorComponent" as prompts
+  participant "AuthoringService" as client
+end box
+box "Backend — Stewardship API application" #D1FADF
+  participant "PromptsController" as controller
+end box
+box "Backend — Stewardship Application and Domain" #ECFDF3
+  participant "RevisePromptCommandHandler" as handler
+  participant "PreparationPrompt" as prompt
+end box
+box "Backend — Stewardship Infrastructure" #FFF4E5
+  database "Stewardship database" as db
+end box
+
+actor -> prompts : Reword a preparation prompt
+prompts -> client : Build the typed request
+client -> controller : PUT /administration/prompts/{id}
+controller -> handler : Send the validated RevisePromptCommand
+handler -> db : Load the prompt by its identifier
+db --> handler : Authored prompt with its attached answers
+handler -> prompt : Change the text and keep the identifier (L2-047 criterion 2)
+prompt --> handler : Revised prompt
+handler -> db : Save changes in one unit of work
+db --> handler : Commit result
+note over db : Notes referencing the prompt identifier remain attached
+handler --> controller : Revision applied
+controller --> client : 204
+client --> prompts : Saved
+prompts --> actor : Present the reworded prompt
+@enduml

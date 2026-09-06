@@ -1,0 +1,174 @@
+# Publish a curriculum
+
+## Overview
+
+Authoring and reading are separate acts, and this feature is the boundary between them. An
+administrator revises a programme freely; a participant reads only what has been published.
+The same feature settles a second question that runs through the whole application: how
+many modules a programme has, how long a cohort runs, and how many sessions it allows are
+facts read from records rather than constants written in code.
+
+**publication state** — one of two values a programme or a module holds: `Draft` or
+`Published`
+
+**publication** — act by which an administrator makes the current content of a programme,
+and every module it holds, visible to participants
+
+**programme shape** — the module count of a programme together with the duration, cadence,
+and session allowance of a cohort
+
+A programme and each of its modules carry a publication state, and newly created content is
+draft (L2-052). Draft content is invisible to participants: a cohort following a draft
+programme is told the programme is not yet available, a draft module does not appear in a
+participant's path or count toward their totals, and a draft module requested by direct URL
+is refused (L2-053).
+
+Publication is refused while it would give a participant nothing to read (L2-054). A
+programme with no modules cannot be published, and neither can one holding a module with no
+sections; the refusal names the empty module. A programme that passes both checks is
+published together with every module it holds.
+
+The line between publishing and revising is drawn deliberately. Content added after a
+programme is published stays invisible until the administrator publishes again, so adding a
+module to a running cohort does not disturb it mid-week. Revising the text of an
+already-published section is not a new publication and reaches participants on their next
+read (L2-055 criterion 3). The distinction is between *what exists* for a participant,
+which publication governs, and *what it says*, which it does not.
+
+Shape follows from records. The module count is a fact about the programme, and a
+participant reading a programme of 8 modules sees 8 markers and totals against 8 (L2-056).
+Duration and cadence are columns on the cohort, set when the cohort is created, and the
+session allowance divides one by the other (L2-057). Every count, remainder, proportion, and
+allowance the application displays derives from those records and the participant's own
+completion (L2-058). This is what removes the `DurationWeeks => 12` and
+`SessionCadenceWeeks => 2` expression-bodied constants from `Cohort`, the twelve-module
+check from cohort creation, and the literal twelves from the client templates, the
+Playwright mock store, and the browser page objects.
+
+What is published is authored in `administration/author-programme`,
+`administration/author-module`, and `administration/author-section`. How a participant reads
+a published path belongs to `curriculum/view-path`, how unlocking follows the order belongs
+to `curriculum/unlock-and-resume`, and how the allowance governs booking belongs to
+`sessions/book-session`. Each of those consumes the derived shape this feature establishes.
+
+## Description
+
+**Web client.**
+
+- **`PublishPanelComponent`** — component in the `domain` library. It calls
+  `inject(AUTHORING_SERVICE)`, offers the publication action, and renders the refusal when
+  publication is declined. It belongs in `domain` because it injects an `api` contract.
+- **`StatePillComponent`** — presentational component in the `components` library rendering
+  a publication state as text, so the state survives greyscale and a screen reader.
+- **`CurriculumOverviewComponent`** — existing `domain` component rendering the participant
+  path. Its template loses the literal week count, the "Twelve weeks of practice" heading,
+  and the module-12 title used as a fallback, each replaced by a value from the response.
+- **`ProgrammeMockStore`** — mock data source in the `api` library testing entry point. Its
+  hard-coded twelve module titles, fixed five sections, and `12 - completed` arithmetic are
+  replaced by a fabricated programme whose size the test states.
+- **`PublicationResult`** — `api` result type carrying the outcome and, when publication is
+  refused, the reason.
+
+**API.**
+
+- **`CurriculaController`** — exposes `POST /administration/curricula/{id}/publication`.
+- **`PublishCurriculumCommand`**, **`PublishCurriculumCommandHandler`**, and
+  **`PublishCurriculumCommandValidator`** — the publication slice. The handler evaluates
+  readiness, publishes the programme and its modules in one transaction, and stamps the
+  publication time.
+- **`CurriculumReadiness`** — domain value object over a programme. It answers whether the
+  programme may be published and, when it may not, which module is empty. Holding the rule
+  in the domain keeps L2-054 out of the handler and out of the controller.
+- **`Curriculum`** — domain entity owning `State` and `PublishedAt`.
+- **`CurriculumModule`** — domain entity owning its own `State`, which is what lets a new
+  module stay invisible inside a published programme.
+- **`Cohort`** — existing domain entity. `DurationWeeks` and `SessionCadenceWeeks` change
+  from expression-bodied constants to stored properties; `SessionAllowance`, `EndDate`, and
+  `CurrentWeek` continue to derive from them and so become correct for any cohort.
+- **`ProgrammeReader`** — existing shared read helper. It filters modules to the published
+  state and reads the module count from the programme, which is what makes L2-053 and
+  L2-056 hold for every participant screen at once.
+- **`GetCurriculumQueryHandler`** and **`GetModuleQueryHandler`** — existing participant
+  handlers. They gain no new rule; they inherit the filtering `ProgrammeReader` applies.
+- **`CreateCohortCommandValidator`** — existing validator. Its twelve-module check is
+  replaced by a requirement that the named programme is published, and duration and cadence
+  become required inputs.
+
+Filtering in `ProgrammeReader` rather than in each handler is deliberate. The reader is the
+one place the participant path, the module screen, the progress figures, and the session
+allowance all pass through, so a single filter covers every screen and no future handler can
+forget it.
+
+## Requirements
+
+The feature realises the following level-2 (L2) requirements. Each L2 requirement refines a
+level-1 (L1) requirement, cited by identifier. Requirement text is quoted from
+`docs/specs/L2.md` unchanged.
+
+| L2 ID | Refines (L1) | Requirement |
+|-------|--------------|-------------|
+| `L2-052` | `L1-013` | A programme and each of its modules carry a publication state. Newly created content is draft, and draft content is invisible to participants. |
+| `L2-053` | `L1-013` | A participant reads the published modules of their cohort's published programme, and nothing else. |
+| `L2-054` | `L1-013` | Publication is refused while it would give a participant nothing to read. |
+| `L2-055` | `L1-013` | Content added after a programme is published stays invisible until the administrator publishes again. Revising already-published content is not a new publication. |
+| `L2-056` | `L1-014` | How many modules a programme has is a fact about the programme, not a constant. |
+| `L2-057` | `L1-014` | Duration and cadence are properties of a cohort record, set when the cohort is created. |
+| `L2-058` | `L1-014` | No count, remainder, proportion, or allowance the system displays is authored as content or fixed as a literal. |
+
+## Diagrams
+
+### System context
+
+Publication is the one feature in this subsystem where both parties matter: the
+administrator decides what becomes visible, and the participant is who it becomes visible
+to. The context view is kept here for that reason, where it is omitted from the sibling
+features.
+
+![C4 system context view for publishing a curriculum](diagrams/c4-context.png)
+
+### Containers
+
+One publication write changes what every participant screen reads, because all of them pass
+through the same reader. The database holds both the publication state and the cohort
+columns the shape derives from.
+
+![C4 container view for publishing a curriculum](diagrams/c4-container.png)
+
+### Components
+
+`CurriculumReadiness` holds the refusal rule of L2-054, and `ProgrammeReader` holds the
+filter of L2-053. Putting each in one place is what stops the rules being restated per
+screen.
+
+![C4 component view for publishing a curriculum](diagrams/c4-component.png)
+
+### Class structure
+
+`Curriculum` and `CurriculumModule` each hold a `PublicationState`, which is what lets a
+draft module sit inside a published programme. `Cohort` stores its duration and cadence and
+derives the allowance from them, so no figure is a constant (L2-057, L2-058).
+
+![Class diagram for publishing a curriculum](diagrams/class-structure.png)
+
+### Behaviour — publish a programme
+
+The handler asks `CurriculumReadiness` before it writes, publishes the programme and every
+module it holds in one transaction, and stamps the publication time (L2-054 criterion 3,
+L2-055 criterion 4).
+
+![Sequence diagram for publishing a programme](diagrams/sequence-publish-programme.png)
+
+### Behaviour — refuse an incomplete publication
+
+A programme holding a module with no sections is refused, and the refusal names that module.
+Nothing is published, and what participants read is unchanged (L2-054 criteria 2 and 4).
+
+![Sequence diagram for refusing an incomplete publication](diagrams/sequence-refuse-publication.png)
+
+### Behaviour — read a derived shape
+
+The participant path is assembled from published modules only, and every figure is derived
+from that count and the participant's completion records. A draft module added since the
+last publication is absent from both (L2-053, L2-056, L2-058).
+
+![Sequence diagram for reading a derived programme shape](diagrams/sequence-derived-shape.png)

@@ -2,7 +2,7 @@
 
 ## Overview
 
-Stewardship is read closely, on small screens, over twelve weeks. Some participants
+Stewardship is read closely, on small screens, over the weeks of a cohort. Some participants
 navigate by keyboard, some use a screen reader, and some read with reduced vision. This
 feature owns what the application does to remain operable for all of them: contrast,
 target size, keyboard operation, and the rule that meaning is never carried by colour

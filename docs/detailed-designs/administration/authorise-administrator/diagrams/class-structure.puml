@@ -1,0 +1,63 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Authorise an administrator
+
+class Participant {
+  +Guid Id
+  +string EmailAddress
+  +string PasswordHash
+  +bool IsMentor
+  +bool IsAdministrator
+}
+
+interface ICurrentParticipant {
+  +Guid Id
+  +string EmailAddress
+  +bool IsAdministrator
+}
+
+class CurrentParticipant {
+  +Guid Id
+  +string EmailAddress
+  +bool IsAdministrator
+}
+
+class SessionAuthenticationHandler {
+  +HandleAuthenticateAsync(): Task<AuthenticateResult>
+}
+
+class AdministrationPolicy {
+  +{static} string Name
+  +{static} Configure(options: AuthorizationOptions): void
+}
+
+class GetSessionQuery {
+}
+
+class GetSessionQueryHandler {
+  -ICurrentParticipant _participant
+  +Handle(query: GetSessionQuery, token: CancellationToken): Task<SessionResponse>
+}
+
+class SessionResponse {
+  +string EmailAddress
+  +bool IsAdministrator
+}
+
+CurrentParticipant ..|> ICurrentParticipant : implements
+SessionAuthenticationHandler --> Participant : reads authority from
+SessionAuthenticationHandler ..> CurrentParticipant : issues the claim read by
+AdministrationPolicy ..> SessionAuthenticationHandler : requires the claim issued by
+GetSessionQueryHandler ..> GetSessionQuery : handles
+GetSessionQueryHandler --> ICurrentParticipant : reads
+GetSessionQueryHandler --> SessionResponse : returns
+@enduml

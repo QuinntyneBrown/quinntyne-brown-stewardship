@@ -1,0 +1,51 @@
+@startuml
+title UML sequence behaviour — Refuse a participant
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Participant" as actor
+box "Frontend — Stewardship web client" #E0F2FE
+  participant "adminGuard" as guard
+  participant "AuthoringService" as client
+end box
+box "Backend — Stewardship API application" #D1FADF
+  participant "SessionAuthenticationHandler" as auth
+  participant "AdministrationPolicy" as policy
+  participant "CurriculaController" as controller
+end box
+box "Backend — Stewardship Application and Domain" #ECFDF3
+  participant "CreateCurriculumCommandHandler" as handler
+end box
+box "Backend — Stewardship Infrastructure" #FFF4E5
+  database "Stewardship database" as db
+end box
+
+actor -> guard : Request an authoring screen by direct URL
+guard -> auth : Resolve the current session
+auth -> db : Load the account record for the session
+db --> auth : Account record without administrator authority
+auth --> guard : Session reporting no administrator authority (L2-041)
+guard -> guard : Refuse the navigation (L2-042 criterion 2)
+guard --> actor : Return to the curriculum with an explanation
+
+actor -> client : Call an authoring endpoint directly
+client -> auth : POST /administration/curricula with the session cookie
+auth -> auth : Build the principal without the Administrator claim
+auth -> policy : Evaluate the administration policy
+policy -> policy : Requirement unmet, refuse before any handler runs (L2-043)
+policy --> controller : Authorisation failed
+controller --> client : 403 ProblemDetails, no curriculum read or changed (L2-043 criterion 3)
+note over handler, db : Never reached; the stored curriculum is unchanged
+client --> actor : Present the refusal
+@enduml
