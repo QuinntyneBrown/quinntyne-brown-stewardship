@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "test": "playwright test",
-    "test:performance": "npm --prefix ../frontend run build -- --configuration production,acceptance --optimization --source-map=false --output-path dist/performance && playwright test --config playwright.performance.config.ts",
+    "test:performance": "npm --prefix ../frontend run build -- --configuration production,performance --source-map=false --output-path dist/performance && playwright test --config playwright.performance.config.ts",
     "install:browsers": "playwright install chromium"
   },
   "devDependencies": {

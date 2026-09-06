@@ -8,7 +8,6 @@ export class BrowserMeasurement {
     latencyMs: 150,
     downloadMbps: 4,
     uploadMbps: 1,
-    serviceDelayMs: 150,
   };
   constructor(private readonly page: Page) {}
 

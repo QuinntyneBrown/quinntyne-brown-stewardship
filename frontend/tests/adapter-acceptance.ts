@@ -135,11 +135,17 @@ try {
     [() => sessions.get('session-id'), '/sessions/session-id'],
     [() => sessions.preparation('session-id'), '/sessions/session-id/preparation'],
     [() => notes.list('module-id'), '/notes?moduleId=module-id'],
+    [() => notes.list('module-id', undefined, 'a+b/c=', true), '/notes?moduleId=module-id&cursor=a%2Bb%2Fc%3D&generalOnly=true'],
+    [() => notes.list(undefined, 'session-id', 'next'), '/notes?sessionId=session-id&cursor=next'],
     [() => notes.get('note-id'), '/notes/note-id'],
   ] as const) {
     const pending = request(); http.expectOne({ method: 'GET', url }).flush({ marker: 'unchanged' });
     assert.deepEqual(await pending, { marker: 'unchanged' });
   }
+  const nextPage = notes.list(undefined, undefined, 'next');
+  const nextPageBody = { notes: [{ id: 'note-2', body: 'The complete reflection.' }], nextCursor: null, attachments: [], maxLength: 10000 };
+  http.expectOne('/notes?cursor=next').flush(nextPageBody);
+  assert.deepEqual(await nextPage, nextPageBody);
   const body = { body: '<script>literal</script>', moduleId: 'module-id', sessionId: null };
   for (const [request, method, url, expected] of [
     [() => curriculum.completeSection('section-id'), 'POST', '/sections/section-id/completion', {}],

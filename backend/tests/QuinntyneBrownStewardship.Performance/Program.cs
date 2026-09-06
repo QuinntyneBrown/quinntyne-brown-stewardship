@@ -3,14 +3,14 @@ using System.Diagnostics;
 using System.Net.Http.Json;
 using System.Runtime.InteropServices;
 using System.Text.Json;
-using System.IO.Compression;
-using System.Security.Cryptography;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
 using QuinntyneBrownStewardship.Api.Tests;
 using QuinntyneBrownStewardship.Application.Access;
 using QuinntyneBrownStewardship.Application.Administration;
 using QuinntyneBrownStewardship.Application.Programme;
+using QuinntyneBrownStewardship.Infrastructure.Persistence;
 using Xunit;
 namespace QuinntyneBrownStewardship.Performance;
 
@@ -27,6 +27,12 @@ public static class Program
             await fixture.InitializeAsync(); initialized = true; await fixture.Reset();
             var json = new JsonSerializerOptions(JsonSerializerDefaults.Web) { WriteIndented = true };
             var content = JsonSerializer.Deserialize<CurriculumImport>(await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "starter-curriculum.json")), json)!;
+            if (args.Contains("--payload-only"))
+            {
+                Directory.CreateDirectory(".local");
+                await PayloadScenario.Capture(fixture, content, ".local/production-responses.json");
+                return 0;
+            }
             var slots = Enumerable.Range(0, 10).Select(i => new SlotImport(Guid.NewGuid(), fixture.Clock.UtcNow.AddDays(2).AddHours(i))).ToList();
             using (var scope = fixture.Services.CreateScope())
             {
@@ -48,10 +54,17 @@ public static class Program
                 }
             }
             var results = new List<Measurement>();
+            if (args.Contains("--sign-in-only"))
+            {
+                await ClearSignInHistory();
+                var signIn = await Measure("POST /authentication/sign-in", 500, (client, _) => clients[client].PostAsJsonAsync("/authentication/sign-in", new { EmailAddress = $"performance-{client}@example.com", ApiFixture.Password }), afterWarmup: ClearSignInHistory);
+                Console.WriteLine(JsonSerializer.Serialize(signIn, json));
+                return signIn.Passed ? 0 : 1;
+            }
             // Traces to: L2-039 AC1–2. Given five active participants, when each
             // programme operation receives 100 requests after warm-up, then its
             // p95 stays within the read/write budget. Setup is outside timing.
-            foreach (var path in new[] { "/curriculum", "/modules/current", "/sessions/availability", "/sessions/history", "/notes" })
+            foreach (var path in new[] { "/authentication/session", "/authentication/csrf", "/enrollment", "/health", "/curriculum", "/modules/current", "/modules/1", "/sessions/availability", "/sessions/history", "/notes" })
                 results.Add(await Measure("GET " + path, 300, (client, _) => clients[client].GetAsync(path)));
             results.Add(await Measure("POST /notes", 500, (client, iteration) => clients[client].PostAsJsonAsync("/notes", new { ModuleId = content.Modules[0].Id, Body = $"Reflection {client}/{iteration}: attend to the person carrying the cost." })));
             var notes = new NoteResponse[5];
@@ -93,25 +106,29 @@ public static class Program
             {
                 var response = await clients[client].DeleteAsync($"/sessions/{bookings[client]!.Id}"); bookings[client] = null; return response;
             }, async (client, _) => { if (bookings[client] == null) { using var response = await Book(client); } }));
-            // Valid long notes must also fit the screen's transfer budget. Random
-            // plain text avoids a misleadingly small compressed repeated fixture.
-            for (var i = 0; i < 20; i++)
+            async Task ClearSignInHistory()
             {
-                using var response = await clients[0].PostAsJsonAsync("/notes", new { ModuleId = content.Modules[0].Id, Body = Convert.ToBase64String(RandomNumberGenerator.GetBytes(7500)) });
-                response.EnsureSuccessStatusCode();
+                using var scope = fixture.Services.CreateScope();
+                await scope.ServiceProvider.GetRequiredService<StewardshipDbContext>().SignInAttempts.ExecuteDeleteAsync();
             }
-            var payloads = new List<object>();
-            foreach (var path in new[] { "/curriculum", "/modules/1", "/sessions/availability", "/sessions/history", "/notes" })
+            // A warm-up is separate from the 100 successful authentication samples.
+            // Reset only the isolated fixture's attempt history between these phases;
+            // production rate limits and their concurrent refusal tests stay intact.
+            await ClearSignInHistory();
+            results.Add(await Measure("POST /authentication/sign-in", 500, (client, _) => clients[client].PostAsJsonAsync("/authentication/sign-in", new { EmailAddress = $"performance-{client}@example.com", ApiFixture.Password }), afterWarmup: ClearSignInHistory));
+            await ClearSignInHistory();
+            results.Add(await Measure("POST /authentication/sign-out", 500, (client, _) => clients[client].PostAsJsonAsync("/authentication/sign-out", new { }), async (client, _) =>
             {
-                using var response = await clients[0].GetAsync(path); response.EnsureSuccessStatusCode();
-                var bytes = await response.Content.ReadAsByteArrayAsync();
-                using var outputBody = new MemoryStream();
-                using (var compressor = new BrotliStream(outputBody, CompressionLevel.Fastest, true)) await compressor.WriteAsync(bytes);
-                payloads.Add(new { path, uncompressedBytes = bytes.Length, compressedBytes = outputBody.Length });
-            }
-            var report = new { measuredAt = DateTimeOffset.UtcNow, runtime = RuntimeInformation.FrameworkDescription, os = RuntimeInformation.OSDescription, architecture = RuntimeInformation.ProcessArchitecture.ToString(), processors = Environment.ProcessorCount, configuration = "Release; real SQL Server; in-process ASP.NET HTTP host; five independently authenticated participants; 15 warm-up requests per operation", results, payloadScenario = "First participant has 20 additional distinct 10,000-character notes on module 1; Brotli fastest, excluding HTTP headers and frontend assets", payloads };
+                using var signedIn = await ApiFixture.Post(clients[client], "/authentication/sign-in", new { EmailAddress = $"performance-{client}@example.com", ApiFixture.Password });
+                signedIn.EnsureSuccessStatusCode();
+                var csrf = await clients[client].GetFromJsonAsync<CsrfResponse>("/authentication/csrf");
+                clients[client].DefaultRequestHeaders.Remove("X-CSRF-TOKEN");
+                clients[client].DefaultRequestHeaders.Add("X-CSRF-TOKEN", csrf!.Token);
+            }, ClearSignInHistory));
             var output = args.FirstOrDefault() ?? ".local/api-performance.json";
             Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(output))!);
+            results.AddRange(await PayloadScenario.Capture(fixture, content, Path.Combine(Path.GetDirectoryName(Path.GetFullPath(output))!, "production-responses.json"), measureReads: true));
+            var report = new { measuredAt = DateTimeOffset.UtcNow, runtime = RuntimeInformation.FrameworkDescription, os = RuntimeInformation.OSDescription, architecture = RuntimeInformation.ProcessArchitecture.ToString(), processors = Environment.ProcessorCount, configuration = "Release; real SQL Server; in-process ASP.NET HTTP host; five independently authenticated participants; 15 warm-up requests per operation; four additional compressed reads from five devices of the participant with full-length Unicode notes", results, payloadFixture = "production-responses.json" };
             await File.WriteAllTextAsync(output, JsonSerializer.Serialize(report, json));
             foreach (var result in results) Console.WriteLine($"{result.Operation}: p95 {result.P95Milliseconds:F1} ms / {result.BudgetMilliseconds} ms — {(result.Passed ? "PASS" : "FAIL")}");
             return results.All(x => x.Passed) ? 0 : 1;
@@ -124,9 +141,10 @@ public static class Program
         }
     }
 
-    private static async Task<Measurement> Measure(string operation, int budget, Func<int, int, Task<HttpResponseMessage>> request, Func<int, int, Task>? prepare = null)
+    internal static async Task<Measurement> Measure(string operation, int budget, Func<int, int, Task<HttpResponseMessage>> request, Func<int, int, Task>? prepare = null, Func<Task>? afterWarmup = null)
     {
         for (var i = 0; i < 15; i++) { if (prepare != null) await prepare(i % 5, -i); using var response = await request(i % 5, -i); response.EnsureSuccessStatusCode(); await response.Content.LoadIntoBufferAsync(); }
+        if (afterWarmup != null) await afterWarmup();
         var times = new ConcurrentBag<double>();
         await Task.WhenAll(Enumerable.Range(0, 5).Select(async client =>
         {

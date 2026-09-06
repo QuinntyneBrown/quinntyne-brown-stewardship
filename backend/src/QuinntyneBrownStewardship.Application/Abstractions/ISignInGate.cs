@@ -5,5 +5,5 @@ namespace QuinntyneBrownStewardship.Application.Abstractions;
 
 public interface ISignInGate
 {
-    Task<IAsyncDisposable> Enter(CancellationToken cancellationToken);
+    Task<T> Execute<T>(Func<CancellationToken, Task<T>> operation, CancellationToken cancellationToken);
 }

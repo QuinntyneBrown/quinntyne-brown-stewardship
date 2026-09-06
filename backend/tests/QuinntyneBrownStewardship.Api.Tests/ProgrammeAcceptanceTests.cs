@@ -342,7 +342,6 @@ public sealed class ProgrammeAcceptanceTests(ApiFixture fixture) : IClassFixture
         Assert.Equal(JsonValueKind.Null, available.GetProperty("nextSession").ValueKind);
     }
 
-    // Traces to: L2-006, L2-017. Local calendar weeks and DST labels use the cohort zone.
     // Traces to: L2-025–028, L2-039. Given many long notes, when traversing
     // the notes destination or an attachment, then pages stay bounded and every
     // complete body is retrievable once, newest first, including timestamp ties.
@@ -381,6 +380,42 @@ public sealed class ProgrammeAcceptanceTests(ApiFixture fixture) : IClassFixture
         Assert.Contains("cursor", await malformed.Content.ReadAsStringAsync());
     }
 
+    // Traces to: L2-025–028. Given full-length Unicode notes on a session,
+    // when reading each page, then no body is shortened and the attachment stays scoped.
+    [Fact]
+    public async Task Given_long_unicode_session_notes_when_paged_then_every_body_remains_whole()
+    {
+        var setup = await BookingSetup(); using var client = fixture.Browser(); await ApiFixture.SignIn(client);
+        using var created = await ApiFixture.Post(client, "/sessions", new { SlotId = setup.Slot });
+        created.EnsureSuccessStatusCode();
+        var sessionId = (await created.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("id").GetGuid();
+        var body = new string('\u754c', 10000);
+        for (var i = 0; i < 3; i++)
+        {
+            using var saved = await ApiFixture.Post(client, "/notes", new { SessionId = sessionId, Body = body });
+            saved.EnsureSuccessStatusCode();
+        }
+        var preparation = await client.GetFromJsonAsync<JsonElement>($"/sessions/{sessionId}/preparation");
+        Assert.Single(preparation.GetProperty("notes").EnumerateArray());
+        var note = preparation.GetProperty("notes")[0];
+        Assert.Equal(body, note.GetProperty("body").GetString());
+        var seen = new HashSet<Guid> { note.GetProperty("id").GetGuid() };
+        var cursor = preparation.GetProperty("notesCursor").GetString();
+        while (cursor != null)
+        {
+            var page = await client.GetFromJsonAsync<JsonElement>($"/notes?sessionId={sessionId}&generalOnly=true&cursor={Uri.EscapeDataString(cursor)}");
+            Assert.Single(page.GetProperty("notes").EnumerateArray());
+            note = page.GetProperty("notes")[0];
+            Assert.Equal(body, note.GetProperty("body").GetString());
+            Assert.Equal(sessionId, note.GetProperty("sessionId").GetGuid());
+            Assert.True(seen.Add(note.GetProperty("id").GetGuid()));
+            Assert.InRange(seen.Count, 1, 3);
+            cursor = page.GetProperty("nextCursor").GetString();
+        }
+        Assert.Equal(3, seen.Count);
+    }
+
+    // Traces to: L2-006, L2-017. Local calendar weeks and DST labels use the cohort zone.
     [Fact]
     public async Task Given_a_cohort_zone_when_utc_has_advanced_a_day_then_the_local_week_is_used()
     {

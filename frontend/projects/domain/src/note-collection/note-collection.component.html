@@ -1,0 +1,13 @@
+<div class="stack" [attr.aria-busy]="busy()">
+  @for (note of notes(); track note.id) {
+    <article #noteArticle tabindex="-1" class="panel stack compact">
+      @if (showAttachment()) { <h2>{{ note.attachmentTitle }}</h2> }
+      <p class="muted">Revised {{ date(note.revisedAt) }}</p>
+      <p class="note-body">{{ note.body }}</p>
+      <a class="action-link" [routerLink]="['/notes', note.id]">Edit note</a>
+    </article>
+  } @empty { <p class="notice">{{ emptyMessage() }}</p> }
+  @if (error()) { <p class="notice" role="alert">{{ error() }}</p> }
+  @if (cursor()) { <button type="button" (click)="more()" [disabled]="busy()">{{ busy() ? 'Loading notes…' : 'More notes' }}</button> }
+  <p class="muted" role="status">{{ announcement() }}</p>
+</div>

@@ -116,21 +116,39 @@ Run performance checks separately from builds and other test suites so competing
 work does not distort the normal-load measurements. The API check sends 100 measured
 requests per operation from five authenticated participants against a temporary SQL
 Server database, using the Release ASP.NET HTTP test host. It measures actual section
-completion, note creation/revision, booking, rescheduling and cancellation alongside
-the read endpoints. Results are written to `.local/api-performance.json`.
-The report also measures real JSON response sizes after adding twenty distinct,
-maximum-length notes. Those diagnostic sizes exclude frontend assets and HTTP
-headers; evaluate them alongside the browser transfer before declaring the full
-screen payload requirement satisfied.
+completion, note creation/revision, booking, rescheduling, cancellation, sign-in and
+sign-out alongside every read endpoint, enrollment and health: 21 operations in
+total, plus four compressed reads with full-length Unicode notes (25 measured
+scenarios). Successful authentication measurements clear the isolated fixture's attempt
+history between warm-up and measured requests; rate limits remain enabled and
+concurrent refusals are verified separately. Results go to `.local/api-performance.json`.
+For a focused diagnostic, append `--sign-in-only` directly to the performance
+project's `dotnet run` arguments; the complete gate still uses all 25 scenarios.
+The same command writes `.local/production-responses.json` from a separate populated
+participant: twenty maximum-length Unicode module notes, twenty Unicode session notes,
+three maximum-length Unicode preparation answers, five past sessions and one future session.
+It records real response DTOs, server time and sizes compressed by the production
+middleware, with application headers and an additional 1KB transport-header reserve.
+Run the API command before the browser performance command to refresh this fixture.
 
-The browser check builds optimized Angular assets with the same service-token mock
-composition as other Playwright tests and serves Brotli-compressed assets on port
-4319. A cold-cache Chromium profile uses 4× CPU slowdown, 150 ms network latency,
-4 Mbps down/1 Mbps up, and 150 ms per mocked read. It measures curriculum control
-readiness and every screen's full transfer, including fonts; JSON results and resource
-timings are written to `.local/web-performance.json`. This is a repeatable device
-simulation, not a measurement from a physical phone or a deployed network. Production
-adapters are tested separately; browser tests never call them.
+The browser check builds optimized Angular assets with service-token doubles that
+return those captured DTOs. Production adapter code remains in the measured bundle,
+but the doubles override those tokens before services are instantiated. It serves
+Brotli assets on port 4319 using quality 4,
+matching production's `CompressionLevel.Optimal`. A cold-cache Chromium profile uses
+4× CPU slowdown, 150ms network latency and 4Mbps down/1Mbps up. Each service double
+waits for the captured server time plus the simulated latency and response transfer.
+For each of nine screens, the 300KB gate adds all captured API responses actually used
+to browser asset transfers, including fonts and headers. It also requires usable
+curriculum controls within 2.5 seconds. JSON results, resource timings and API calls
+are written to `.local/web-performance.json`. This is a repeatable lab simulation;
+production adapters are checked separately and browser tests never call them.
+Critical CSS inlining is disabled because its deferred stylesheet caused duplicate
+CSS and body-font downloads under the application's no-store cache policy.
+Newsreader uses its default optical size with the full supported character and weight
+set; [font provenance and reproduction](design-system/fonts/README.md) document the
+smaller asset. Off-screen note paragraphs defer rendering while retaining their full
+text and accessibility, using [`content-visibility: auto`](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/content-visibility).
 
 ## Design system and publishing
 
@@ -163,7 +181,9 @@ PBKDF2 hash with 210,000 iterations. Options control the work factor, 30-day idl
 session lifetime, and sign-in limits. Sign-in attempts are serialized with a SQL
 application lock so concurrent API instances cannot race past the limits: ten failed
 attempts per normalized email and 100 attempts per origin in fifteen minutes. Refused
-attempts are recorded without extending their own cooling-off window.
+attempts are recorded without extending their own cooling-off window. Password
+verification runs outside the lock; cooldown is rechecked under the lock, and the
+attempt and session commit in one transaction. Failed session creation rolls back both.
 
 Sessions use random 256-bit tokens, with only their SHA-256 digest persisted. Cookies
 are Secure, HttpOnly, SameSite=Strict, persistent, and scoped to one browser session
@@ -171,7 +191,10 @@ record. Each mutating authentication request needs a fresh CSRF token. Errors ex
 a correlation identifier without internal exception details; that identifier is logged.
 
 Notes are plain text, limited to 10,000 characters by default, and use revisions to
-detect concurrent edits. Booking changes close exactly 24 hours before the start;
+detect concurrent edits. Lists return bounded pages with opaque continuation cursors;
+“More notes” keeps every full body reachable in the notes destination, module reader
+and session preparation. Preparation answers remain beneath their prompts.
+Booking changes close exactly 24 hours before the start;
 cancelled sessions release their slot and allowance. All programme writes are
 transactional and booking audit records carry the actor, action, time and correlation
 identifier. `/health` reports application/database readiness with 200 or 503.

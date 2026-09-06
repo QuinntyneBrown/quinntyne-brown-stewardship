@@ -2,7 +2,7 @@ import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
 import { resolve, extname, sep } from "node:path";
 import { fileURLToPath } from "node:url";
-import { brotliCompressSync } from "node:zlib";
+import { brotliCompressSync, constants } from "node:zlib";
 
 const root = fileURLToPath(
   new URL("../frontend/dist/performance/browser/", import.meta.url),
@@ -30,7 +30,8 @@ createServer(async (request, response) => {
     }
     if (!assets.has(path)) {
       const body = await readFile(path);
-      assets.set(path, { body, compressed: brotliCompressSync(body) });
+      // .NET's CompressionLevel.Optimal maps to Brotli quality 4.
+      assets.set(path, { body, compressed: brotliCompressSync(body, { params: { [constants.BROTLI_PARAM_QUALITY]: 4 } }) });
     }
     const asset = assets.get(path);
     const compressed = /\bbr\b/.test(request.headers["accept-encoding"] ?? "");

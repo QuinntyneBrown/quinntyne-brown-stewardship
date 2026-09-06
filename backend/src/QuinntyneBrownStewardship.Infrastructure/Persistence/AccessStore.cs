@@ -19,10 +19,9 @@ public sealed class AccessStore(StewardshipDbContext db) : IAccessStore
     {
         var since = now - options.Window;
         var recent = db.SignInAttempts.Where(x => x.At > since && !x.Refused);
-        var account = await recent.Where(x => x.NormalizedEmail == email && !x.Succeeded).OrderByDescending(x => x.At).Skip(options.AccountLimit - 1).Select(x => (DateTimeOffset?)x.At).FirstOrDefaultAsync(ct);
-        var address = await recent.Where(x => x.Origin == origin).OrderByDescending(x => x.At).Skip(options.OriginLimit - 1).Select(x => (DateTimeOffset?)x.At).FirstOrDefaultAsync(ct);
-        var latest = account > address ? account : address;
-        latest ??= account;
+        var account = recent.Where(x => x.NormalizedEmail == email && !x.Succeeded).OrderByDescending(x => x.At).Skip(options.AccountLimit - 1).Take(1).Select(x => (DateTimeOffset?)x.At);
+        var address = recent.Where(x => x.Origin == origin).OrderByDescending(x => x.At).Skip(options.OriginLimit - 1).Take(1).Select(x => (DateTimeOffset?)x.At);
+        var latest = await account.Concat(address).MaxAsync(ct);
         return latest + options.Window;
     }
     public async Task RecordAttempt(SignInAttempt attempt, CancellationToken ct) { db.SignInAttempts.Add(attempt); await db.SaveChangesAsync(ct); }

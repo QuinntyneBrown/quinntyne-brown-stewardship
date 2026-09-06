@@ -34,8 +34,7 @@
         }</section>
       }
       <section class="stack"><h2>Module notes</h2><a class="action-link" routerLink="/notes/new" [queryParams]="{ moduleId: module.id }">Add a module note</a>
-      @for (note of moduleNotes(); track note.id) { <article class="panel stack compact"><p class="note-body">{{ note.body }}</p><a class="action-link" [routerLink]="['/notes', note.id]">Edit note</a></article> }
-      @empty { <p class="muted">No notes for this module yet.</p> }</section>
+      <qbs-note-collection [initialNotes]="module.notes" [initialCursor]="module.notesCursor" [moduleId]="module.id" [generalOnly]="true" [showAttachment]="false" emptyMessage="No notes for this module yet." (expired)="expired.emit()" /></section>
     </article>
   </div>
 } @else if (!error()) { <qbs-status-message message="Loading your module…" /> }

@@ -221,6 +221,52 @@ public sealed class AccessAcceptanceTests(ApiFixture fixture) : IClassFixture<Ap
         await ApiFixture.SignIn(client);
     }
 
+    // Traces to: L2-038. Given simultaneous credential failures, when they cross
+    // the ten-attempt limit, then only ten are evaluated as ordinary failures,
+    // every other response is a recorded refusal, and correct credentials stay blocked.
+    [Fact]
+    public async Task Given_concurrent_failures_when_the_limit_is_reached_then_no_attempt_bypasses_cooling_off()
+    {
+        var clients = Enumerable.Range(0, 16).Select(_ => fixture.Browser()).ToList();
+        try
+        {
+            var responses = await Task.WhenAll(clients.Select(client => ApiFixture.Post(client, "/authentication/sign-in", new { EmailAddress = ApiFixture.Email, Password = "wrong" })));
+            Assert.Equal(10, responses.Count(response => response.StatusCode == HttpStatusCode.Unauthorized));
+            Assert.Equal(6, responses.Count(response => response.StatusCode == HttpStatusCode.TooManyRequests));
+            foreach (var response in responses) response.Dispose();
+            using var correct = await ApiFixture.Post(clients[0], "/authentication/sign-in", new { EmailAddress = ApiFixture.Email, ApiFixture.Password });
+            Assert.Equal(HttpStatusCode.TooManyRequests, correct.StatusCode);
+            using var scope = fixture.Services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<StewardshipDbContext>();
+            Assert.Equal(17, await db.SignInAttempts.CountAsync());
+            Assert.Equal(7, await db.SignInAttempts.CountAsync(attempt => attempt.Refused));
+            Assert.Empty(await db.Sessions.ToListAsync());
+        }
+        finally { foreach (var client in clients) client.Dispose(); }
+    }
+
+    // Traces to: L2-001, L2-037, L2-040. Given a failure while establishing a
+    // session, when sign-in fails, then neither a successful attempt nor a live
+    // session is left behind by the unsuccessful request.
+    [Fact]
+    public async Task Given_a_session_creation_failure_when_signing_in_then_the_attempt_and_session_roll_back()
+    {
+        await using var host = fixture.WithWebHostBuilder(builder => builder.ConfigureTestServices(services =>
+        {
+            services.AddScoped<DeviceSession>();
+            services.RemoveAll<IDeviceSession>();
+            services.AddScoped<IDeviceSession, FailingDeviceSession>();
+        }));
+        using var client = host.CreateClient(new() { BaseAddress = new Uri("https://localhost") });
+        using var response = await ApiFixture.Post(client, "/authentication/sign-in", new { EmailAddress = ApiFixture.Email, ApiFixture.Password });
+        Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
+        using var scope = fixture.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<StewardshipDbContext>();
+        Assert.Empty(await db.Sessions.ToListAsync());
+        Assert.Empty(await db.SignInAttempts.ToListAsync());
+        Assert.Equal(HttpStatusCode.Unauthorized, (await client.GetAsync("/enrollment")).StatusCode);
+    }
+
     // Traces to: L2-038 origin throttling.
     [Fact]
     public async Task Given_an_exhausted_origin_when_a_different_account_signs_in_then_it_is_throttled()

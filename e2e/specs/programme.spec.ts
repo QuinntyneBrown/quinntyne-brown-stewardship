@@ -139,3 +139,27 @@ test('long notes load in pages at both their attachment and the notes destinatio
   await new NoteEditorPage(page).expectBody('Reflection 0: ' + 'A'.repeat(9900));
   await module.open(); await module.expectNoteCount(1); await module.moreNotes(); await module.expectNoteCount(2);
 });
+
+// Traces to: L2-025–026, L2-033, L2-040. Given an interrupted next-page request,
+// when the participant retries by keyboard, then previous notes remain and focus
+// reaches the first additional note without duplicates.
+test('loading more notes recovers without losing the loaded notes', async ({ page }) => {
+  const mocks = new MockBridge(page); await mocks.enrolled(); await mocks.longNotes();
+  const notes = new NotesPage(page);
+  await notes.open(); await notes.expectVisibleCount(1);
+  await mocks.interruptProgramme(); await notes.more();
+  await notes.expectError('temporarily unavailable'); await notes.expectVisibleCount(1);
+  await mocks.allowProgramme(); await notes.moreByKeyboard();
+  await notes.expectVisibleCount(2); await notes.expectNoteFocused(1);
+  await notes.expectFitsViewport(); await notes.expectAccessible();
+});
+
+// Traces to: L2-026–027, L2-039. Given long session notes, when loading additional
+// pages at their session attachment, then all four notes remain reachable.
+test('session preparation pages through its attached long notes', async ({ page }) => {
+  const mocks = new MockBridge(page); await mocks.enrolled(); await mocks.longNotes(true);
+  const detail = new SessionDetailPage(page);
+  await detail.open('/sessions/session-long-notes'); await detail.expectPrompts();
+  await detail.expectNoteCount(1);
+  for (let count = 2; count <= 4; count++) { await detail.moreNotes(); await detail.expectNoteCount(count); }
+});

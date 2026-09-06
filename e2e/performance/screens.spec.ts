@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { BrowserMeasurement } from "../page-objects/browser-measurement";
-import { MockBridge } from "../page-objects/mock-bridge";
+import { ProductionResponses } from "../page-objects/production-responses";
 import { CurriculumPage } from "../page-objects/curriculum-page";
 import { ModulePage } from "../page-objects/module-page";
 import { SessionsPage } from "../page-objects/sessions-page";
@@ -21,28 +21,18 @@ for (const screen of [
   "sessions",
   "notes",
   "note-editor",
+  "note-edit",
   "session-detail",
 ]) {
   test(`${screen} meets its cold-load budget`, async ({ page }, info) => {
-    const mocks = new MockBridge(page);
-    if (screen === "not-enrolled") await mocks.signedIn();
-    else if (screen !== "sign-in") await mocks.enrolled();
-    await mocks.slowResponses(BrowserMeasurement.profile.serviceDelayMs);
+    const production = new ProductionResponses(page);
+    const fixture = await production.install(screen);
     const curriculum = new CurriculumPage(page),
       module = new ModulePage(page),
       sessions = new SessionsPage(page);
     const notes = new NotesPage(page),
       editor = new NoteEditorPage(page),
       detail = new SessionDetailPage(page);
-    let sessionPath = "";
-    if (screen === "session-detail") {
-      await sessions.open();
-      await sessions.selectFirstOpen();
-      await sessions.book();
-      await sessions.prepare();
-      await detail.expectPrompts();
-      sessionPath = await detail.path();
-    }
     const measurement = new BrowserMeasurement(page);
     await measurement.configure();
     const actions: Record<
@@ -59,25 +49,28 @@ for (const screen of [
       ],
       curriculum: [() => curriculum.open(), () => curriculum.expectReady()],
       module: [() => module.open(), () => module.expectSection(1)],
-      sessions: [() => sessions.open(), () => sessions.expectCanBook()],
-      notes: [() => notes.open(), () => notes.expectReady()],
+      sessions: [() => sessions.open(), () => sessions.expectBooking()],
+      notes: [() => notes.open(), () => notes.expectVisibleCount(1)],
       "note-editor": [() => editor.open(), () => editor.expectBody("")],
+      "note-edit": [() => editor.openExisting(fixture.notePath), () => editor.expectBody(fixture.noteBody)],
       "session-detail": [
-        () => detail.open(sessionPath),
+        () => detail.open(fixture.sessionPath),
         () => detail.expectPrompts(),
       ],
     };
     const result = await measurement.load(...actions[screen]);
+    const api = await production.transfer();
+    const completeBytes = result.transferredBytes + api.bytes;
     await info.attach("measurement", {
       body: JSON.stringify(
-        { profile: BrowserMeasurement.profile, ...result },
+        { profile: BrowserMeasurement.profile, capturedAt: fixture.measuredAt, ...result, api, completeBytes },
         null,
         2,
       ),
       contentType: "application/json",
     });
     expect(result.transferredBytes).toBeGreaterThan(0);
-    expect(result.transferredBytes).toBeLessThanOrEqual(300_000);
+    expect(completeBytes).toBeLessThanOrEqual(300_000);
     if (screen === "curriculum") {
       expect(result.interactiveMs).toBeLessThanOrEqual(2500);
       await curriculum.resume();

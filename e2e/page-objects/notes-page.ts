@@ -9,6 +9,8 @@ export class NotesPage extends ScreenPage {
   async editFirst() { await this.page.getByRole('link', { name: 'Edit note', exact: true }).first().click(); }
   async expectVisibleCount(count: number) { await expect(this.page.getByRole('link', { name: 'Edit note', exact: true })).toHaveCount(count); }
   async more() { await this.page.getByRole('button', { name: 'More notes', exact: true }).click(); }
+  async moreByKeyboard() { await this.page.keyboard.press('Shift+Tab'); await this.activateByKeyboard(this.page.getByRole('button', { name: 'More notes', exact: true })); }
+  async expectNoteFocused(index: number) { await expect(this.page.getByRole('article').nth(index)).toBeFocused(); }
   async expectNoMore() { await expect(this.page.getByRole('button', { name: 'More notes', exact: true })).toHaveCount(0); }
 }
 

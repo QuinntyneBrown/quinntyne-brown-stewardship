@@ -87,27 +87,35 @@ than a test assembly. New browser performance commands preserve service-token mo
 use optimized assets and record the complete cold transfer, including fonts. The
 README now describes curriculum import, cohort setup, enrollment and availability.
 
-## Remaining completion checks
+## Completion work after the first measurements
 
-- The valid long-note diagnostic confirms a gap: twenty distinct 10,000-character
-  notes produce a 157,802-byte compressed module response and a 153,998-byte
-  compressed notes response, before frontend assets or HTTP headers. The browser
-  currently transfers about 283–285KB for those screens with mocked data. Bounded
-  retrieval is required; keep every note reachable rather than silently truncating
-  the participant's collection or text.
-- The browser performance composition currently measures populated curriculum but
-  mostly empty notes and session history. It substitutes service results without
-  transferring production JSON, so it cannot alone establish the complete 300KB
-  screen budget. Measure representative production response sizes alongside assets,
-  including many long notes, answers and session history. Notes queries currently
-  return all matching notes; investigate bounded retrieval if those measurements
-  exceed the requirement, while keeping every note reachable.
-- Align the static measurement server's Brotli quality with production response
-  compression and include production JSON alongside the browser resource totals.
-  A mocked browser-only pass must not hide a larger production transfer.
-- Retain the final command results for the completed changes, including the latest
-  viewport-content comparison, production build, API suite and all performance
-  operations. The goal remains active until the open payload evidence is resolved.
+Notes now use bounded pages with opaque timestamp/identifier cursors. API acceptance
+traverses 24 long notes including timestamp ties and full-length Unicode session
+notes, preserving every body and attachment. The shared domain note collection
+provides “More notes” at all three destinations, retains loaded content after an
+error, retries without duplicates and moves keyboard focus to the new content.
+Preparation answers remain beneath their prompts and also appear in the notes
+destination. The updated suites pass 45 API cases and 56 browser cases.
+
+The performance fixture now captures production-compressed DTOs for twenty long
+module notes, twenty session notes, three full-length preparation answers and all
+six sessions. Each of nine browser journeys records its service calls and adds the
+corresponding response bytes and header allowance to its asset transfers. The
+performance build retains production adapter code while overriding its tokens with
+the test doubles, and uses the same Brotli quality as production. This closes the
+earlier measurement gaps around empty data, missing JSON and different bundles.
+
+Critical CSS inlining was removed after the trace showed duplicate stylesheet and
+body-font requests under the no-store policy. The Newsreader asset retains its
+characters and declared 300–600 weight range while dropping unused weights.
+Booking display queries now execute after the atomic write, reducing lock duration.
+Sign-in hashes outside its global gate and rechecks cooldown under the gate before
+recording the result; concurrent-failure acceptance verifies the limit stays atomic.
+
+Final measurement of all 21 API operations and all nine complete screen payloads is
+still required after these corrections. The first expanded API run found a sign-in
+latency failure that the previous programme-only harness could not detect. The goal
+remains active until these gates and the final verification record are complete.
 
 CPU and network emulation use the documented Chromium
 [CPU slowdown](https://chromedevtools.github.io/devtools-protocol/tot/Emulation/#method-setCPUThrottlingRate)

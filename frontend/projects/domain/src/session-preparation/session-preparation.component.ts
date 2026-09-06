@@ -1,14 +1,15 @@
-import { Component, inject, input, output, signal, computed, OnInit, TemplateRef, contentChild, viewChild, ElementRef } from '@angular/core';
+import { Component, inject, input, output, signal, OnInit } from '@angular/core';
 import { RetryNoticeComponent, StatusMessageComponent } from '@qbs/components';
 import { ServiceError } from '@qbs/api';
 import { RouterLink } from '@angular/router';
-import { SESSION_SERVICE, CURRICULUM_SERVICE, PreparationResult } from '@qbs/api';
+import { SESSION_SERVICE, PreparationResult } from '@qbs/api';
 import { formatSession } from '../format-session';
+import { NoteCollectionComponent } from '../note-collection/note-collection.component';
 @Component({
-  selector: 'qbs-session-preparation', imports: [RouterLink, RetryNoticeComponent, StatusMessageComponent], templateUrl: './session-preparation.component.html', styleUrl: './session-preparation.component.css'
+  selector: 'qbs-session-preparation', imports: [RouterLink, RetryNoticeComponent, StatusMessageComponent, NoteCollectionComponent], templateUrl: './session-preparation.component.html', styleUrl: './session-preparation.component.css'
 })
 export class SessionPreparationComponent implements OnInit {
-  private readonly service = inject(SESSION_SERVICE); private readonly curriculum = inject(CURRICULUM_SERVICE);
+  private readonly service = inject(SESSION_SERVICE);
   readonly id = input.required<string>(); readonly expired = output<void>();
   readonly data = signal<PreparationResult | null>(null); readonly moduleId = signal(''); readonly error = signal('');
   ngOnInit() { void this.load(); }

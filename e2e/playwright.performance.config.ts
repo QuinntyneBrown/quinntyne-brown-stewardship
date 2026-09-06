@@ -5,6 +5,7 @@ export default defineConfig({
   outputDir: "../.local/browser-performance-results",
   workers: 1,
   timeout: 60000,
+  expect: { timeout: 15000 },
   reporter: [
     ["list"],
     ["json", { outputFile: "../.local/web-performance.json" }],

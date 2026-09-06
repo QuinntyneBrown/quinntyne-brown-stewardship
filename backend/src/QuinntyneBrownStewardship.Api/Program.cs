@@ -4,6 +4,8 @@ using QuinntyneBrownStewardship.Infrastructure;
 using QuinntyneBrownStewardship.Infrastructure.Access;
 using QuinntyneBrownStewardship.Api.Http;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.ResponseCompression;
+using System.IO.Compression;
 using QuinntyneBrownStewardship.Infrastructure.Persistence;
 namespace QuinntyneBrownStewardship.Api;
 
@@ -22,6 +24,7 @@ public partial class Program
         builder.Services.AddHttpsRedirection(options => options.HttpsPort = builder.Configuration.GetValue<int?>("HttpsPort") ?? 7240);
         builder.WebHost.ConfigureKestrel(options => options.Limits.MaxRequestBodySize = 65536);
         builder.Services.AddResponseCompression(options => options.EnableForHttps = true);
+        builder.Services.Configure<BrotliCompressionProviderOptions>(options => options.Level = CompressionLevel.Optimal);
         builder.Services.AddHealthChecks().AddCheck<DatabaseHealthCheck>("database", timeout: TimeSpan.FromSeconds(5));
         var app = builder.Build();
         app.UseMiddleware<CorrelationIdMiddleware>();

@@ -13,15 +13,19 @@ export class MockBridge {
   enrolled() {
     return this.seed({ signedIn: true, enrolled: true });
   }
-  async longNotes() {
-    await this.page.addInitScript(() => {
+  async longNotes(sessionNotes = false) {
+    await this.page.addInitScript((sessionNotes) => {
       const bridge = window.__stewardship ??= {};
-      bridge.programmeSeed = { notes: Array.from({ length: 4 }, (_, i) => ({
-        id: `long-note-${i}`, moduleId: 'module-1', sessionId: null, promptId: null,
+      bridge.programmeSeed = { ...(sessionNotes ? { booking: {
+        id: 'session-long-notes', slotId: 'slot-2026-09-10-14', startsAt: '2026-09-10T14:00:00Z',
+        durationMinutes: 45, mentorName: 'Quinntyne Brown', timeZone: 'America/Toronto', status: 'Booked',
+        canChange: true, changeReason: null, moduleOrdinal: 1, moduleTitle: 'Begin with stewardship',
+      } } : {}), notes: Array.from({ length: 4 }, (_, i) => ({
+        id: `long-note-${i}`, moduleId: sessionNotes ? null : 'module-1', sessionId: sessionNotes ? 'session-long-notes' : null, promptId: null,
         attachmentTitle: 'Begin with stewardship', body: `Reflection ${i}: ` + 'A'.repeat(9900),
         revisedAt: new Date(Date.UTC(2026, 8, 10 - i)).toISOString(), revision: `revision-${i}`, canEdit: true,
       })) };
-    });
+    }, sessionNotes);
   }
   unavailableSlot() {
     return this.seed({ slotConflict: true });
@@ -31,6 +35,9 @@ export class MockBridge {
   }
   allowProgramme() {
     return this.apply({ programmeFailure: false });
+  }
+  interruptProgramme() {
+    return this.apply({ programmeFailure: true });
   }
   throttledSignIn() {
     return this.seed({ throttled: true });

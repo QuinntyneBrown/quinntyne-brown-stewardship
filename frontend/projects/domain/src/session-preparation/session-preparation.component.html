@@ -11,8 +11,7 @@
     </article> }
   </section> }
   <section class="stack"><h2>Session notes</h2><a class="action-link" routerLink="/notes/new" [queryParams]="{ sessionId: data.session.id }">Add a session note</a>
-    @for (note of data.notes; track note.id) { <article class="panel stack compact"><p class="note-body">{{ note.body }}</p><a class="action-link" [routerLink]="['/notes', note.id]">Edit note</a></article> }
-    @empty { <p class="muted">No notes for this session yet.</p> }
+    <qbs-note-collection [initialNotes]="data.notes" [initialCursor]="data.notesCursor" [sessionId]="data.session.id" [generalOnly]="true" [showAttachment]="false" emptyMessage="No notes for this session yet." (expired)="expired.emit()" />
   </section>
 } @else { <qbs-status-message message="Loading your session…" /> }
 </div>

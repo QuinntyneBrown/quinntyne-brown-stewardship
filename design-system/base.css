@@ -7,6 +7,7 @@ body {
   color: var(--qbs-text);
   font-family: var(--qbs-font-body);
   font-size: var(--qbs-type-body);
+  font-optical-sizing: var(--qbs-font-optical-sizing);
   line-height: var(--qbs-leading-body);
 }
 a {
@@ -110,7 +111,7 @@ h2 {
 .notice { border-left: var(--qbs-focus-width) solid var(--qbs-accent); padding: var(--qbs-space-md); background: var(--qbs-surface); }
 .reading { font-size: var(--qbs-type-lead); color: var(--qbs-body); }
 .reading-column { max-width: var(--qbs-reading-max); }
-.note-body { white-space: pre-wrap; overflow-wrap: anywhere; }
+.note-body { white-space: pre-wrap; overflow-wrap: anywhere; content-visibility: auto; contain-intrinsic-size: auto var(--qbs-note-estimated-height); }
 textarea, select { width: var(--qbs-full); min-width: var(--qbs-space-none); border: var(--qbs-border-width) solid var(--qbs-control-border); padding: var(--qbs-space-md); border-radius: var(--qbs-radius); color: var(--qbs-text); background: var(--qbs-surface); }
 textarea { min-height: var(--qbs-textarea-height); resize: vertical; }
 select { min-height: var(--qbs-control-min); }

@@ -14,6 +14,7 @@
   --qbs-error: #efc189;
   --qbs-font-body: Karla, system-ui, sans-serif;
   --qbs-font-heading: Newsreader, Georgia, serif;
+  --qbs-font-optical-sizing: none;
   --qbs-type-label: 0.6875rem;
   --qbs-type-small: 0.875rem;
   --qbs-type-body: 1rem;
@@ -62,6 +63,7 @@
   --qbs-type-module-title: clamp(1.75rem, 3vw, 2.5rem);
   --qbs-type-section-title: clamp(2rem, 4vw, 2.75rem);
   --qbs-textarea-height: 18rem;
+  --qbs-note-estimated-height: 18rem;
   --qbs-nav-display: flex;
   --qbs-menu-display: none;
   --qbs-dialog-max: 32rem;

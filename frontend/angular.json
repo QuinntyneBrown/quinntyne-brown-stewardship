@@ -28,6 +28,11 @@
           "configurations": {
             "production": {
               "outputHashing": "all",
+              "optimization": {
+                "scripts": true,
+                "styles": { "minify": true, "inlineCritical": false },
+                "fonts": true
+              },
               "budgets": [
                 {
                   "type": "initial",
@@ -47,6 +52,14 @@
                 {
                   "replace": "projects/quinntyne-brown-stewardship/src/app/service-providers.ts",
                   "with": "projects/quinntyne-brown-stewardship/src/app/service-providers.mock.ts"
+                }
+              ]
+            },
+            "performance": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/quinntyne-brown-stewardship/src/app/service-providers.ts",
+                  "with": "projects/quinntyne-brown-stewardship/src/app/service-providers.performance.ts"
                 }
               ]
             }
