@@ -70,7 +70,7 @@ Every service an application consumes is reached through an interface and an
 `InjectionToken`. No component, store, or feature imports a concrete implementation.
 
 - `IQuoteService` declares the contract and `QUOTE_SERVICE` is its `InjectionToken`;
-  the interface, the token, and each implementation live in separate files.
+  the interface, the token, and each implementation live in separate files (with contract files named `<entity>-service.contract.ts`, e.g., `quote-service.contract.ts`).
 - Contracts are named `I<Entity>Service`, singular, with no `Api` suffix. Data
   shapes (`QuoteResult`) take no prefix, and the production implementation takes
   the unprefixed name (`QuoteService`), never an `Impl` suffix.

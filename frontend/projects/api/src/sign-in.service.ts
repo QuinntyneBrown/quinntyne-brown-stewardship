@@ -1,7 +1,7 @@
 import { inject, Injectable } from "@angular/core";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { firstValueFrom } from "rxjs";
-import { ISignInService } from "./i-sign-in-service";
+import { ISignInService } from "./sign-in-service.contract";
 import { SessionResult } from "./session-result";
 import { SignInResult } from "./sign-in-result";
 import { ServiceError } from "./service-error";

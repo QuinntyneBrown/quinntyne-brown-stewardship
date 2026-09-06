@@ -1,7 +1,7 @@
 import { inject, Injectable } from "@angular/core";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { firstValueFrom } from "rxjs";
-import { ICohortService } from "./i-cohort-service";
+import { ICohortService } from "./cohort-service.contract";
 import { EnrollmentResult } from "./enrollment-result";
 import { ServiceError } from "./service-error";
 @Injectable()
