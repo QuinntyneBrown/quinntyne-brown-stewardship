@@ -10,8 +10,8 @@ public sealed class ModulesController(ISender sender) : ControllerBase
 {
     [HttpGet("modules/current")]
     public Task<ModuleResponse> Current(CancellationToken ct) => sender.Send(new GetModuleQuery(null), ct);
-    [HttpGet("modules/{ordinal:int}")]
+    [HttpGet("modules/{ordinal}")]
     public Task<ModuleResponse> Get(int ordinal, CancellationToken ct) => sender.Send(new GetModuleQuery(ordinal), ct);
-    [HttpPost("sections/{id:guid}/completion")]
+    [HttpPost("sections/{id}/completion")]
     public Task<CompletionResponse> Complete(Guid id, CancellationToken ct) => sender.Send(new CompleteSectionCommand(id), ct);
 }

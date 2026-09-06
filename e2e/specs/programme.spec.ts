@@ -37,6 +37,19 @@ test('learn a complete module and resume persisted section progress', async ({ p
   await curriculum.expectProgress(1);
 });
 
+// Traces to: L2-014 AC1–4. Given five sections, when none, two or all five
+// are complete, then the labelled progress indicator fills 0%, 40% or 100%.
+test('section progress pairs the current position with recorded completion', async ({ page }) => {
+  await new MockBridge(page).enrolled();
+  const module = new ModulePage(page);
+  await module.open(); await module.expectProgress(0, 1);
+  for (let completed = 1; completed <= 4; completed++) {
+    await module.completeSection(); await module.expectProgress(completed, completed + 1);
+  }
+  await module.completeSection(); await new CurriculumPage(page).expectProgress(1);
+  await module.open(1); await module.expectProgress(5, 5);
+});
+
 // Traces to: L2-017–024. Given open availability, when a booking is made,
 // changed and cancelled, then the next-session and booking controls follow it.
 test('book, reschedule and cancel a mentor conversation', async ({ page }) => {

@@ -18,11 +18,11 @@ CLI; mentor access is an authenticated read API. No administration UI is introdu
 | Responsive experience | L2-029–034 | Given any screen from XS to XL, when it is operated by keyboard or touch, then all content and actions remain available with visible focus, accessible contrast and text states. |
 | Operations | L2-039–040 | Given a running release, when health and measured workflows run, then database status, correlation and audit evidence are available and the specified performance budgets are measured. |
 
-## Designs touched
+## Architecture
 
-The existing designs under `docs/detailed-designs/` for access, enrollment,
-curriculum, learning, sessions, notes and platform are refined alongside each slice.
-The implementation retains Clean Architecture, MediatR 12.5.0, Angular service
+The existing designs under `docs/detailed-designs/` cover access, enrollment,
+curriculum, learning, sessions, notes and platform. The implementation retains
+Clean Architecture, MediatR 12.5.0, Angular service
 contracts and tokens, and the independent design system's authoritative `--qbs-*`
 tokens. Acceptance tests prove behavior; the traceability table is documentation,
 not an architecture test.
@@ -39,7 +39,13 @@ as an independent flag. Historical module resolution uses completion timestamps.
 
 ## Verification evidence
 
-See [the requirement audit](requirements-audit.md) for inspected implementation,
-behavioral checks, corrections and remaining evidence. The local SQL helper resolves
-the Windows ARM64/LocalDB architecture mismatch through its named pipe. API and
-browser performance checks are now runnable from the root package scripts.
+See [the requirement audit](requirements-audit.md) and the
+[final verification record](../verification/2026-09-06.json) for inspected
+implementation, corrections and results. The production build, 47 API cases,
+58 browser cases, two design-system cases and adapter checks pass. All 25 API
+performance scenarios and nine complete screen transfers meet their budgets.
+Curriculum is usable in 1700.5ms; the largest screen transfers 276,757 bytes.
+
+The local SQL helper resolves the Windows ARM64/LocalDB architecture mismatch
+through its named pipe. API and browser performance commands are documented in
+the repository README and run separately from other tests and builds.

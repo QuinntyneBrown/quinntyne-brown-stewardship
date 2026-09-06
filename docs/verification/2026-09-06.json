@@ -1,27 +1,99 @@
 {
-  "recordedAt": "2026-09-06T18:29:39.2277588+00:00",
-  "scope": "Intermediate verification; L2-039 complete production payload remains unresolved",
-  "build": "Release build passed with zero warnings and errors",
+  "recordedAt": "2026-09-06T20:14:24.054Z",
+  "scope": "Final verification of participant L1-001 through L1-010 and L2-001 through L2-040; see docs/slices/requirements-audit.md for implementation and behavioral evidence.",
+  "build": {
+    "command": "npm run build",
+    "result": "passed",
+    "warnings": 0,
+    "errors": 0,
+    "includes": [
+      "Angular api, components and domain libraries",
+      "production Angular application",
+      "independent design-system static site",
+      "Release .NET solution"
+    ]
+  },
   "acceptance": {
-    "api": 42,
-    "assignmentViewportRecheck": 2,
-    "browser": 50,
-    "adapters": "passed",
-    "designSystem": 2
+    "api": {
+      "command": ". ./scripts/use-local-sql.ps1; dotnet test backend/tests/QuinntyneBrownStewardship.Api.Tests/QuinntyneBrownStewardship.Api.Tests.csproj --configuration Release",
+      "passed": 47,
+      "failed": 0,
+      "skipped": 0
+    },
+    "browser": {
+      "command": "npm --prefix e2e test -- --workers 1",
+      "passed": 58,
+      "failed": 0,
+      "projects": [
+        "desktop",
+        "mobile"
+      ],
+      "viewportWidths": [
+        320,
+        576,
+        768,
+        992,
+        1440
+      ]
+    },
+    "adapters": {
+      "command": "npm run test:adapters",
+      "result": "passed"
+    },
+    "designSystem": {
+      "command": "npm --prefix design-system test",
+      "passed": 2,
+      "failed": 0
+    },
+    "progressRegression": "A new L2-014 acceptance case failed on the old label, then passed at every completion count and after reopening the completed module, on desktop and mobile.",
+    "routeValidationRegression": "A new L2-036 API case reproduced an HTML 200 response for a malformed route identifier. MVC binding now returns 400 naming the invalid ordinal or id on all seven affected read/write routes; completion, booking and note state remains unchanged.",
+    "visualReview": "Inspected current captures for sign-in, absent enrollment, curriculum, module, availability, session preparation, notes and note editor after the font change; reading, controls and labels remain legible."
   },
   "api": {
-    "measuredAt": "2026-09-06T14:26:30.4603312-04:00",
+    "measuredAt": "2026-09-06T20:12:42.2105415+00:00",
     "runtime": ".NET 10.0.1",
     "os": "Microsoft Windows 10.0.26200",
     "architecture": "Arm64",
     "processors": 12,
-    "configuration": "Release; real SQL Server; in-process ASP.NET HTTP host; five independently authenticated participants; 15 warm-up requests per operation",
+    "configuration": "Release; real SQL Server; in-process ASP.NET HTTP host; five independently authenticated participants; 15 warm-up requests per operation; four additional compressed reads from five devices of the participant with full-length Unicode notes",
     "results": [
+      {
+        "operation": "GET /authentication/session",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 8.68,
+        "budgetMilliseconds": 300,
+        "passed": true
+      },
+      {
+        "operation": "GET /authentication/csrf",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 19.68,
+        "budgetMilliseconds": 300,
+        "passed": true
+      },
+      {
+        "operation": "GET /enrollment",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 24.6,
+        "budgetMilliseconds": 300,
+        "passed": true
+      },
+      {
+        "operation": "GET /health",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 21.95,
+        "budgetMilliseconds": 300,
+        "passed": true
+      },
       {
         "operation": "GET /curriculum",
         "requests": 100,
         "concurrency": 5,
-        "p95Milliseconds": 44.19,
+        "p95Milliseconds": 22.96,
         "budgetMilliseconds": 300,
         "passed": true
       },
@@ -29,7 +101,15 @@
         "operation": "GET /modules/current",
         "requests": 100,
         "concurrency": 5,
-        "p95Milliseconds": 141.16,
+        "p95Milliseconds": 21.67,
+        "budgetMilliseconds": 300,
+        "passed": true
+      },
+      {
+        "operation": "GET /modules/1",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 86.58,
         "budgetMilliseconds": 300,
         "passed": true
       },
@@ -37,7 +117,7 @@
         "operation": "GET /sessions/availability",
         "requests": 100,
         "concurrency": 5,
-        "p95Milliseconds": 70.04,
+        "p95Milliseconds": 104.75,
         "budgetMilliseconds": 300,
         "passed": true
       },
@@ -45,7 +125,7 @@
         "operation": "GET /sessions/history",
         "requests": 100,
         "concurrency": 5,
-        "p95Milliseconds": 92.74,
+        "p95Milliseconds": 47.81,
         "budgetMilliseconds": 300,
         "passed": true
       },
@@ -53,7 +133,7 @@
         "operation": "GET /notes",
         "requests": 100,
         "concurrency": 5,
-        "p95Milliseconds": 140.91,
+        "p95Milliseconds": 10.9,
         "budgetMilliseconds": 300,
         "passed": true
       },
@@ -61,7 +141,7 @@
         "operation": "POST /notes",
         "requests": 100,
         "concurrency": 5,
-        "p95Milliseconds": 377.84,
+        "p95Milliseconds": 287.31,
         "budgetMilliseconds": 500,
         "passed": true
       },
@@ -69,7 +149,7 @@
         "operation": "GET /notes/{id}",
         "requests": 100,
         "concurrency": 5,
-        "p95Milliseconds": 138.46,
+        "p95Milliseconds": 68.39,
         "budgetMilliseconds": 300,
         "passed": true
       },
@@ -77,7 +157,7 @@
         "operation": "POST /notes (revision)",
         "requests": 100,
         "concurrency": 5,
-        "p95Milliseconds": 411.99,
+        "p95Milliseconds": 238.44,
         "budgetMilliseconds": 500,
         "passed": true
       },
@@ -85,7 +165,7 @@
         "operation": "POST /sections/{id}/completion",
         "requests": 100,
         "concurrency": 5,
-        "p95Milliseconds": 93.56,
+        "p95Milliseconds": 72.93,
         "budgetMilliseconds": 500,
         "passed": true
       },
@@ -93,7 +173,7 @@
         "operation": "POST /sessions",
         "requests": 100,
         "concurrency": 5,
-        "p95Milliseconds": 309.45,
+        "p95Milliseconds": 31.91,
         "budgetMilliseconds": 500,
         "passed": true
       },
@@ -101,7 +181,7 @@
         "operation": "GET /sessions/{id}",
         "requests": 100,
         "concurrency": 5,
-        "p95Milliseconds": 52.46,
+        "p95Milliseconds": 8.3,
         "budgetMilliseconds": 300,
         "passed": true
       },
@@ -109,7 +189,7 @@
         "operation": "GET /sessions/{id}/preparation",
         "requests": 100,
         "concurrency": 5,
-        "p95Milliseconds": 109.65,
+        "p95Milliseconds": 26.32,
         "budgetMilliseconds": 300,
         "passed": true
       },
@@ -117,7 +197,7 @@
         "operation": "PUT /sessions/{id}/slot",
         "requests": 100,
         "concurrency": 5,
-        "p95Milliseconds": 444.65,
+        "p95Milliseconds": 13.17,
         "budgetMilliseconds": 500,
         "passed": true
       },
@@ -125,136 +205,345 @@
         "operation": "DELETE /sessions/{id}",
         "requests": 100,
         "concurrency": 5,
-        "p95Milliseconds": 486.92,
+        "p95Milliseconds": 15.25,
         "budgetMilliseconds": 500,
+        "passed": true
+      },
+      {
+        "operation": "POST /authentication/sign-in",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 194.96,
+        "budgetMilliseconds": 500,
+        "passed": true
+      },
+      {
+        "operation": "POST /authentication/sign-out",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 130.95,
+        "budgetMilliseconds": 500,
+        "passed": true
+      },
+      {
+        "operation": "GET /modules/current (long Unicode notes)",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 33.35,
+        "budgetMilliseconds": 300,
+        "passed": true
+      },
+      {
+        "operation": "GET /notes (long Unicode notes)",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 21.59,
+        "budgetMilliseconds": 300,
+        "passed": true
+      },
+      {
+        "operation": "GET /notes/{noteId} (long Unicode notes)",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 16.14,
+        "budgetMilliseconds": 300,
+        "passed": true
+      },
+      {
+        "operation": "GET /sessions/{sessionId}/preparation (long Unicode notes)",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 18.81,
+        "budgetMilliseconds": 300,
         "passed": true
       }
     ],
-    "payloadScenario": "First participant has 20 additional distinct 10,000-character notes on module 1; Brotli fastest, excluding HTTP headers and frontend assets",
-    "payloads": [
+    "payloadFixture": "production-responses.json"
+  },
+  "payload": {
+    "capturedAt": "2026-09-06T20:12:40.0342072+00:00",
+    "scenario": "20 distinct 10,000-character Unicode module notes; 20 Unicode session notes; all three preparation answers at 10,000 Unicode characters; five past sessions and one future session; responses compressed by the production middleware",
+    "compression": "Production ASP.NET Brotli CompressionLevel.Optimal; actual application headers plus 1000 bytes of transport-header reserve per response.",
+    "responses": [
       {
-        "path": "/curriculum",
-        "uncompressedBytes": 3313,
-        "compressedBytes": 1679
+        "path": "/authentication/session",
+        "uncompressedBytes": 42,
+        "compressedBytes": 49,
+        "headerBytes": 1329,
+        "serverMilliseconds": 13.15
       },
       {
-        "path": "/modules/1",
-        "uncompressedBytes": 220836,
-        "compressedBytes": 157802
+        "path": "/enrollment",
+        "uncompressedBytes": 205,
+        "compressedBytes": 163,
+        "headerBytes": 1329,
+        "serverMilliseconds": 3.54
+      },
+      {
+        "path": "/curriculum",
+        "uncompressedBytes": 3637,
+        "compressedBytes": 1749,
+        "headerBytes": 1329,
+        "serverMilliseconds": 3.73
+      },
+      {
+        "path": "/modules/current",
+        "uncompressedBytes": 128291,
+        "compressedBytes": 90878,
+        "headerBytes": 1329,
+        "serverMilliseconds": 22.58
       },
       {
         "path": "/sessions/availability",
-        "uncompressedBytes": 467,
-        "compressedBytes": 305
+        "uncompressedBytes": 2745,
+        "compressedBytes": 779,
+        "headerBytes": 1329,
+        "serverMilliseconds": 7.89
       },
       {
         "path": "/sessions/history",
-        "uncompressedBytes": 45,
-        "compressedBytes": 49
+        "uncompressedBytes": 1959,
+        "compressedBytes": 534,
+        "headerBytes": 1329,
+        "serverMilliseconds": 3.96
       },
       {
         "path": "/notes",
-        "uncompressedBytes": 214553,
-        "compressedBytes": 153998
+        "uncompressedBytes": 31251,
+        "compressedBytes": 22462,
+        "headerBytes": 1329,
+        "serverMilliseconds": 6.16
+      },
+      {
+        "path": "/notes/{noteId}",
+        "uncompressedBytes": 30303,
+        "compressedBytes": 22107,
+        "headerBytes": 1329,
+        "serverMilliseconds": 5.21
+      },
+      {
+        "path": "/sessions/{sessionId}",
+        "uncompressedBytes": 336,
+        "compressedBytes": 252,
+        "headerBytes": 1329,
+        "serverMilliseconds": 3.35
+      },
+      {
+        "path": "/sessions/{sessionId}/preparation",
+        "uncompressedBytes": 122278,
+        "compressedBytes": 88329,
+        "headerBytes": 1329,
+        "serverMilliseconds": 6.66
       }
     ]
   },
-  "browser": [
-    {
-      "screen": "sign-in meets its cold-load budget",
-      "interactiveMs": 1939.5999999940395,
-      "transferredBytes": 284394,
-      "profile": {
-        "cpuSlowdown": 4,
-        "latencyMs": 150,
-        "downloadMbps": 4,
-        "uploadMbps": 1,
-        "serviceDelayMs": 150
-      }
+  "browser": {
+    "command": "npm run test:performance:web",
+    "measuredAt": "2026-09-06T20:13:13.788Z",
+    "passed": 9,
+    "failed": 0,
+    "flaky": 0,
+    "profile": {
+      "cpuSlowdown": 4,
+      "latencyMilliseconds": 150,
+      "downloadMbps": 4,
+      "uploadMbps": 1,
+      "cache": "disabled"
     },
-    {
-      "screen": "not-enrolled meets its cold-load budget",
-      "interactiveMs": 2020.2000000178814,
-      "transferredBytes": 281736,
-      "profile": {
-        "cpuSlowdown": 4,
-        "latencyMs": 150,
-        "downloadMbps": 4,
-        "uploadMbps": 1,
-        "serviceDelayMs": 150
+    "methodology": "Optimized Angular bundle retaining production adapter code, with service-token doubles returning captured production DTOs. Doubles simulate captured server time and network transfer; browser journeys never instantiate the HTTP adapters. Complete transfer includes asset resource timing and every used compressed API response plus its header allowance.",
+    "curriculumBudgetMilliseconds": 2500,
+    "screens": [
+      {
+        "screen": "sign-in",
+        "interactiveMilliseconds": 1580.7,
+        "assetTransferBytes": 179147,
+        "apiTransferBytes": 0,
+        "completeTransferBytes": 179147,
+        "budgetBytes": 300000,
+        "passed": true,
+        "requests": []
+      },
+      {
+        "screen": "not-enrolled",
+        "interactiveMilliseconds": 1906.6,
+        "assetTransferBytes": 176111,
+        "apiTransferBytes": 2870,
+        "completeTransferBytes": 178981,
+        "budgetBytes": 300000,
+        "passed": true,
+        "requests": [
+          {
+            "path": "/authentication/session",
+            "bytes": 1378
+          },
+          {
+            "path": "/enrollment",
+            "bytes": 1492
+          }
+        ]
+      },
+      {
+        "screen": "curriculum",
+        "interactiveMilliseconds": 1700.5,
+        "assetTransferBytes": 176111,
+        "apiTransferBytes": 5948,
+        "completeTransferBytes": 182059,
+        "budgetBytes": 300000,
+        "passed": true,
+        "requests": [
+          {
+            "path": "/authentication/session",
+            "bytes": 1378
+          },
+          {
+            "path": "/enrollment",
+            "bytes": 1492
+          },
+          {
+            "path": "/curriculum",
+            "bytes": 3078
+          }
+        ]
+      },
+      {
+        "screen": "module",
+        "interactiveMilliseconds": 3122.8,
+        "assetTransferBytes": 181680,
+        "apiTransferBytes": 95077,
+        "completeTransferBytes": 276757,
+        "budgetBytes": 300000,
+        "passed": true,
+        "requests": [
+          {
+            "path": "/authentication/session",
+            "bytes": 1378
+          },
+          {
+            "path": "/enrollment",
+            "bytes": 1492
+          },
+          {
+            "path": "/modules/current",
+            "bytes": 92207
+          }
+        ]
+      },
+      {
+        "screen": "sessions",
+        "interactiveMilliseconds": 2127.8,
+        "assetTransferBytes": 180388,
+        "apiTransferBytes": 4978,
+        "completeTransferBytes": 185366,
+        "budgetBytes": 300000,
+        "passed": true,
+        "requests": [
+          {
+            "path": "/authentication/session",
+            "bytes": 1378
+          },
+          {
+            "path": "/enrollment",
+            "bytes": 1492
+          },
+          {
+            "path": "/sessions/availability",
+            "bytes": 2108
+          }
+        ]
+      },
+      {
+        "screen": "notes",
+        "interactiveMilliseconds": 5158,
+        "assetTransferBytes": 179936,
+        "apiTransferBytes": 26661,
+        "completeTransferBytes": 206597,
+        "budgetBytes": 300000,
+        "passed": true,
+        "requests": [
+          {
+            "path": "/authentication/session",
+            "bytes": 1378
+          },
+          {
+            "path": "/enrollment",
+            "bytes": 1492
+          },
+          {
+            "path": "/notes",
+            "bytes": 23791
+          }
+        ]
+      },
+      {
+        "screen": "note-editor",
+        "interactiveMilliseconds": 2340,
+        "assetTransferBytes": 179483,
+        "apiTransferBytes": 26661,
+        "completeTransferBytes": 206144,
+        "budgetBytes": 300000,
+        "passed": true,
+        "requests": [
+          {
+            "path": "/authentication/session",
+            "bytes": 1378
+          },
+          {
+            "path": "/enrollment",
+            "bytes": 1492
+          },
+          {
+            "path": "/notes",
+            "bytes": 23791
+          }
+        ]
+      },
+      {
+        "screen": "note-edit",
+        "interactiveMilliseconds": 4574.8,
+        "assetTransferBytes": 179483,
+        "apiTransferBytes": 26306,
+        "completeTransferBytes": 205789,
+        "budgetBytes": 300000,
+        "passed": true,
+        "requests": [
+          {
+            "path": "/authentication/session",
+            "bytes": 1378
+          },
+          {
+            "path": "/enrollment",
+            "bytes": 1492
+          },
+          {
+            "path": "/notes/{noteId}",
+            "bytes": 23436
+          }
+        ]
+      },
+      {
+        "screen": "session-detail",
+        "interactiveMilliseconds": 7805.1,
+        "assetTransferBytes": 180387,
+        "apiTransferBytes": 92528,
+        "completeTransferBytes": 272915,
+        "budgetBytes": 300000,
+        "passed": true,
+        "requests": [
+          {
+            "path": "/authentication/session",
+            "bytes": 1378
+          },
+          {
+            "path": "/enrollment",
+            "bytes": 1492
+          },
+          {
+            "path": "/sessions/{sessionId}/preparation",
+            "bytes": 89658
+          }
+        ]
       }
-    },
-    {
-      "screen": "curriculum meets its cold-load budget",
-      "interactiveMs": 2374.0999999940395,
-      "transferredBytes": 281736,
-      "profile": {
-        "cpuSlowdown": 4,
-        "latencyMs": 150,
-        "downloadMbps": 4,
-        "uploadMbps": 1,
-        "serviceDelayMs": 150
-      }
-    },
-    {
-      "screen": "module meets its cold-load budget",
-      "interactiveMs": 1959.0999999940395,
-      "transferredBytes": 284680,
-      "profile": {
-        "cpuSlowdown": 4,
-        "latencyMs": 150,
-        "downloadMbps": 4,
-        "uploadMbps": 1,
-        "serviceDelayMs": 150
-      }
-    },
-    {
-      "screen": "sessions meets its cold-load budget",
-      "interactiveMs": 1984.699999988079,
-      "transferredBytes": 285415,
-      "profile": {
-        "cpuSlowdown": 4,
-        "latencyMs": 150,
-        "downloadMbps": 4,
-        "uploadMbps": 1,
-        "serviceDelayMs": 150
-      }
-    },
-    {
-      "screen": "notes meets its cold-load budget",
-      "interactiveMs": 2053.4000000059605,
-      "transferredBytes": 283430,
-      "profile": {
-        "cpuSlowdown": 4,
-        "latencyMs": 150,
-        "downloadMbps": 4,
-        "uploadMbps": 1,
-        "serviceDelayMs": 150
-      }
-    },
-    {
-      "screen": "note-editor meets its cold-load budget",
-      "interactiveMs": 2008.800000011921,
-      "transferredBytes": 284635,
-      "profile": {
-        "cpuSlowdown": 4,
-        "latencyMs": 150,
-        "downloadMbps": 4,
-        "uploadMbps": 1,
-        "serviceDelayMs": 150
-      }
-    },
-    {
-      "screen": "session-detail meets its cold-load budget",
-      "interactiveMs": 1986.5,
-      "transferredBytes": 283597,
-      "profile": {
-        "cpuSlowdown": 4,
-        "latencyMs": 150,
-        "downloadMbps": 4,
-        "uploadMbps": 1,
-        "serviceDelayMs": 150
-      }
-    }
-  ]
+    ]
+  },
+  "limits": "These are repeatable lab measurements on the recorded host under five-client normal load and Chromium device/network emulation. They do not certify every production host, physical device or arbitrary authored curriculum volume."
 }

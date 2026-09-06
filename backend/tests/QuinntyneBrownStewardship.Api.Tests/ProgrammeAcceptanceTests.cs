@@ -428,6 +428,33 @@ public sealed class ProgrammeAcceptanceTests(ApiFixture fixture) : IClassFixture
         Assert.Equal("America/Toronto", response.GetProperty("cohort").GetProperty("timeZone").GetString());
     }
 
+    // Traces to: L2-036 AC1. Given a malformed required route identifier, when
+    // a programme endpoint is called, then it names the invalid field with 400
+    // instead of serving the application document, and no state changes.
+    [Fact]
+    public async Task Given_malformed_route_identifiers_when_requested_then_the_invalid_field_is_rejected()
+    {
+        var setup = await BookingSetup(); using var client = fixture.Browser(); await ApiFixture.SignIn(client);
+        foreach (var (method, path, field) in new[]
+        {
+            (HttpMethod.Get, "/modules/not-a-number", "ordinal"),
+            (HttpMethod.Get, "/notes/not-a-guid", "id"),
+            (HttpMethod.Get, "/sessions/not-a-guid", "id"),
+            (HttpMethod.Get, "/sessions/not-a-guid/preparation", "id"),
+            (HttpMethod.Post, "/sections/not-a-guid/completion", "id"),
+            (HttpMethod.Put, "/sessions/not-a-guid/slot", "id"),
+            (HttpMethod.Delete, "/sessions/not-a-guid", "id")
+        })
+        {
+            using var response = method == HttpMethod.Get ? await client.GetAsync(path) : await Change(client, method, path, new { SlotId = setup.Slot });
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            var problem = await response.Content.ReadFromJsonAsync<JsonElement>();
+            Assert.True(problem.GetProperty("errors").TryGetProperty(field, out _));
+        }
+        using var scope = fixture.Services.CreateScope(); var db = scope.ServiceProvider.GetRequiredService<StewardshipDbContext>();
+        Assert.Empty(await db.Completions.ToListAsync()); Assert.Empty(await db.Bookings.ToListAsync()); Assert.Empty(await db.Notes.ToListAsync());
+    }
+
     // Traces to: L2-004, L2-035. Every programme endpoint requires authentication.
     [Theory]
     [InlineData("/curriculum")]

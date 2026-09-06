@@ -2,9 +2,14 @@ import { ScreenPage } from './screen-page';
 import { expect, Page } from '@playwright/test';
 export class ModulePage extends ScreenPage {
   constructor(page: Page) { super(page); }
-  async open() { await this.page.goto('/modules/current'); }
+  async open(ordinal?: number) { await this.page.goto(`/modules/${ordinal ?? 'current'}`); }
   async completeSection() { await this.page.getByRole('button', { name: 'Mark section complete' }).click(); }
-  async expectSection(position: number) { await expect(this.page.getByText(`Section ${position} of 5`, { exact: true })).toBeVisible(); }
+  async expectSection(position: number) { await expect(this.page.getByRole('progressbar', { name: `Section ${position} of 5`, exact: true })).toBeVisible(); }
+  async expectProgress(completed: number, position: number) {
+    const progress = this.page.getByRole('progressbar', { name: `Section ${position} of 5`, exact: true });
+    await expect(progress).toBeVisible();
+    await expect(progress).toHaveJSProperty('position', completed / 5);
+  }
   async reload() { await this.page.reload(); }
   async addNote() { await this.page.getByRole('link', { name: 'Add a module note' }).click(); }
   async moreNotes() { await this.page.getByRole('button', { name: 'More notes', exact: true }).click(); }

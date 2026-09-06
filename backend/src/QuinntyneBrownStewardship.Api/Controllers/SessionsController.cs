@@ -12,14 +12,14 @@ public sealed class SessionsController(ISender sender) : ControllerBase
     public Task<AvailabilityResponse> Availability([FromQuery] DateOnly? day, CancellationToken ct) => sender.Send(new GetAvailabilityQuery(day), ct);
     [HttpGet("history")]
     public Task<HistoryResponse> History(CancellationToken ct) => sender.Send(new GetSessionHistoryQuery(), ct);
-    [HttpGet("{id:guid}")]
+    [HttpGet("{id}")]
     public Task<BookingResponse> Get(Guid id, CancellationToken ct) => sender.Send(new GetSessionQuery(id), ct);
-    [HttpGet("{id:guid}/preparation")]
+    [HttpGet("{id}/preparation")]
     public Task<PreparationResponse> Preparation(Guid id, CancellationToken ct) => sender.Send(new GetPreparationQuery(id), ct);
     [HttpPost]
     public Task<BookingResponse> Book(BookSessionCommand command, CancellationToken ct) => sender.Send(command, ct);
-    [HttpPut("{id:guid}/slot")]
+    [HttpPut("{id}/slot")]
     public Task<BookingResponse> Reschedule(Guid id, BookSessionCommand command, CancellationToken ct) => sender.Send(new RescheduleSessionCommand(id, command.SlotId), ct);
-    [HttpDelete("{id:guid}")]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> Cancel(Guid id, CancellationToken ct) { await sender.Send(new CancelSessionCommand(id), ct); return NoContent(); }
 }

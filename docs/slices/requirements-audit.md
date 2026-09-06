@@ -2,15 +2,16 @@
 
 This audit uses `docs/specs/L1.md`, all forty L2 requirements and `AGENTS.md` as
 the scope. Administration screens remain outside the participant requirements.
-The source and behavioral evidence below were inspected on 2026-09-06. A passing
-sample is not a claim that every volume or production environment has been measured.
+The source and behavioral evidence below were inspected on 2026-09-06. All forty
+participant requirements are implemented and their verification gates pass. The
+performance evidence covers the documented normal-load and device simulation.
 
 ## Evidence
 
 - [Recorded verification results](../verification/2026-09-06.json) preserve the
-  successful build, 42 API cases, 50 browser cases, two assignment viewport
-  rechecks, two design-system cases, adapter checks and measured performance.
-  This is an intermediate record; the large-note payload gap is explicitly open.
+  successful build, 47 API cases, 58 browser cases, two design-system cases,
+  adapter checks, 25 API performance scenarios and nine complete screen transfers.
+  The large-note payload and sign-in latency gaps found earlier are closed.
 - `backend/tests/QuinntyneBrownStewardship.Api.Tests/AccessAcceptanceTests.cs`
   exercises real passwords, cookies, expiry, throttling, safe errors and enrollment.
 - `backend/tests/QuinntyneBrownStewardship.Api.Tests/ProgrammeAcceptanceTests.cs`
@@ -46,7 +47,7 @@ sample is not a claim that every volume or production environment has been measu
 | L2-011      | Reader returns the first incomplete section, or the last after full completion; API and reload/resume browser acceptance. There is no independent module-complete flag.                                |
 | L2-012      | Reader returns ordered titled sections; module template renders reading, assignment and text states; API/browser module acceptance.                                                                    |
 | L2-013      | Transactional idempotent completion and persisted reload; API duplicate completion and browser complete/resume journeys.                                                                               |
-| L2-014      | Completed-section proportion and section position derive from response records; API and module browser acceptance.                                                                                     |
+| L2-014      | Native progress value/max derive from section records. Browser acceptance checks the exact “Section N of 5” label, every fill from 0% to 80%, and 100% after reopening the completed module. |
 | L2-015      | One assignment source at every viewport; browser compares reading, effort and all three practice steps at XS and XL.                                                                                   |
 | L2-016      | Completion is derived, including reopening on appended sections; Administration import acceptance and all-module HTTP progression.                                                                     |
 | L2-017      | Cohort-local day/week availability returns open/taken states without other participants' identity; booking HTTP checks and slot-picker browser journeys.                                               |
@@ -68,10 +69,10 @@ sample is not a claim that every volume or production environment has been measu
 | L2-033      | Native semantic controls, visible focus, skip link and modal dialog; keyboard sign-in and booking/cancellation-dialog focus acceptance.                                                                |
 | L2-034      | Module, section and slot states use visible text/symbols, with pressed/current/disabled semantics; module/slot templates and accessibility journeys.                                                   |
 | L2-035      | Acting identity comes from the authenticated session; explicit forged participant/cohort/module/booking/note identifiers cannot read or mutate foreign state.                                          |
-| L2-036      | MVC binding and Application validators reject missing, malformed, oversized and inconsistent fields; API invalid note tests and literal-markup browser rendering.                                      |
+| L2-036      | MVC binding and Application validators reject missing, malformed, oversized and inconsistent fields; API tests cover malformed route identifiers on seven read/write routes, invalid notes and literal-markup browser rendering. |
 | L2-037      | HTTPS redirect, secure cookie attributes, salted one-way passwords and safe correlated errors; Access acceptance exercises these boundaries.                                                           |
 | L2-038      | SQL-serialized account/origin cooldown with recorded attempts and controlled expiry; Access throttle acceptance.                                                                                       |
-| L2-039      | Fourteen programme operations have a 100-request/five-participant performance harness; eight cold-load browser screens are measured. Full-volume payload verification remains open as described below. |
+| L2-039      | All 21 API operations and four populated Unicode read scenarios pass their 100-request p95 gates; all nine cold-load screens pass 300KB including API payloads; curriculum is usable in 1700.5ms. |
 | L2-040      | Health reports database readiness and safe 503; failures log/return the same correlation ID; booking actions commit actor/action/time/correlation audit records.                                       |
 
 ## Changes made during this audit
@@ -95,7 +96,7 @@ notes, preserving every body and attachment. The shared domain note collection
 provides “More notes” at all three destinations, retains loaded content after an
 error, retries without duplicates and moves keyboard focus to the new content.
 Preparation answers remain beneath their prompts and also appear in the notes
-destination. The updated suites pass 45 API cases and 56 browser cases.
+destination. The final suites pass 47 API cases and 58 browser cases.
 
 The performance fixture now captures production-compressed DTOs for twenty long
 module notes, twenty session notes, three full-length preparation answers and all
@@ -107,15 +108,52 @@ earlier measurement gaps around empty data, missing JSON and different bundles.
 
 Critical CSS inlining was removed after the trace showed duplicate stylesheet and
 body-font requests under the no-store policy. The Newsreader asset retains its
-characters and declared 300–600 weight range while dropping unused weights.
+characters and declared 300–600 weight range at its default optical size, reducing
+it from 132,000 to 50,548 bytes. Off-screen note paragraphs defer rendering without
+removing text from the document or accessibility tree.
 Booking display queries now execute after the atomic write, reducing lock duration.
 Sign-in hashes outside its global gate and rechecks cooldown under the gate before
-recording the result; concurrent-failure acceptance verifies the limit stays atomic.
+recording the result. Attempt and session commit in one transaction; acceptance
+verifies concurrent throttling and rollback when session creation fails.
 
-Final measurement of all 21 API operations and all nine complete screen payloads is
-still required after these corrections. The first expanded API run found a sign-in
-latency failure that the previous programme-only harness could not detect. The goal
-remains active until these gates and the final verification record are complete.
+The final label audit also found that module progress said “N of 5 sections
+complete” instead of the specified “Section N of 5”. A failing browser acceptance
+case established the gap before the label correction, and now checks the label and
+native progress fill through every completion state on desktop and mobile.
+
+Malformed resource identifiers previously missed constrained API routes and could
+fall through to the application document with 200. Route parameters now reach MVC
+type binding, which returns 400 and names the invalid field. A failing-then-passing
+API case covers all seven affected module, note, session and completion routes and
+verifies that no programme state changes. Literal routes such as `current`,
+`availability` and `history` retain precedence and pass the full API suite.
+
+## Final performance and delivery evidence
+
+The final isolated API run passes all 25 scenarios: 100 measured requests at five
+concurrent clients per scenario after warm-up. The slowest read p95 is 104.75ms
+for availability, below 300ms. The slowest write p95 is 287.31ms for note creation,
+below 500ms. Sign-in p95 is 194.96ms.
+
+All nine cold-load screen checks pass. Curriculum controls are usable in 1700.5ms,
+below 2500ms. The largest complete screen is the module reader at 276,757 bytes,
+below 300,000 bytes, including fonts, compressed API responses and header allowance.
+The populated fixture includes forty 10,000-character Unicode notes, three
+10,000-character answers, five past sessions and one future session. Full note
+bodies remain reachable through pagination; no participant text was shortened to
+meet the transfer gate.
+
+`npm run build` passes for the three Angular libraries, production application,
+independent design-system site and Release .NET solution with zero warnings or
+errors. The design system owns the mirrored tokens and font assets. Source review
+confirms inward backend dependencies, MediatR 12.5.0, thin dispatching controllers,
+service-token composition and the prescribed project placement. The CLI remains a
+project under `backend/src`. Current screenshots were inspected after the font
+change; accessibility, target and viewport checks pass alongside browser journeys.
+
+The [verification record](../verification/2026-09-06.json) contains the commands,
+environment, every API percentile and every screen total. It supersedes the
+intermediate measurements previously stored at that path.
 
 CPU and network emulation use the documented Chromium
 [CPU slowdown](https://chromedevtools.github.io/devtools-protocol/tot/Emulation/#method-setCPUThrottlingRate)

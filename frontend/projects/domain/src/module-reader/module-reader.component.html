@@ -3,7 +3,7 @@
 @if (data(); as module) {
   <div class="programme-grid reader-grid">
     <aside class="stack"><p class="eyebrow">Module {{ module.ordinal.toString().padStart(2, '0') }}</p><h1 class="module-title">{{ module.title }}</h1>
-      <qbs-progress-summary [completed]="module.completedSections" [total]="module.sections.length" [label]="module.completedSections + ' of ' + module.sections.length + ' sections complete'" />
+      <qbs-progress-summary [completed]="module.completedSections" [total]="module.sections.length" [label]="'Section ' + (section()?.ordinal ?? 1) + ' of ' + module.sections.length" />
       <nav aria-label="Module sections" class="section-navigation">
         @for (item of module.sections; track item.id) {
           <button type="button" class="secondary section-link" [attr.aria-current]="item.id === selected() ? 'step' : null" (click)="choose(item.id)" [disabled]="!item.isComplete && item.id !== module.resumeSectionId">
