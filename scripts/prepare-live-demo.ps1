@@ -102,4 +102,13 @@ $env:HttpsPort = $Port.ToString()
 $api = Join-Path $workspace 'backend/src/QuinntyneBrownStewardship.Api/bin/Release/net10.0/QuinntyneBrownStewardship.Api.dll'
 $process = Start-Process -FilePath dotnet -ArgumentList @($api) -WorkingDirectory (Join-Path $workspace 'backend/src/QuinntyneBrownStewardship.Api') -WindowStyle Hidden -PassThru -RedirectStandardOutput "$output/api.stdout.log" -RedirectStandardError "$output/api.stderr.log"
 @{baseUrl="https://localhost:$Port"; database=$demoDatabase; processId=$process.Id; password=$demoPassword; firstDay=$firstDay.ToString('yyyy-MM-dd'); preparedAt=[DateTimeOffset]::Now.ToString('o')} | ConvertTo-Json | Set-Content -LiteralPath "$output/run.json"
+$ready = $false
+for ($attempt = 0; $attempt -lt 30; $attempt++) {
+    if ($process.HasExited) { throw "The demo API exited. See $output/api.stderr.log." }
+    try {
+        $health = Invoke-RestMethod "https://localhost:$Port/health" -SkipCertificateCheck -TimeoutSec 2
+        if ($health.status -eq 'Healthy') { $ready = $true; break }
+    } catch { Start-Sleep -Milliseconds 500 }
+}
+if (-not $ready) { throw "The demo API did not become healthy. See $output/api.stderr.log." }
 Write-Output "Demo prepared at https://localhost:$Port with database $demoDatabase and API process $($process.Id)."

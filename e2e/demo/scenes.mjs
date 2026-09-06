@@ -18,7 +18,7 @@ export const scenes = [
     title: "03  Your cohort and curriculum",
     caption:
       "Twelve ordered modules, cohort dates, mentor and derived progress. Future modules stay locked.",
-    code: "await screens.signIn.enter(); await screens.curriculum.overview();",
+    code: "await screens.shell.signOut(); await screens.signIn.enter(); await screens.curriculum.overview();",
   },
   {
     seconds: 20,
@@ -116,7 +116,7 @@ export const scenes = [
     title: "16  The same programme on mobile",
     caption:
       "At 390px, sign in by keyboard and use the menu to reach curriculum, notes and sessions without horizontal scrolling.",
-    code: 'await screens.shell.signOut(); await page.setViewportSize({width:390,height:810}); page.__demo.mobileStart = Date.now(); await screens.signIn.enterKeyboard(); await screens.shell.navigate("Curriculum"); await screens.curriculum.ready(1); await screens.shell.fits(); await screens.shell.navigate("Notes"); await screens.notes.visibleNote(config.revisedNote); await screens.shell.fits(); await screens.shell.navigate("Sessions"); await screens.sessions.canBook(); await screens.shell.fits();',
+    code: 'await screens.shell.signOut(); await page.setViewportSize({width:390,height:810}); page.__demo.mobileStart = Date.now(); await screens.signIn.enterKeyboard(); await screens.shell.navigate("Curriculum"); await screens.curriculum.ready(1); await screens.shell.fits(); await screens.shell.pause(2500); await screens.shell.navigate("Notes"); await screens.notes.visibleNote(config.revisedNote); await screens.shell.fits(); await screens.shell.pause(2500); await screens.shell.navigate("Sessions"); await screens.sessions.canBook(); await screens.shell.fits();',
   },
   {
     seconds: 9,

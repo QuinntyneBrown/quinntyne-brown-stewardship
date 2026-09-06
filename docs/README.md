@@ -12,6 +12,7 @@ Everything written down about this project, indexed. Start with the
 | [Testing](testing.md)                       | Run the suites, or write a test that fits the project's approach.                |
 | [Deployment](deployment.md)                 | Build the artifacts and operate the system in production.                        |
 | [Design system](../design-system/README.md) | Work with design tokens, or build and publish the catalogue.                     |
+| [Live walkthrough](live-demo.md)            | Reproduce the five-minute video and inspect its live verification evidence.      |
 
 ## Contributing and policy
 

@@ -231,6 +231,7 @@ quinntyne-brown-stewardship/
 | [Testing](docs/testing.md)               | Suites, performance budgets, how to write a test here.           |
 | [Deployment](docs/deployment.md)         | Artifacts, configuration, TLS, health checks, operations.        |
 | [Design system](design-system/README.md) | Tokens, fonts, catalogue, publishing.                            |
+| [Live walkthrough](docs/live-demo.md)    | Five-minute feature demonstration, recording, and verification.  |
 | [Requirements](docs/specs/L1.md)         | Ten high-level and forty detailed requirements.                  |
 
 ## Testing

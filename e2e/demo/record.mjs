@@ -102,6 +102,27 @@ async function code(body, allowDialog = false) {
   );
 }
 
+await writeFile(
+  join(output, "cli.config.json"),
+  JSON.stringify(
+    {
+      browser: {
+        browserName: "chromium",
+        isolated: true,
+        launchOptions: { channel: "chrome", headless: true },
+        contextOptions: {
+          ignoreHTTPSErrors: true,
+          viewport: { width: 1440, height: 810 },
+          deviceScaleFactor: 1,
+        },
+      },
+      outputDir: ".local/live-demo/cli",
+      timeouts: { action: 10000, navigation: 20000 },
+    },
+    null,
+    2,
+  ),
+);
 await cli("close").catch(() => {});
 await cli(
   "open",
@@ -114,6 +135,8 @@ await code(`
   page.on('pageerror',error=>page.__demo.pageErrors.push(error.message));
   const health=await page.request.get(config.baseUrl+'/health'); if(health.status()!==200) throw new Error('Live database health failed.');
   page.__demo.checks.push('The live HTTPS API and SQL database report Healthy.');
+  const favicon=await page.request.get(config.baseUrl+'/favicon.svg'); if(favicon.status()!==200) throw new Error('The application favicon is missing.');
+  page.__demo.checks.push('The application favicon returns 200.');
 `);
 let startedAt = Date.now();
 if (!rehearsal)

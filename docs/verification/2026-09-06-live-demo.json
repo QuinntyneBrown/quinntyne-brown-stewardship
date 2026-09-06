@@ -1,0 +1,204 @@
+{
+  "verifiedAt": "2026-09-06T22:24:49.2696072+00:00",
+  "scope": "Five-minute Playwright CLI walkthrough of the live participant experience",
+  "baseUrl": "https://localhost:7240",
+  "database": "StewardshipDemo_20260906_181604",
+  "fixtures": "Dedicated demonstration database; historical sessions, notes, approaching booking and completed cohort prepared before capture",
+  "recordedAt": "2026-09-06T22:22:00.142Z",
+  "liveScenesPassed": 17,
+  "realHttpResponses": 157,
+  "unexpectedHttpResponses": 0,
+  "browserExceptions": 0,
+  "checks": [
+    "The live HTTPS API and SQL database report Healthy.",
+    "The application favicon returns 200.",
+    "Section progress persisted after reload; completing module 1 unlocked module 2; completed reading remains available.",
+    "A module note was created, revised, protected against unsaved navigation and recovered after reload.",
+    "The real notes endpoint returned a continuation page; additional notes remain reachable.",
+    "Preparation prompts retain their saved answers and session notes appear against their booking.",
+    "Booking, curriculum next-session details, rescheduling and cancellation used the live API; cancellation restored the allowance.",
+    "Signed-out notes API returns 401; browser history and direct URLs return to sign-in."
+  ],
+  "accessChecks": [
+    {
+      "account": "participant@demo.invalid",
+      "operation": "Read the recorded participant note",
+      "expectedStatus": 200,
+      "actualStatus": 200
+    },
+    {
+      "account": "participant@demo.invalid",
+      "operation": "Mutating request without a CSRF token",
+      "expectedStatus": 400,
+      "actualStatus": 400
+    },
+    {
+      "account": "rehearsal@demo.invalid",
+      "operation": "Read the recorded participant note",
+      "expectedStatus": 404,
+      "actualStatus": 404
+    },
+    {
+      "account": "rehearsal@demo.invalid",
+      "operation": "Mutating request without a CSRF token",
+      "expectedStatus": 400,
+      "actualStatus": 400
+    },
+    {
+      "account": "mentor@demo.invalid",
+      "operation": "Read the recorded participant note",
+      "expectedStatus": 200,
+      "actualStatus": 200
+    },
+    {
+      "account": "mentor@demo.invalid",
+      "operation": "Mutating request without a CSRF token",
+      "expectedStatus": 400,
+      "actualStatus": 400
+    }
+  ],
+  "video": {
+    "path": ".local/live-demo/stewardship-live-demo-5min.mp4",
+    "durationSeconds": 300.0,
+    "width": 1440,
+    "height": 930,
+    "videoCodec": "h264",
+    "audioCodec": "aac",
+    "frames": 7500,
+    "bytes": 10171548,
+    "sha256": "8B9AE231C8978ECA50B1AB1E22239EE9CAB0499102B6A47115AEC78645843263",
+    "embeddedChapters": 17,
+    "fullDecode": "passed with FFmpeg -xerror",
+    "audioMeanDecibels": -20.8,
+    "audioPeakDecibels": -1.6,
+    "browserPlayback": "Chrome played the final MP4 and sought through the mobile chapter button; duration 300, readyState 4, no media error",
+    "visualReview": "Reviewed all 17 chapters in a final contact sheet and full-resolution enrollment, saved preparation answer and mobile frames. Captions fit below the application; mobile footage is centered."
+  },
+  "issuesCorrected": [
+    "Missing application favicon, verified HTTP 200 after shared design-system icon was added.",
+    "Playwright CLI dialog synchronization and mobile menu closure.",
+    "Enrollment notice hold, saved-answer scroll position, and mobile reading time."
+  ],
+  "timeline": [
+    {
+      "title": "01  Secure participant access",
+      "caption": "Protected links require sign-in. Empty fields and incorrect credentials receive clear feedback.",
+      "startSeconds": 1.038,
+      "actionSeconds": 6.13,
+      "allottedSeconds": 15
+    },
+    {
+      "title": "02  Explicit enrollment",
+      "caption": "A participant awaiting a cohort sees a clear enrollment notice, with no empty programme.",
+      "startSeconds": 15.01,
+      "actionSeconds": 5.826,
+      "allottedSeconds": 15
+    },
+    {
+      "title": "03  Your cohort and curriculum",
+      "caption": "Twelve ordered modules, cohort dates, mentor and derived progress. Future modules stay locked.",
+      "startSeconds": 30.015,
+      "actionSeconds": 9.197,
+      "allottedSeconds": 15
+    },
+    {
+      "title": "04  Reading, practice and preparation",
+      "caption": "Resume at the first incomplete section. Reading, all assignment steps and prompts remain available.",
+      "startSeconds": 45.071,
+      "actionSeconds": 12.197,
+      "allottedSeconds": 20
+    },
+    {
+      "title": "05  Progress that persists",
+      "caption": "Complete a section, reload and resume. Finishing a module unlocks the next; completed reading stays open.",
+      "startSeconds": 65.011,
+      "actionSeconds": 11.631,
+      "allottedSeconds": 20
+    },
+    {
+      "title": "06  Write a module note",
+      "caption": "An empty note cannot be saved. A new reflection is stored against its module by the real API.",
+      "startSeconds": 85.003,
+      "actionSeconds": 8.48,
+      "allottedSeconds": 20
+    },
+    {
+      "title": "07  Revise without losing your draft",
+      "caption": "Decline the unsaved-change warning, keep the draft, save the revision and verify it after reload.",
+      "startSeconds": 105.016,
+      "actionSeconds": 12.704,
+      "allottedSeconds": 20
+    },
+    {
+      "title": "08  Every note remains reachable",
+      "caption": "The notes destination includes module and session attachments. More notes loads the next real page.",
+      "startSeconds": 125.003,
+      "actionSeconds": 3.849,
+      "allottedSeconds": 15
+    },
+    {
+      "title": "09  Session history and availability",
+      "caption": "Read notes from earlier conversations, change the booking day and distinguish taken from open times.",
+      "startSeconds": 140.015,
+      "actionSeconds": 6.307,
+      "allottedSeconds": 20
+    },
+    {
+      "title": "10  Book one mentor conversation",
+      "caption": "Select an open slot and confirm. The held session and the curriculum show the same mentor and time.",
+      "startSeconds": 160.002,
+      "actionSeconds": 6.975,
+      "allottedSeconds": 20
+    },
+    {
+      "title": "11  Prepare for the conversation",
+      "caption": "The current module supplies the prompts. Save an answer and see it beneath the original prompt.",
+      "startSeconds": 180.009,
+      "actionSeconds": 10.802,
+      "allottedSeconds": 20
+    },
+    {
+      "title": "12  Keep notes with the session",
+      "caption": "A session reflection is saved and retrieved in the conversation it belongs to.",
+      "startSeconds": 200.007,
+      "actionSeconds": 5.583,
+      "allottedSeconds": 18
+    },
+    {
+      "title": "13  Reschedule and cancel",
+      "caption": "Move to another open time, keep a booking from the dialog, then cancel and recover the session allowance.",
+      "startSeconds": 218.003,
+      "actionSeconds": 7.698,
+      "allottedSeconds": 20
+    },
+    {
+      "title": "14  The 24-hour change window",
+      "caption": "This prepared account has a session in twelve hours. Rescheduling and cancellation are disabled with a reason.",
+      "startSeconds": 238.008,
+      "actionSeconds": 3.64,
+      "allottedSeconds": 17
+    },
+    {
+      "title": "15  Completion and cohort end",
+      "caption": "A completed cohort keeps its reading and history. All twelve modules and six held sessions remain visible.",
+      "startSeconds": 255.01,
+      "actionSeconds": 4.523,
+      "allottedSeconds": 15
+    },
+    {
+      "title": "16  The same programme on mobile",
+      "caption": "At 390px, sign in by keyboard and use the menu to reach curriculum, notes and sessions without horizontal scrolling.",
+      "startSeconds": 270.005,
+      "actionSeconds": 11.538,
+      "allottedSeconds": 21
+    },
+    {
+      "title": "17  Deliberate sign-out",
+      "caption": "Sign-out revokes this device. Browser history and protected URLs return to sign-in; the API refuses access.",
+      "startSeconds": 291.013,
+      "actionSeconds": 1.632,
+      "allottedSeconds": 9
+    }
+  ],
+  "reproduction": "docs/live-demo.md"
+}
