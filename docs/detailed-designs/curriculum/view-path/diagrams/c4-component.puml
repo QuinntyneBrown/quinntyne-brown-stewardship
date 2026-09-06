@@ -1,0 +1,29 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — View the curriculum path
+
+Container_Boundary(spa, "Stewardship web client") {
+  Component(page, "CurriculumPageComponent", "Angular routed component", "Composes the curriculum screen")
+  Component(path, "ModulePathComponent", "Angular domain component", "Injects CURRICULUM_SERVICE and renders the path")
+  Component(marker, "ModuleMarkerComponent", "Angular presentational component", "Renders one marker with its state as text")
+}
+
+Container_Boundary(api, "Stewardship API") {
+  Component(controller, "CurriculumController", "ASP.NET Core controller", "Exposes GET /curriculum")
+  Component(handler, "GetCurriculumQueryHandler", "MediatR handler", "Assembles the path and the progress summary")
+  Component(module, "CurriculumModule", "Domain entity", "One of the twelve ordered modules")
+  Component(completion, "SectionCompletion", "Domain entity", "One record per section a participant has completed")
+  Component(summary, "ProgressSummary", "Domain value object", "Derives completed, remaining, and proportion")
+  ComponentDb(db, "Stewardship database", "SQL Server", "Persists modules and completion records")
+}
+
+Rel(page, path, "Composes")
+Rel(path, marker, "Renders one per module")
+Rel(path, controller, "Requests the curriculum path", "JSON/HTTPS")
+Rel(controller, handler, "Sends GetCurriculumQuery")
+Rel(handler, module, "Reads the ordered modules")
+Rel(handler, completion, "Counts recorded completion from")
+Rel(handler, summary, "Derives the progress figures with")
+Rel(handler, db, "Reads", "EF Core")
+@enduml

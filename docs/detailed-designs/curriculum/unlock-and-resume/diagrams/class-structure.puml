@@ -1,0 +1,68 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Unlock modules and resume the current one
+
+class ModuleAccessPolicy {
+  +IsOpen(module: CurriculumModule, completed: IReadOnlySet<Guid>): bool
+  +CurrentOrdinal(modules: IReadOnlyList<CurriculumModule>, completed: IReadOnlySet<Guid>): int
+}
+
+class ResumePoint {
+  +int SectionOrdinal
+  +Resolve(module: CurriculumModule, completed: IReadOnlySet<Guid>): ResumePoint
+}
+
+class CurriculumModule {
+  +Guid Id
+  +int Ordinal
+  +string Title
+  +IReadOnlyList<ModuleSection> Sections
+  +IsComplete(completed: IReadOnlySet<Guid>): bool
+}
+
+class ModuleSection {
+  +Guid Id
+  +int Ordinal
+  +string Title
+}
+
+class SectionCompletion {
+  +Guid ParticipantId
+  +Guid SectionId
+  +DateTimeOffset CompletedAt
+}
+
+class GetModuleQuery {
+  +int Ordinal
+}
+
+class GetModuleQueryHandler {
+  -ICurrentParticipant _participant
+  -ModuleAccessPolicy _policy
+  +Handle(query: GetModuleQuery, token: CancellationToken): Task<Result<ModuleResponse>>
+}
+
+class ModuleLockedResult {
+  +int RequestedOrdinal
+  +int CurrentOrdinal
+  +string Explanation
+}
+
+ModuleAccessPolicy ..> CurriculumModule : decides access to
+ModuleAccessPolicy ..> SectionCompletion : reads
+ResumePoint ..> CurriculumModule : resolves within
+CurriculumModule "1" *-- "*" ModuleSection : owns
+GetModuleQueryHandler ..> GetModuleQuery : handles
+GetModuleQueryHandler --> ModuleAccessPolicy : applies
+GetModuleQueryHandler --> ResumePoint : resolves
+GetModuleQueryHandler --> ModuleLockedResult : returns on refusal
+@enduml

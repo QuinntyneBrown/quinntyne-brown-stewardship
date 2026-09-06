@@ -1,0 +1,28 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Secure boundary
+
+Container_Boundary(api, "Stewardship API") {
+  Component(https, "HttpsRedirectionMiddleware", "ASP.NET Core middleware", "Redirects plain HTTP to HTTPS and sets HSTS")
+  Component(cookies, "CookiePolicy", "ASP.NET Core configuration", "Issues session cookies HttpOnly, Secure, and SameSite")
+  Component(binding, "JsonSerializerOptions", "System.Text.Json configuration", "Skips members the endpoint does not define")
+  Component(behavior, "ValidationBehavior", "MediatR pipeline behaviour", "Runs every validator before the handler")
+  Component(validators, "FluentValidation validators", "Application validators", "Declare required fields and maximum lengths")
+  Component(problem, "ProblemDetailsExceptionHandler", "ASP.NET Core handler", "Returns a correlation identifier and no internal detail")
+  Component(hasher, "PasswordHasher", "Infrastructure implementation", "Produces a salted one-way hash")
+  ComponentDb(db, "Stewardship database", "SQL Server", "Persists hashes and validated content")
+}
+
+Container_Boundary(spa, "Stewardship web client") {
+  Component(render, "Angular interpolation", "Template binding", "Escapes stored text on output")
+}
+
+Rel(https, cookies, "Precedes")
+Rel(cookies, binding, "Precedes")
+Rel(binding, behavior, "Passes the bound request to")
+Rel(behavior, validators, "Runs")
+Rel(behavior, problem, "Raises a validation failure to")
+Rel(hasher, db, "Writes hashes to", "EF Core")
+Rel(render, db, "Renders stored text read from, as literal text", "JSON/HTTPS")
+@enduml

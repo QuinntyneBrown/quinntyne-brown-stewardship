@@ -1,0 +1,33 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Change or cancel a booking
+
+Container_Boundary(spa, "Stewardship web client") {
+  Component(panel, "BookingPanelComponent", "Angular domain component", "Injects SESSION_SERVICE and holds the session")
+  Component(card, "HeldSessionCardComponent", "Angular presentational component", "Disables the actions and states the reason when the window has closed")
+}
+
+Container_Boundary(api, "Stewardship API") {
+  Component(controller, "SessionsController", "ASP.NET Core controller", "Exposes PUT /sessions/{id}/slot and DELETE /sessions/{id}")
+  Component(reschedule, "RescheduleSessionCommandHandler", "MediatR handler", "Moves the session to another open slot")
+  Component(cancel, "CancelSessionCommandHandler", "MediatR handler", "Cancels the session and releases its slot")
+  Component(window, "BookingChangeWindow", "Domain value object", "Decides whether the 24-hour window is open")
+  Component(session, "Session", "Domain entity", "Owns its status and the slot it occupies")
+  Component(slot, "AvailabilitySlot", "Domain entity", "Becomes open again once released")
+  ComponentDb(db, "Stewardship database", "SQL Server", "Persists sessions and slots")
+}
+
+Rel(panel, card, "Composes")
+Rel(panel, controller, "Posts the change or the cancellation", "JSON/HTTPS")
+Rel(controller, reschedule, "Sends RescheduleSessionCommand")
+Rel(controller, cancel, "Sends CancelSessionCommand")
+Rel(reschedule, window, "Checks the window with")
+Rel(cancel, window, "Checks the window with")
+Rel(reschedule, session, "Moves")
+Rel(cancel, session, "Cancels")
+Rel(reschedule, slot, "Releases the previous and claims the new")
+Rel(cancel, slot, "Releases")
+Rel(reschedule, db, "Writes", "EF Core")
+Rel(cancel, db, "Writes", "EF Core")
+@enduml

@@ -1,0 +1,46 @@
+@startuml
+title UML sequence behaviour — Return to a persisted session
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Participant" as actor
+box "Frontend — Stewardship web client" #E0F2FE
+  participant "CurriculumPageComponent" as page
+  participant "CurriculumService" as client
+end box
+box "Backend — Stewardship API application" #D1FADF
+  participant "SessionAuthenticationMiddleware" as middleware
+  participant "CurriculumController" as controller
+end box
+box "Backend — Stewardship Infrastructure" #FFF4E5
+  database "Stewardship database" as db
+end box
+
+actor -> page : Reopen the browser and request the curriculum
+page -> client : Request the curriculum
+client -> middleware : GET /curriculum with the persisted session cookie
+middleware -> db : Load the session record
+db --> middleware : Session with its last-activity time
+alt L2-002 criterion 2 — idle beyond the 30-day timeout
+  middleware --> client : 401 carrying no programme data
+  client --> page : Unauthenticated result
+  page --> actor : Present the sign-in screen
+else Within the idle window
+  middleware -> db : Refresh the last-activity time
+  middleware -> controller : Continue with the resolved participant
+  controller --> client : 200 with the curriculum
+  client --> page : Curriculum result
+  page --> actor : Present the curriculum without a further sign-in
+end
+@enduml

@@ -1,0 +1,16 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Unlock modules and resume the current one
+
+Person(participant, "Participant", "Advances one module at a time and returns where they stopped")
+System_Boundary(stewardship, "Stewardship") {
+  Container(spa, "Stewardship web client", "Angular", "Offers the continue action and refuses a locked route")
+  Container(api, "Stewardship API", "ASP.NET Core", "Applies the unlock policy and resolves the resume point")
+  ContainerDb(db, "Stewardship database", "SQL Server", "Modules, sections, and completion records")
+}
+
+Rel(participant, spa, "Continues the current module, or requests a module by URL", "HTTPS")
+Rel(spa, api, "Requests a module", "JSON/HTTPS")
+Rel(api, db, "Reads modules and completion to decide access", "EF Core")
+@enduml

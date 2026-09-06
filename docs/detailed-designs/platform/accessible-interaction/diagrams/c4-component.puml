@@ -1,0 +1,31 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Accessible interaction
+
+Container_Boundary(ds, "Stewardship design system") {
+  Component(colour, "colour.css", "CSS custom properties", "Foreground and background pairs with a measured ratio")
+  Component(focus, "focus.css", "CSS custom properties", "Focus ring width and colour at 3:1 or better")
+  Component(target, "target.css", "CSS custom properties", "The 44px minimum hit area")
+}
+
+Container_Boundary(spa, "Stewardship web client") {
+  Component(marker, "ModuleMarkerComponent", "Angular presentational component", "Renders module state as shape and text, not colour alone")
+  Component(slot, "SlotButtonComponent", "Angular presentational component", "Announces a taken slot as unavailable")
+  Component(dialog, "DialogComponent", "Angular presentational component", "Moves focus in, keeps it inside, and returns it on close")
+  Component(trap, "FocusTrapDirective", "Angular directive", "Confines Tab traversal to the open dialog")
+}
+
+Container_Boundary(api, "Stewardship API") {
+  Component(labels, "StateLabels", "Application constants", "One text label per module, section, and slot state")
+}
+
+Rel(marker, colour, "Reads")
+Rel(marker, target, "Reads")
+Rel(marker, labels, "Renders the label supplied by", "JSON/HTTPS")
+Rel(slot, labels, "Renders the label supplied by", "JSON/HTTPS")
+Rel(slot, target, "Reads")
+Rel(dialog, trap, "Applies")
+Rel(dialog, focus, "Reads")
+Rel(marker, focus, "Reads")
+@enduml

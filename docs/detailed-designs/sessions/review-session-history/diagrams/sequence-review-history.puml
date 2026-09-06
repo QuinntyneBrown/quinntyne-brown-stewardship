@@ -1,0 +1,60 @@
+@startuml
+title UML sequence behaviour — Review sessions held
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Participant" as actor
+box "Frontend — Stewardship web client" #E0F2FE
+  participant "SessionHistoryListComponent" as list
+  participant "EmptyStateComponent" as empty
+  participant "SessionService" as client
+end box
+box "Backend — Stewardship API application" #D1FADF
+  participant "SessionsController" as controller
+end box
+box "Backend — Stewardship Application and Domain" #ECFDF3
+  participant "GetSessionHistoryQueryHandler" as handler
+  participant "CurrentModuleAtResolver" as resolver
+end box
+box "Backend — Stewardship Infrastructure" #FFF4E5
+  database "Stewardship database" as db
+end box
+
+actor -> list : Open the sessions screen
+list -> client : Request the session history
+client -> controller : GET /sessions/history
+controller -> handler : Send GetSessionHistoryQuery
+handler -> db : Read the sessions of the acting participant that have already started
+db --> handler : Past sessions, most recent first (L2-022 criterion 1)
+alt No session has been held
+  handler --> controller : Empty history
+  controller --> client : 200 with an empty list
+  client --> list : Empty result
+  list -> empty : Render the explicit empty state (L2-022 criterion 3)
+  empty --> actor : State that no session has yet been held
+else One or more sessions have been held
+  handler -> db : Read completion timestamps and the cohort modules
+  db --> handler : Completion records and modules
+  loop for each past session
+    handler -> resolver : Resolve the module current at the session start
+    resolver --> handler : Module ordinal and title
+  end
+  handler -> db : Read the note reference for each session
+  db --> handler : Note identifiers where notes exist
+  handler --> controller : History items with date, module, and notes route
+  controller --> client : 200 with the history
+  client --> list : History result
+  list --> actor : Present each session with its date, module, and route to its notes
+end
+@enduml

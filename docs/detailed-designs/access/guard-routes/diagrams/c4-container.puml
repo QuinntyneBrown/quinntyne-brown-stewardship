@@ -1,0 +1,19 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Guard routes and authorise requests
+
+Person(participant, "Participant", "Reaches only their own programme data")
+Person_Ext(visitor, "Unidentified visitor", "Holds no authenticated session")
+System_Boundary(stewardship, "Stewardship") {
+  Container(spa, "Stewardship web client", "Angular", "Routes guarded before a page loads")
+  Container(api, "Stewardship API", "ASP.NET Core", "Authenticates, then authorises every request against the session")
+  ContainerDb(db, "Stewardship database", "SQL Server", "Programme data owned by a participant")
+}
+
+Rel(visitor, spa, "Requests a programme route by direct URL", "HTTPS")
+Rel(spa, spa, "Redirects to sign-in, retaining the requested route")
+Rel(participant, spa, "Uses", "HTTPS")
+Rel(spa, api, "Calls programme endpoints", "JSON/HTTPS")
+Rel(api, db, "Reads only rows owned by the acting participant", "EF Core")
+@enduml

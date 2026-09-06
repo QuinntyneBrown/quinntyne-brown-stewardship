@@ -1,0 +1,16 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Prepare for a session
+
+Person(participant, "Participant", "Opens the next session to review its prompts")
+System_Boundary(stewardship, "Stewardship") {
+  Container(spa, "Stewardship web client", "Angular", "Renders each prompt with any answer beneath it")
+  Container(api, "Stewardship API", "ASP.NET Core", "Pairs the preceding module's prompts with the participant's answers")
+  ContainerDb(db, "Stewardship database", "SQL Server", "Preparation prompts, notes, and sessions")
+}
+
+Rel(participant, spa, "Opens the next session", "HTTPS")
+Rel(spa, api, "Requests the session preparation", "JSON/HTTPS")
+Rel(api, db, "Reads the preceding module prompts and the matching notes", "EF Core")
+@enduml

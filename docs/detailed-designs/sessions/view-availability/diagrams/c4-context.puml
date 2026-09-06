@@ -1,0 +1,12 @@
+@startuml
+!include <C4/C4_Context>
+LAYOUT_WITH_LEGEND()
+title System Context — View a mentor's availability
+
+Person(participant, "Participant", "Chooses a time to meet their mentor")
+Person_Ext(mentor, "Mentor", "Publishes the times they are open; their own experience is outside this design")
+System(stewardship, "Stewardship", "Curriculum, learning modules, and 1-on-1 sessions")
+
+Rel(participant, stewardship, "Views open times and the remaining allowance in", "HTTPS")
+Rel(mentor, stewardship, "Publishes open times to", "HTTPS")
+@enduml

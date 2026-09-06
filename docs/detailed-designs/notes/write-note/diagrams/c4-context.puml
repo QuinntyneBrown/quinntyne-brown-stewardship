@@ -1,0 +1,14 @@
+@startuml
+!include <C4/C4_Context>
+LAYOUT_WITH_LEGEND()
+title System Context — Write and retrieve notes
+
+Person(participant, "Participant", "Writes notes against a module or a session")
+Person_Ext(mentor, "Mentor", "Reads the notes of participants in their own cohort")
+Person_Ext(other, "Another participant", "Reaches no part of these notes")
+System(stewardship, "Stewardship", "Curriculum, learning modules, and 1-on-1 sessions")
+
+Rel(participant, stewardship, "Writes, revises, and retrieves notes in", "HTTPS")
+Rel(mentor, stewardship, "Reads notes of their own cohort in", "HTTPS")
+Rel(other, stewardship, "Is answered as not found by", "HTTPS")
+@enduml

@@ -1,0 +1,51 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Guard routes and authorise requests
+
+interface ICurrentParticipant {
+  +Guid Id
+  +Guid CohortId
+}
+
+class CurrentParticipant {
+  -IHttpContextAccessor _accessor
+  +Guid Id
+  +Guid CohortId
+}
+
+class ProgrammeHandlerBase {
+  #ICurrentParticipant Participant
+  #OwnedBy<T>(query: IQueryable<T>): IQueryable<T>
+}
+
+class NotFoundForOtherOwners {
+  +Resolve<T>(entity: T?): Result<T>
+}
+
+class SessionAuthenticationMiddleware {
+  +InvokeAsync(context: HttpContext, next: RequestDelegate): Task
+}
+
+class AuthGuard <<Angular CanActivateFn>> {
+  +canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | UrlTree
+}
+
+class SignInPageComponent {
+  -returnUrl: Signal<string | null>
+}
+
+ICurrentParticipant <|.. CurrentParticipant
+ProgrammeHandlerBase --> ICurrentParticipant : scopes queries by
+ProgrammeHandlerBase ..> NotFoundForOtherOwners : resolves through
+SessionAuthenticationMiddleware ..> CurrentParticipant : populates
+AuthGuard ..> SignInPageComponent : redirects to, carrying the requested URL
+@enduml

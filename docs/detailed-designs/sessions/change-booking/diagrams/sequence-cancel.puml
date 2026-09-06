@@ -1,0 +1,60 @@
+@startuml
+title UML sequence behaviour — Cancel a held session
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Participant" as actor
+box "Frontend — Stewardship web client" #E0F2FE
+  participant "BookingPanelComponent" as panel
+  participant "SessionService" as client
+end box
+box "Backend — Stewardship API application" #D1FADF
+  participant "SessionsController" as controller
+end box
+box "Backend — Stewardship Application and Domain" #ECFDF3
+  participant "CancelSessionCommandHandler" as handler
+  participant "BookingChangeWindow" as window
+  participant "Session" as session
+end box
+box "Backend — Stewardship Infrastructure" #FFF4E5
+  database "Stewardship database" as db
+end box
+
+actor -> panel : Cancel the held session
+panel -> client : Post the cancellation
+client -> controller : DELETE /sessions/{id}
+controller -> handler : Send CancelSessionCommand
+handler -> db : Load the session of the acting participant
+db --> handler : Session with its start
+handler -> window : Check the 24-hour window (L2-021 criterion 2)
+alt Window closed
+  window --> handler : Closed
+  handler --> controller : ChangeWindowClosed, session unchanged
+  controller --> client : 409 with the reason
+  client --> panel : Rejection result
+  panel --> actor : State that cancellation has closed
+else Window open
+  window --> handler : Open
+  handler -> session : Cancel
+  session --> handler : Status set to Cancelled, slot released
+  handler -> db : Save the cancellation
+  db --> handler : Commit result
+  handler --> controller : Cancelled
+  controller --> client : 200
+  client --> panel : Cancellation result
+  panel -> client : Re-request availability
+  client --> panel : Slot open again, booking panel offered
+  panel --> actor : Present bookable slots, allowance unchanged (L2-021 criterion 3)
+end
+@enduml

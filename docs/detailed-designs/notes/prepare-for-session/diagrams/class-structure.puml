@@ -1,0 +1,85 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Prepare for a session
+
+class PreparationPrompt {
+  +Guid Id
+  +Guid ModuleId
+  +int Ordinal
+  +string Text
+}
+
+class CurriculumModule {
+  +Guid Id
+  +int Ordinal
+  +string Title
+  +IReadOnlyList<PreparationPrompt> Prompts
+}
+
+class Note {
+  +Guid Id
+  +Guid ParticipantId
+  +Guid? ModuleId
+  +Guid? SessionId
+  +Guid? PromptId
+  +string Body
+  +DateTimeOffset RevisedAt
+}
+
+class Session {
+  +Guid Id
+  +DateTimeOffset StartsAt
+}
+
+class PrecedingModuleResolver {
+  +Resolve(session: Session, modules: IReadOnlyList<CurriculumModule>, completions: IReadOnlyList<SectionCompletion>): CurriculumModule?
+}
+
+class PromptWithAnswer {
+  +Guid PromptId
+  +int Ordinal
+  +string Text
+  +string? AnswerBody
+  +DateTimeOffset? AnsweredAt
+}
+
+class GetSessionPreparationQuery {
+  +Guid SessionId
+}
+
+class GetSessionPreparationQueryHandler {
+  -ICurrentParticipant _participant
+  -PrecedingModuleResolver _resolver
+  +Handle(query: GetSessionPreparationQuery, token: CancellationToken): Task<SessionPreparationResponse>
+}
+
+class SessionPreparationResponse {
+  +IReadOnlyList<PromptWithAnswer> Prompts
+  +bool HasPrompts()
+}
+
+note right of Note
+  PromptId refines a note without replacing its
+  attachment, so a note answering a prompt is still
+  a module note and still appears in the notes
+  destination (L2-026).
+end note
+
+CurriculumModule "1" *-- "*" PreparationPrompt : carries in order
+Note ..> PreparationPrompt : may answer
+PrecedingModuleResolver ..> Session : resolves the module for
+PrecedingModuleResolver --> CurriculumModule : returns
+GetSessionPreparationQueryHandler ..> GetSessionPreparationQuery : handles
+GetSessionPreparationQueryHandler --> PrecedingModuleResolver : applies
+GetSessionPreparationQueryHandler --> SessionPreparationResponse : returns
+SessionPreparationResponse *-- PromptWithAnswer : holds
+@enduml

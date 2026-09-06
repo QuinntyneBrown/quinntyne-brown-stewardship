@@ -1,0 +1,27 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Prepare for a session
+
+Container_Boundary(spa, "Stewardship web client") {
+  Component(prep, "SessionPreparationComponent", "Angular domain component", "Injects SESSION_SERVICE and renders the prompts")
+  Component(item, "PromptItemComponent", "Angular presentational component", "Renders one prompt and any answer beneath it")
+}
+
+Container_Boundary(api, "Stewardship API") {
+  Component(controller, "SessionsController", "ASP.NET Core controller", "Exposes GET /sessions/{id}/preparation")
+  Component(handler, "GetSessionPreparationQueryHandler", "MediatR handler", "Resolves the preceding module and pairs prompts with answers")
+  Component(resolver, "PrecedingModuleResolver", "Domain service", "Finds the module a session follows")
+  Component(prompt, "PreparationPrompt", "Domain entity", "One ordered question carried by a module")
+  Component(note, "Note", "Domain entity", "May name the prompt it answers")
+  ComponentDb(db, "Stewardship database", "SQL Server", "Persists prompts and notes")
+}
+
+Rel(prep, item, "Renders one per prompt")
+Rel(prep, controller, "Requests the session preparation", "JSON/HTTPS")
+Rel(controller, handler, "Sends GetSessionPreparationQuery")
+Rel(handler, resolver, "Resolves the preceding module with")
+Rel(handler, prompt, "Reads the ordered prompts of that module")
+Rel(handler, note, "Pairs each prompt with the answering note")
+Rel(handler, db, "Reads", "EF Core")
+@enduml

@@ -1,0 +1,31 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — View a mentor's availability
+
+Container_Boundary(spa, "Stewardship web client") {
+  Component(page, "SessionsPageComponent", "Angular routed component", "Owns the sessions route")
+  Component(panel, "BookingPanelComponent", "Angular domain component", "Injects SESSION_SERVICE and holds the selected day")
+  Component(strip, "DayStripComponent", "Angular presentational component", "Renders the days of the booking week")
+  Component(slot, "SlotButtonComponent", "Angular presentational component", "Renders one slot with its state as text")
+}
+
+Container_Boundary(api, "Stewardship API") {
+  Component(controller, "SessionsController", "ASP.NET Core controller", "Exposes GET /sessions/availability")
+  Component(handler, "GetAvailabilityQueryHandler", "MediatR handler", "Resolves slot state and the allowance")
+  Component(slotEntity, "AvailabilitySlot", "Domain entity", "One published time offered by the mentor")
+  Component(session, "Session", "Domain entity", "A booked 1-on-1 occupying one slot")
+  Component(cohort, "Cohort", "Domain entity", "Derives the session allowance from duration and cadence")
+  ComponentDb(db, "Stewardship database", "SQL Server", "Persists slots, sessions, and cohorts")
+}
+
+Rel(page, panel, "Composes")
+Rel(panel, strip, "Renders the booking week with")
+Rel(panel, slot, "Renders one per published time with")
+Rel(panel, controller, "Requests availability", "JSON/HTTPS")
+Rel(controller, handler, "Sends GetAvailabilityQuery")
+Rel(handler, slotEntity, "Reads published slots")
+Rel(handler, session, "Marks a slot taken from")
+Rel(handler, cohort, "Derives the allowance from")
+Rel(handler, db, "Reads", "EF Core")
+@enduml

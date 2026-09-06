@@ -1,0 +1,77 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — View the curriculum path
+
+enum ModuleState {
+  Complete
+  Current
+  Locked
+}
+
+class CurriculumModule {
+  +Guid Id
+  +Guid CohortId
+  +int Ordinal
+  +string Title
+  +string Summary
+}
+
+class ModuleSection {
+  +Guid Id
+  +Guid ModuleId
+  +int Ordinal
+  +string Title
+}
+
+class SectionCompletion {
+  +Guid Id
+  +Guid ParticipantId
+  +Guid SectionId
+  +DateTimeOffset CompletedAt
+}
+
+class ProgressSummary {
+  +int CompletedCount
+  +int TotalCount
+  +int RemainingCount()
+  +int Percentage()
+}
+
+class ModulePathItem {
+  +int Ordinal
+  +string Title
+  +ModuleState State
+  +string StateLabel
+}
+
+class GetCurriculumQuery {
+}
+
+class GetCurriculumQueryHandler {
+  -ICurrentParticipant _participant
+  +Handle(query: GetCurriculumQuery, token: CancellationToken): Task<CurriculumResponse>
+}
+
+class CurriculumResponse {
+  +IReadOnlyList<ModulePathItem> Path
+  +ProgressSummary Progress
+  +int CurrentModuleOrdinal
+}
+
+CurriculumModule "1" *-- "*" ModuleSection : owns
+ModuleSection "1" --> "*" SectionCompletion : completed by
+ModulePathItem --> ModuleState : carries
+GetCurriculumQueryHandler ..> GetCurriculumQuery : handles
+GetCurriculumQueryHandler --> CurriculumResponse : returns
+CurriculumResponse *-- ProgressSummary : holds
+CurriculumResponse *-- ModulePathItem : holds twelve
+@enduml

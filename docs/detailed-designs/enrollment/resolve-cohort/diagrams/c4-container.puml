@@ -1,0 +1,16 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Resolve the cohort
+
+Person(participant, "Participant", "Belongs to exactly one cohort, or to none")
+System_Boundary(stewardship, "Stewardship") {
+  Container(spa, "Stewardship web client", "Angular", "Presents the programme, or the not-enrolled notice")
+  Container(api, "Stewardship API", "ASP.NET Core", "Resolves the cohort and derives its week, allowance, and end date")
+  ContainerDb(db, "Stewardship database", "SQL Server", "Cohorts, enrollments, and mentors")
+}
+
+Rel(participant, spa, "Opens the programme", "HTTPS")
+Rel(spa, api, "Requests the enrollment context", "JSON/HTTPS")
+Rel(api, db, "Reads the active enrollment and its cohort", "EF Core")
+@enduml

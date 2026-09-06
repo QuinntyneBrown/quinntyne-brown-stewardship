@@ -1,0 +1,1 @@
+- VERY focused responsive web application to allow participants to learn about building redemptive technology via structure curriclum, learning modules, 1 - on 1 sessions

@@ -1,0 +1,16 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Review sessions held
+
+Person(participant, "Participant", "Opens the sessions screen")
+System_Boundary(stewardship, "Stewardship") {
+  Container(spa, "Stewardship web client", "Angular", "Lists held sessions, or an explicit empty state")
+  Container(api, "Stewardship API", "ASP.NET Core", "Returns past sessions with the module current at each")
+  ContainerDb(db, "Stewardship database", "SQL Server", "Sessions, completion records, and notes")
+}
+
+Rel(participant, spa, "Opens the sessions screen", "HTTPS")
+Rel(spa, api, "Requests the session history", "JSON/HTTPS")
+Rel(api, db, "Reads past sessions, completion timestamps, and note references", "EF Core")
+@enduml

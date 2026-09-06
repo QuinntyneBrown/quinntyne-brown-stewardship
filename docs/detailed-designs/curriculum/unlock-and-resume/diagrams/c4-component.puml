@@ -1,0 +1,29 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Unlock modules and resume the current one
+
+Container_Boundary(spa, "Stewardship web client") {
+  Component(page, "CurriculumPageComponent", "Angular routed component", "Offers the continue action")
+  Component(notice, "ModuleLockedNoticeComponent", "Angular presentational component", "States why a module is not yet open")
+}
+
+Container_Boundary(api, "Stewardship API") {
+  Component(controller, "ModulesController", "ASP.NET Core controller", "Exposes GET /modules/{ordinal}")
+  Component(handler, "GetModuleQueryHandler", "MediatR handler", "Applies the access policy before reading module content")
+  Component(policy, "ModuleAccessPolicy", "Domain service", "Decides whether a module is open to a participant")
+  Component(resume, "ResumePoint", "Domain value object", "Resolves the section a participant returns to")
+  Component(module, "CurriculumModule", "Domain entity", "Owns its ordered sections")
+  Component(completion, "SectionCompletion", "Domain entity", "One record per completed section")
+  ComponentDb(db, "Stewardship database", "SQL Server", "Persists modules and completion records")
+}
+
+Rel(page, controller, "Requests the current module at its resume point", "JSON/HTTPS")
+Rel(page, notice, "Renders on refusal")
+Rel(controller, handler, "Sends GetModuleQuery")
+Rel(handler, policy, "Asks whether the requested module is open")
+Rel(policy, completion, "Reads recorded completion from")
+Rel(handler, resume, "Resolves the returning section with")
+Rel(handler, module, "Reads content from")
+Rel(handler, db, "Reads", "EF Core")
+@enduml

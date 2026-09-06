@@ -1,0 +1,46 @@
+@startuml
+title UML sequence behaviour — Reach every destination at XS
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Participant" as actor
+box "Frontend — Stewardship web client" #E0F2FE
+  participant "AppShellComponent" as shell
+  participant "NavDisclosureComponent" as disclosure
+  participant "PrimaryNavComponent" as nav
+  participant "BackAffordanceComponent" as back
+  participant "appRoutes" as routes
+end box
+box "Frontend — Stewardship design system" #ECFDF3
+  participant "breakpoints.css" as tokens
+end box
+
+actor -> shell : Open the application on a phone
+shell -> tokens : Read the breakpoint tokens
+tokens --> shell : XS is below the SM boundary
+shell -> disclosure : Render the navigation behind a control
+disclosure --> actor : Present the navigation control
+actor -> disclosure : Open the navigation
+disclosure -> nav : Reveal the same component rendered at XL
+nav -> routes : Read the declared destinations
+routes --> nav : Curriculum, Sessions, Notes
+nav --> actor : Offer all three destinations (L2-030 criterion 1)
+actor -> nav : Choose Sessions
+nav -> shell : Navigate to the sessions route
+shell --> actor : Present the sessions screen in one column, no horizontal page scroll (L2-029 criterion 3)
+
+actor -> shell : Open a module
+shell -> back : Render the back affordance on the module route
+back --> actor : Offer a return to the curriculum (L2-030 criterion 2)
+@enduml

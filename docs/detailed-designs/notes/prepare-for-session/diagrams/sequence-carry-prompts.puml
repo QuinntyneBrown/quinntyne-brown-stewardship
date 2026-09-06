@@ -1,0 +1,60 @@
+@startuml
+title UML sequence behaviour — Carry preparation prompts to a session
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Participant" as actor
+box "Frontend — Stewardship web client" #E0F2FE
+  participant "SessionPreparationComponent" as prep
+  participant "PromptItemComponent" as item
+  participant "SessionService" as client
+end box
+box "Backend — Stewardship API application" #D1FADF
+  participant "SessionsController" as controller
+end box
+box "Backend — Stewardship Application and Domain" #ECFDF3
+  participant "GetSessionPreparationQueryHandler" as handler
+  participant "PrecedingModuleResolver" as resolver
+end box
+box "Backend — Stewardship Infrastructure" #FFF4E5
+  database "Stewardship database" as db
+end box
+
+actor -> prep : Open the next session
+prep -> client : Request the session preparation
+client -> controller : GET /sessions/{id}/preparation
+controller -> handler : Send GetSessionPreparationQuery
+handler -> db : Read the session, the cohort modules, and the completion records
+db --> handler : Session with the module history
+handler -> resolver : Resolve the module this session follows
+resolver --> handler : Preceding module, or none
+alt L2-027 criterion 3 — the module carries no prompts
+  handler --> controller : Preparation with no prompts
+  controller --> client : 200 with an empty prompt set
+  client --> prep : Empty preparation
+  prep --> actor : Present the session with no prompt area rendered
+else The module carries prompts
+  handler -> db : Read the ordered prompts of that module
+  db --> handler : Prompts in order
+  handler -> db : Read the notes of the acting participant that name those prompts
+  db --> handler : Answering notes
+  handler -> handler : Pair each prompt with its answer (L2-027 criterion 2)
+  handler --> controller : Prompts with answers
+  controller --> client : 200 with the preparation
+  client --> prep : Preparation held in a signal
+  prep -> item : Render each prompt with any answer beneath it
+  item --> prep : Rendered prompt
+  prep --> actor : Present the prompts against the session (L2-027 criterion 1)
+end
+@enduml

@@ -1,0 +1,14 @@
+@startuml
+!include <C4/C4_Context>
+LAYOUT_WITH_LEGEND()
+title System Context — Change or cancel a booking
+
+Person(participant, "Participant", "Moves or cancels a held session while the window is open")
+Person_Ext(mentor, "Mentor", "Regains the released time; their own experience is outside this design")
+Person_Ext(other, "Another participant", "May claim a released slot")
+System(stewardship, "Stewardship", "Curriculum, learning modules, and 1-on-1 sessions")
+
+Rel(participant, stewardship, "Reschedules or cancels in", "HTTPS")
+Rel(stewardship, mentor, "Releases the reserved time back to")
+Rel(other, stewardship, "Books the released slot in", "HTTPS")
+@enduml

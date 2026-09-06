@@ -1,0 +1,29 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Operate and observe
+
+Container_Boundary(api, "Stewardship API") {
+  Component(correlation, "CorrelationIdMiddleware", "ASP.NET Core middleware", "Assigns a correlation identifier to every request")
+  Component(logging, "LoggingBehavior", "MediatR pipeline behaviour", "Logs each request with its correlation identifier and duration")
+  Component(health, "HealthEndpoint", "ASP.NET Core health checks", "Reports the application and its data store")
+  Component(check, "DatabaseHealthCheck", "IHealthCheck", "Names the data store when it is unreachable")
+  Component(audit, "IAuditWriter", "Application abstraction", "Records who did what and when")
+  Component(record, "AuditRecord", "Domain entity", "Acting participant, action, subject, and time")
+  Component(handlers, "Booking handlers", "MediatR handlers", "Write an audit record on create, change, and cancel")
+  ComponentDb(db, "Stewardship database", "SQL Server", "Persists audit records")
+}
+
+Container_Boundary(spa, "Stewardship web client") {
+  Component(routes, "Lazy route bundles", "Angular route configuration", "Loads each screen bundle on demand")
+}
+
+Rel(correlation, logging, "Supplies the identifier to")
+Rel(logging, handlers, "Wraps")
+Rel(handlers, audit, "Records booking actions through")
+Rel(audit, record, "Writes")
+Rel(health, check, "Runs")
+Rel(check, db, "Probes reachability of", "EF Core")
+Rel(audit, db, "Writes", "EF Core")
+Rel(routes, correlation, "Sends one request per screen to", "JSON/HTTPS")
+@enduml

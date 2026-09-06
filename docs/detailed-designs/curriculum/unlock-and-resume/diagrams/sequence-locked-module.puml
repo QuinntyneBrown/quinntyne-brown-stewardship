@@ -1,0 +1,56 @@
+@startuml
+title UML sequence behaviour — Request a module that is not yet open
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Participant" as actor
+box "Frontend — Stewardship web client" #E0F2FE
+  participant "ModulePageComponent" as target
+  participant "ModuleLockedNoticeComponent" as notice
+  participant "CurriculumService" as client
+end box
+box "Backend — Stewardship API application" #D1FADF
+  participant "ModulesController" as controller
+end box
+box "Backend — Stewardship Application and Domain" #ECFDF3
+  participant "GetModuleQueryHandler" as handler
+  participant "ModuleAccessPolicy" as policy
+end box
+box "Backend — Stewardship Infrastructure" #FFF4E5
+  database "Stewardship database" as db
+end box
+
+actor -> target : Request /modules/4 by direct URL while module 3 is current
+target -> client : Request module 4
+client -> controller : GET /modules/4
+controller -> handler : Send GetModuleQuery
+handler -> db : Read the requested module and the participant completion records
+db --> handler : Module 4 and completion
+handler -> policy : Apply the sequential unlock rule (L2-010)
+alt Module 4 is not open
+  policy --> handler : Refused, current module is 3
+  handler --> controller : ModuleLockedResult with the explanation
+  controller --> client : 403 with the explanation and no module content
+  client --> target : Refusal result
+  target -> notice : Render the explanation
+  notice --> actor : State why module 4 is not yet open
+  target --> actor : Return to the curriculum (L2-010 criterion 2)
+else A completed module such as module 2 is requested
+  policy --> handler : Open, because completed modules remain accessible
+  handler --> controller : Module content in a readable state
+  controller --> client : 200 with the module
+  client --> target : Module result
+  target --> actor : Open module 2 for reading (L2-010 criterion 4)
+end
+@enduml

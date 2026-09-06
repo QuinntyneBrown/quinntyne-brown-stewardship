@@ -1,0 +1,12 @@
+@startuml
+!include <C4/C4_Context>
+LAYOUT_WITH_LEGEND()
+title System Context — Review sessions held
+
+Person(participant, "Participant", "Looks back over the sessions already held")
+Person_Ext(mentor, "Mentor", "Met the participant at each listed session")
+System(stewardship, "Stewardship", "Curriculum, learning modules, and 1-on-1 sessions")
+
+Rel(participant, stewardship, "Reviews held sessions and their notes in", "HTTPS")
+Rel(mentor, stewardship, "Held each listed session recorded in")
+@enduml

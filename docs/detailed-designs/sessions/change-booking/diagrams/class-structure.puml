@@ -1,0 +1,85 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Change or cancel a booking
+
+class BookingChangeWindow {
+  +TimeSpan Notice
+  +bool IsOpen(startsAt: DateTimeOffset, now: DateTimeOffset)
+  +string ClosedReason(startsAt: DateTimeOffset)
+}
+
+class Session {
+  +Guid Id
+  +Guid ParticipantId
+  +Guid SlotId
+  +DateTimeOffset StartsAt
+  +SessionStatus Status
+  +MoveTo(slot: AvailabilitySlot): void
+  +Cancel(now: DateTimeOffset): void
+  +bool CountsAgainstAllowance()
+}
+
+enum SessionStatus {
+  Booked
+  Held
+  Cancelled
+}
+
+class AvailabilitySlot {
+  +Guid Id
+  +DateTimeOffset StartsAt
+  +bool IsPublished
+}
+
+class RescheduleSessionCommand {
+  +Guid SessionId
+  +Guid NewSlotId
+}
+
+class CancelSessionCommand {
+  +Guid SessionId
+}
+
+class RescheduleSessionCommandHandler {
+  -BookingChangeWindow _window
+  -ISystemClock _clock
+  +Handle(command: RescheduleSessionCommand, token: CancellationToken): Task<Result<SessionResponse>>
+}
+
+class CancelSessionCommandHandler {
+  -BookingChangeWindow _window
+  -ISystemClock _clock
+  +Handle(command: CancelSessionCommand, token: CancellationToken): Task<Result>
+}
+
+class ChangeWindowClosed {
+  +DateTimeOffset StartsAt
+  +string Reason
+}
+
+note right of BookingChangeWindow
+  Notice is 24 hours. A session starting in more than
+  the notice may change; one starting in the notice or
+  less may not (L2-020, L2-021).
+end note
+
+Session --> SessionStatus : carries
+Session --> AvailabilitySlot : occupies
+RescheduleSessionCommandHandler ..> RescheduleSessionCommand : handles
+CancelSessionCommandHandler ..> CancelSessionCommand : handles
+RescheduleSessionCommandHandler --> BookingChangeWindow : checks
+CancelSessionCommandHandler --> BookingChangeWindow : checks
+RescheduleSessionCommandHandler --> Session : moves
+CancelSessionCommandHandler --> Session : cancels
+RescheduleSessionCommandHandler ..> ChangeWindowClosed : returns when closed
+CancelSessionCommandHandler ..> ChangeWindowClosed : returns when closed
+@enduml

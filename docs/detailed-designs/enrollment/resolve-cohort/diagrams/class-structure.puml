@@ -1,0 +1,70 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Resolve the cohort
+
+class Cohort {
+  +Guid Id
+  +string Name
+  +DateOnly StartDate
+  +int DurationWeeks
+  +int SessionCadenceWeeks
+  +Guid MentorId
+  +EndDate(): DateOnly
+  +CurrentWeek(today: DateOnly): int
+  +SessionAllowance(): int
+  +HasEnded(today: DateOnly): bool
+}
+
+class Enrollment {
+  +Guid Id
+  +Guid ParticipantId
+  +Guid CohortId
+  +DateTimeOffset EnrolledAt
+  +bool IsActive
+}
+
+class Mentor {
+  +Guid Id
+  +string DisplayName
+}
+
+class Participant {
+  +Guid Id
+  +string EmailAddress
+}
+
+class GetEnrollmentQuery {
+}
+
+class GetEnrollmentQueryHandler {
+  -ICurrentParticipant _participant
+  -ISystemClock _clock
+  +Handle(query: GetEnrollmentQuery, token: CancellationToken): Task<EnrollmentResponse>
+}
+
+class EnrollmentResponse {
+  +bool IsEnrolled
+  +string? CohortName
+  +int? CurrentWeek
+  +int? DurationWeeks
+  +DateOnly? EndDate
+  +int? SessionAllowance
+  +string? MentorDisplayName
+}
+
+Participant "1" --> "1" Enrollment : holds one active
+Enrollment --> Cohort : names
+Cohort --> Mentor : is met by
+GetEnrollmentQueryHandler ..> GetEnrollmentQuery : handles
+GetEnrollmentQueryHandler --> Enrollment : resolves
+GetEnrollmentQueryHandler --> EnrollmentResponse : returns
+@enduml

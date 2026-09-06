@@ -1,0 +1,20 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Operate and observe
+
+Person(participant, "Participant", "Experiences the response budgets as an uninterrupted screen")
+Person_Ext(operator, "Operator", "Runs and diagnoses the deployed system")
+System_Boundary(stewardship, "Stewardship") {
+  Container(spa, "Stewardship web client", "Angular", "Lazy-loaded routes within the payload budget")
+  Container(api, "Stewardship API", "ASP.NET Core", "Reports health, correlates errors, and records booking actions")
+  ContainerDb(db, "Stewardship database", "SQL Server", "Programme data and the audit record")
+}
+System_Ext(monitor, "Monitoring", "Polls health and collects logs")
+
+Rel(participant, spa, "Loads a screen over a 4G connection", "HTTPS")
+Rel(spa, api, "Requests one payload per screen", "JSON/HTTPS")
+Rel(api, db, "Reads and writes, and checks reachability", "EF Core")
+Rel(monitor, api, "Polls the health endpoint and collects correlated logs", "HTTPS")
+Rel(operator, monitor, "Diagnoses through")
+@enduml

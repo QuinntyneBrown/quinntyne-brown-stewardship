@@ -1,0 +1,56 @@
+@startuml
+title UML sequence behaviour — Resolve who may read a note
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Requester" as actor
+box "Frontend — Stewardship web client" #E0F2FE
+  participant "NoteListComponent" as list
+  participant "NoteService" as client
+end box
+box "Backend — Stewardship API application" #D1FADF
+  participant "NotesController" as controller
+end box
+box "Backend — Stewardship Application and Domain" #ECFDF3
+  participant "GetNoteQueryHandler" as handler
+  participant "NoteVisibilityPolicy" as policy
+end box
+box "Backend — Stewardship Infrastructure" #FFF4E5
+  database "Stewardship database" as db
+end box
+
+actor -> list : Request a note by its identifier
+list -> client : Build the typed request
+client -> controller : GET /notes/{id}
+controller -> handler : Send GetNoteQuery
+handler -> db : Read the note
+db --> handler : Note with its owner and cohort
+handler -> policy : Resolve visibility for the requester
+alt The requester owns the note
+  policy --> handler : Admitted
+  handler --> controller : Note
+  controller --> client : 200 with the note
+  client --> actor : Present the note
+else The requester is the mentor of the owner cohort
+  policy --> handler : Admitted (L2-028 criterion 2)
+  handler --> controller : Note
+  controller --> client : 200 with the note
+  client --> actor : Present the note
+else Any other requester
+  policy --> handler : Refused
+  handler --> controller : Not found
+  controller --> client : 404 with no note content (L2-028 criteria 1 and 3)
+  client --> actor : State that the note is unavailable
+end
+@enduml

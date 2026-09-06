@@ -1,0 +1,69 @@
+@startuml
+title UML sequence behaviour — Reschedule a held session
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Participant" as actor
+box "Frontend — Stewardship web client" #E0F2FE
+  participant "BookingPanelComponent" as panel
+  participant "HeldSessionCardComponent" as card
+  participant "SessionService" as client
+end box
+box "Backend — Stewardship API application" #D1FADF
+  participant "SessionsController" as controller
+end box
+box "Backend — Stewardship Application and Domain" #ECFDF3
+  participant "RescheduleSessionCommandHandler" as handler
+  participant "BookingChangeWindow" as window
+  participant "Session" as session
+end box
+box "Backend — Stewardship Infrastructure" #FFF4E5
+  database "Stewardship database" as db
+end box
+
+actor -> panel : Open the sessions screen holding a session
+panel -> card : Render the held session
+card -> window : Ask whether the change window is open
+alt L2-020 criterion 2 — the session starts in 24 hours or less
+  window --> card : Closed
+  card --> actor : Disable reschedule and state the reason
+else More than 24 hours remain
+  window --> card : Open
+  card --> actor : Offer reschedule
+  actor -> panel : Select another open slot and confirm the change
+  panel -> client : Post the new slot
+  client -> controller : PUT /sessions/{id}/slot
+  controller -> handler : Send RescheduleSessionCommand
+  handler -> db : Load the session of the acting participant
+  db --> handler : Session with its start
+  handler -> window : Re-check the window on the server (L2-020 criterion 3)
+  alt Window closed
+    window --> handler : Closed
+    handler --> controller : ChangeWindowClosed, session unchanged
+    controller --> client : 409 with the reason
+    client --> panel : Rejection result
+    panel --> actor : State that the window has closed
+  else Window open
+    window --> handler : Open
+    handler -> session : Move to the newly selected slot
+    session --> handler : Moved
+    handler -> db : Save the move, releasing the previous slot
+    db --> handler : Commit result
+    handler --> controller : SessionResponse at the new time
+    controller --> client : 200 with the moved session
+    client --> panel : Reschedule result
+    panel --> actor : Present the new time, with the previous slot open again
+  end
+end
+@enduml

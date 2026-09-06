@@ -1,0 +1,38 @@
+@startuml
+title UML sequence behaviour — Report health
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Monitoring" as actor
+box "Backend — Stewardship API application" #D1FADF
+  participant "HealthEndpoint" as health
+end box
+box "Backend — Stewardship Infrastructure" #FFF4E5
+  participant "DatabaseHealthCheck" as check
+  database "Stewardship database" as db
+end box
+
+actor -> health : GET /health
+health -> check : Run the data store check
+check -> db : Probe reachability
+alt The data store answers
+  db --> check : Reachable
+  check --> health : Healthy
+  health --> actor : 200 with the status of the application and its data store (L2-040 criterion 1)
+else The data store does not answer
+  db --> check : Unreachable
+  check --> health : Unhealthy, naming the data store
+  health --> actor : 503 naming the failing dependency (L2-040 criterion 2)
+end
+@enduml

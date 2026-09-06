@@ -1,0 +1,26 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Responsive shell
+
+Container_Boundary(spa, "Stewardship web client") {
+  Component(shell, "AppShellComponent", "Angular routed component", "Hosts the header, the navigation, and the routed outlet")
+  Component(nav, "PrimaryNavComponent", "Angular presentational component", "Renders every destination as a list")
+  Component(disclosure, "NavDisclosureComponent", "Angular presentational component", "Reveals the same list at XS behind a control")
+  Component(routes, "appRoutes", "Angular route table", "Declares Curriculum, Sessions, and Notes once")
+  Component(back, "BackAffordanceComponent", "Angular presentational component", "Returns to the curriculum from a module at XS")
+}
+
+Container_Boundary(ds, "Stewardship design system") {
+  Component(breakpoints, "breakpoints.css", "CSS custom properties", "XS, SM, MD, LG, and XL as named tokens")
+  Component(layout, "layout.css", "CSS custom properties", "Gutters, measure, and container widths per breakpoint")
+}
+
+Rel(shell, nav, "Renders at SM and wider")
+Rel(shell, disclosure, "Renders at XS")
+Rel(disclosure, nav, "Reveals the same component")
+Rel(nav, routes, "Renders one entry per declared destination")
+Rel(shell, back, "Renders on a module route at XS")
+Rel(shell, breakpoints, "Reads")
+Rel(shell, layout, "Reads")
+@enduml

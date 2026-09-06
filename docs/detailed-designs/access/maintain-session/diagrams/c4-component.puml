@@ -1,0 +1,21 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Maintain and end a session
+
+Container_Boundary(api, "Stewardship API") {
+  Component(middleware, "SessionAuthenticationMiddleware", "ASP.NET Core middleware", "Resolves the session cookie and rejects an expired session with 401")
+  Component(controller, "AuthenticationController", "ASP.NET Core controller", "Exposes POST /authentication/sign-out")
+  Component(handler, "SignOutCommandHandler", "MediatR handler", "Revokes the session record for the calling device")
+  Component(session, "ParticipantSession", "Domain entity", "One device session with its last-activity time")
+  Component(options, "SessionLifetimeOptions", "Options type", "Holds the 30-day idle timeout and the persistent cookie lifetime")
+  ComponentDb(db, "Stewardship database", "SQL Server", "Persists session records")
+}
+
+Rel(middleware, session, "Loads and refreshes the last-activity time of")
+Rel(middleware, options, "Reads the idle timeout from")
+Rel(controller, handler, "Sends SignOutCommand")
+Rel(handler, session, "Revokes")
+Rel(middleware, db, "Reads and writes", "EF Core")
+Rel(handler, db, "Writes", "EF Core")
+@enduml

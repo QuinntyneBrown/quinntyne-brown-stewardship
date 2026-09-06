@@ -1,0 +1,76 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Operate and observe
+
+class CorrelationIdMiddleware {
+  +InvokeAsync(context: HttpContext, next: RequestDelegate): Task
+}
+
+class CorrelationContext {
+  +string CorrelationId
+}
+
+class LoggingBehavior<TRequest, TResponse> {
+  -ILogger _logger
+  -CorrelationContext _correlation
+  +Handle(request: TRequest, next: RequestHandlerDelegate<TResponse>, token: CancellationToken): Task<TResponse>
+}
+
+interface IAuditWriter {
+  +Record(action: AuditAction, subjectId: Guid, token: CancellationToken): Task
+}
+
+class AuditWriter {
+  -ICurrentParticipant _participant
+  -ISystemClock _clock
+  +Record(action: AuditAction, subjectId: Guid, token: CancellationToken): Task
+}
+
+class AuditRecord {
+  +Guid Id
+  +Guid ActingParticipantId
+  +AuditAction Action
+  +Guid SubjectId
+  +DateTimeOffset OccurredAt
+  +string CorrelationId
+}
+
+enum AuditAction {
+  BookingCreated
+  BookingRescheduled
+  BookingCancelled
+}
+
+class DatabaseHealthCheck {
+  +CheckHealthAsync(context: HealthCheckContext, token: CancellationToken): Task<HealthCheckResult>
+}
+
+class PerformanceBudget {
+  +TimeSpan ReadP95
+  +TimeSpan WriteP95
+  +TimeSpan TimeToInteractive
+  +int MaxCompressedPayloadBytes
+}
+
+note right of PerformanceBudget
+  Read p95 300 ms, write p95 500 ms, interactive
+  within 2.5 s on 4G, and 300 KB compressed per
+  screen excluding module media (L2-039).
+end note
+
+IAuditWriter <|.. AuditWriter
+AuditWriter --> AuditRecord : writes
+AuditRecord --> AuditAction : carries
+CorrelationIdMiddleware --> CorrelationContext : populates
+LoggingBehavior ..> CorrelationContext : reads
+AuditWriter ..> CorrelationContext : stamps the record from
+@enduml

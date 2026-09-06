@@ -1,0 +1,51 @@
+@startuml
+title UML sequence behaviour — Read a module
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Participant" as actor
+box "Frontend — Stewardship web client" #E0F2FE
+  participant "ModulePageComponent" as page
+  participant "SectionListComponent" as nav
+  participant "PracticeAssignmentComponent" as practice
+  participant "CurriculumService" as client
+end box
+box "Backend — Stewardship API application" #D1FADF
+  participant "ModulesController" as controller
+end box
+box "Backend — Stewardship Application and Domain" #ECFDF3
+  participant "GetModuleQueryHandler" as handler
+end box
+box "Backend — Stewardship Infrastructure" #FFF4E5
+  database "Stewardship database" as db
+end box
+
+actor -> page : Open a module
+page -> client : Request the module
+client -> controller : GET /modules/{ordinal}
+note right of controller : The request carries no viewport,\nso one payload serves every size (L2-015)
+controller -> handler : Send GetModuleQuery
+handler -> db : Read the module, its sections in order, and each practice assignment
+db --> handler : Sections with reading content and practice steps
+handler -> db : Read the participant completion records for these sections
+db --> handler : Completion records
+handler -> handler : Resolve each section to complete, current, or not started (L2-012)
+handler --> controller : ModuleResponse with every section unabridged
+controller --> client : 200 with the module
+client --> page : Module result held in a signal
+page -> nav : Render the ordered section list with state
+page -> practice : Render every practice step and the effort estimate
+practice --> page : Rendered practice, identical at XS and XL
+page --> actor : Present reading content and practice together (L2-012 criterion 3)
+@enduml

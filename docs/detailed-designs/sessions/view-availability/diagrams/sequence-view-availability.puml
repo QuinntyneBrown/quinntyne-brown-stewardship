@@ -1,0 +1,63 @@
+@startuml
+title UML sequence behaviour — View availability and select a day
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Participant" as actor
+box "Frontend — Stewardship web client" #E0F2FE
+  participant "BookingPanelComponent" as panel
+  participant "DayStripComponent" as strip
+  participant "SlotButtonComponent" as slot
+  participant "SessionService" as client
+end box
+box "Backend — Stewardship API application" #D1FADF
+  participant "SessionsController" as controller
+end box
+box "Backend — Stewardship Application and Domain" #ECFDF3
+  participant "GetAvailabilityQueryHandler" as handler
+  participant "Cohort" as cohort
+end box
+box "Backend — Stewardship Infrastructure" #FFF4E5
+  database "Stewardship database" as db
+end box
+
+actor -> panel : Open the sessions screen
+panel -> client : Request availability with no day selected
+client -> controller : GET /sessions/availability
+controller -> handler : Send GetAvailabilityQuery
+handler -> db : Read the published slots of the cohort mentor for the booking week
+db --> handler : Published slots
+handler -> db : Read the sessions already booked against those slots
+db --> handler : Existing sessions
+handler -> handler : Mark each slot open or taken, disclosing no booking owner (L2-017 criterion 3)
+handler -> cohort : Derive the allowance from duration and cadence (L2-023)
+cohort --> handler : Allowance of 6
+handler -> db : Count the sessions the acting participant has held or holds
+db --> handler : Booked count
+handler --> controller : Days, slots, and the allowance summary
+controller --> client : 200 with the availability
+client --> panel : Availability held in a signal
+panel -> strip : Render the booking week with one day selected (L2-017 criterion 1)
+panel -> slot : Render each slot of that day with its state as text
+panel --> actor : Present the day strip, the slots, and "3 of 6 booked"
+
+actor -> strip : Select a different day
+strip --> panel : Selected day changed
+panel -> client : Request availability for the newly selected day
+client -> controller : GET /sessions/availability?selectedDay=...
+controller --> client : 200 with that day's slots
+client --> panel : Availability for the new day
+panel -> slot : Render the slots of the newly selected day (L2-017 criterion 4)
+panel --> actor : Present the new day's slots
+@enduml

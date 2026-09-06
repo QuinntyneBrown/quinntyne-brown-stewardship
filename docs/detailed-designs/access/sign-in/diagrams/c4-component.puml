@@ -1,0 +1,22 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Sign in
+
+Container_Boundary(api, "Stewardship API") {
+  Component(controller, "AuthenticationController", "ASP.NET Core controller", "Exposes POST /authentication/sign-in")
+  Component(validator, "SignInCommandValidator", "FluentValidation validator", "Rejects an empty email address or password")
+  Component(handler, "SignInCommandHandler", "MediatR handler", "Applies the cooling-off check, verifies the credential, issues the session")
+  Component(attempts, "SignInAttempt", "Domain entity", "Records one attempt with its time and originating address")
+  Component(participant, "Participant", "Domain entity", "Holds the credential hash")
+  Component(hasher, "IPasswordHasher", "Application abstraction", "Verifies a password against a salted one-way hash")
+  ComponentDb(db, "Stewardship database", "SQL Server", "Persists participants and attempts")
+}
+
+Rel(controller, validator, "Validates SignInCommand with")
+Rel(controller, handler, "Sends SignInCommand")
+Rel(handler, attempts, "Counts recent failures and records the attempt")
+Rel(handler, participant, "Loads by email address")
+Rel(handler, hasher, "Verifies the submitted password with")
+Rel(handler, db, "Reads and writes", "EF Core")
+@enduml

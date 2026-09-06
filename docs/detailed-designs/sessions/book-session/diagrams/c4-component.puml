@@ -1,0 +1,31 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Book a session
+
+Container_Boundary(spa, "Stewardship web client") {
+  Component(panel, "BookingPanelComponent", "Angular domain component", "Offers confirm, or the held session actions")
+  Component(held, "HeldSessionCardComponent", "Angular presentational component", "Shows the held session with reschedule and cancel")
+  Component(conflict, "SlotConflictNoticeComponent", "Angular presentational component", "States that the slot is no longer available")
+}
+
+Container_Boundary(api, "Stewardship API") {
+  Component(controller, "SessionsController", "ASP.NET Core controller", "Exposes POST /sessions")
+  Component(validator, "BookSessionCommandValidator", "FluentValidation validator", "Rejects an absent, unpublished, or past slot")
+  Component(handler, "BookSessionCommandHandler", "MediatR handler", "Applies the one-open-booking rule and writes the session")
+  Component(policy, "HeldBookingPolicy", "Domain service", "Decides whether a further booking is permitted")
+  Component(session, "Session", "Domain entity", "A booked 1-on-1 occupying exactly one slot")
+  Component(slot, "AvailabilitySlot", "Domain entity", "The published time being claimed")
+  ComponentDb(db, "Stewardship database", "SQL Server", "Enforces one active session per slot")
+}
+
+Rel(panel, held, "Renders while a booking is held")
+Rel(panel, conflict, "Renders when the slot was taken first")
+Rel(panel, controller, "Posts the booking", "JSON/HTTPS")
+Rel(controller, validator, "Validates the command with")
+Rel(controller, handler, "Sends BookSessionCommand")
+Rel(handler, policy, "Asks whether a booking may be made")
+Rel(handler, session, "Creates")
+Rel(handler, slot, "Claims")
+Rel(handler, db, "Writes, and reads the uniqueness violation back", "EF Core")
+@enduml

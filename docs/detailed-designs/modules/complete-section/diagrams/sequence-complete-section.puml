@@ -1,0 +1,60 @@
+@startuml
+title UML sequence behaviour — Complete a section
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Participant" as actor
+box "Frontend — Stewardship web client" #E0F2FE
+  participant "ModulePageComponent" as page
+  participant "ModuleProgressBarComponent" as bar
+  participant "CurriculumService" as client
+end box
+box "Backend — Stewardship API application" #D1FADF
+  participant "SectionsController" as controller
+end box
+box "Backend — Stewardship Application and Domain" #ECFDF3
+  participant "MarkSectionCompleteCommandHandler" as handler
+  participant "SectionProgress" as progress
+  participant "CurriculumModule" as module
+end box
+box "Backend — Stewardship Infrastructure" #FFF4E5
+  database "Stewardship database" as db
+end box
+
+actor -> page : Mark the current section complete
+page -> client : Post the completion
+client -> controller : POST /sections/{id}/completion
+controller -> handler : Send MarkSectionCompleteCommand
+handler -> db : Record the completion for the acting participant (L2-013)
+db --> handler : Commit result
+handler -> db : Read every section of the module and the completion set
+db --> handler : Sections and completion records
+handler -> progress : Derive the indicator from sections complete over sections total (L2-014)
+progress --> handler : Fill percentage and the section label
+handler -> module : Ask whether every section is now complete (L2-016)
+alt Some section remains incomplete
+  module --> handler : Not complete
+  handler --> controller : Progress with the next section ordinal
+  controller --> client : 200
+  client --> page : Completion result
+  page -> bar : Render the derived fill and label
+  page --> actor : Advance to the next section, with the action no longer offered here
+else Every section is now complete
+  module --> handler : Complete
+  handler --> controller : Progress with module completion
+  controller --> client : 200
+  client --> page : Completion result
+  page --> actor : Return to the curriculum (L2-013 criterion 3)
+end
+@enduml

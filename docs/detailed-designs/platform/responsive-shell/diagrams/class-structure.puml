@@ -1,0 +1,70 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Responsive shell
+
+class Breakpoint <<CSS custom properties>> {
+  +--stw-breakpoint-sm : 576px
+  +--stw-breakpoint-md : 768px
+  +--stw-breakpoint-lg : 992px
+  +--stw-breakpoint-xl : 1200px
+}
+
+class LayoutTokens <<CSS custom properties>> {
+  +--stw-gutter-xs
+  +--stw-gutter-md
+  +--stw-measure
+  +--stw-container-max
+}
+
+class Destination {
+  +string Path
+  +string Label
+  +string Icon
+}
+
+class AppRoutes {
+  +IReadOnlyList<Destination> Destinations
+}
+
+class AppShellComponent {
+  -isCompact: Signal<boolean>
+  -isNavOpen: Signal<boolean>
+}
+
+class PrimaryNavComponent {
+  +destinations: InputSignal<Destination[]>
+  +current: InputSignal<string>
+}
+
+class NavDisclosureComponent {
+  +open: ModelSignal<boolean>
+}
+
+class BackAffordanceComponent {
+  +target: InputSignal<string>
+}
+
+note right of AppRoutes
+  One declared set of destinations serves every
+  breakpoint. Nothing filters it by viewport, so the
+  set at XS equals the set at XL (L2-030 criterion 3).
+end note
+
+AppShellComponent --> PrimaryNavComponent : renders at SM and wider
+AppShellComponent --> NavDisclosureComponent : renders at XS
+NavDisclosureComponent --> PrimaryNavComponent : reveals the same component
+AppShellComponent --> BackAffordanceComponent : renders on a module route at XS
+PrimaryNavComponent ..> Destination : renders one entry per
+AppRoutes *-- Destination : declares
+AppShellComponent ..> Breakpoint : reads
+AppShellComponent ..> LayoutTokens : reads
+@enduml

@@ -1,0 +1,39 @@
+@startuml
+title UML sequence behaviour — Deep link requested without a session
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Unidentified visitor" as actor
+box "Frontend — Stewardship web client" #E0F2FE
+  participant "authGuard" as guard
+  participant "SignInPageComponent" as signin
+  participant "ModulePageComponent" as target
+end box
+box "Backend — Stewardship API application" #D1FADF
+  participant "SessionAuthenticationMiddleware" as middleware
+end box
+
+actor -> guard : Request /modules/3 by direct URL
+guard -> middleware : Confirm the presented session
+middleware --> guard : 401, no session
+guard -> guard : Apply L2-004 criterion 1 and retain /modules/3
+guard --> signin : Redirect, carrying the requested route
+signin --> actor : Present the sign-in screen with no programme content
+actor -> signin : Sign in successfully
+signin -> guard : Re-activate the retained route
+guard -> middleware : Confirm the established session
+middleware --> guard : Authenticated participant
+guard --> target : Activate /modules/3, applying L2-004 criterion 3
+target --> actor : Present the originally requested screen
+@enduml

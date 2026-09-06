@@ -1,0 +1,60 @@
+@startuml
+title UML sequence behaviour — Book a session
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Participant" as actor
+box "Frontend — Stewardship web client" #E0F2FE
+  participant "BookingPanelComponent" as panel
+  participant "HeldSessionCardComponent" as held
+  participant "SessionService" as client
+end box
+box "Backend — Stewardship API application" #D1FADF
+  participant "SessionsController" as controller
+end box
+box "Backend — Stewardship Application and Domain" #ECFDF3
+  participant "BookSessionCommandHandler" as handler
+  participant "HeldBookingPolicy" as policy
+end box
+box "Backend — Stewardship Infrastructure" #FFF4E5
+  database "Stewardship database" as db
+end box
+
+actor -> panel : Select an open slot
+panel -> panel : Mark the slot selected and enable confirm
+actor -> panel : Confirm the selection
+panel -> client : Post the booking
+client -> controller : POST /sessions
+controller -> handler : Send BookSessionCommand
+handler -> db : Read any future session of the acting participant and the booked count
+db --> handler : Held session or none, and the booked count
+handler -> policy : Apply the one-open-booking rule and the allowance (L2-019, L2-023)
+alt A future session is already held
+  policy --> handler : Refused, a booking is already held
+  handler --> controller : Rejected, held session unchanged
+  controller --> client : 409 with the held session
+  client --> panel : Rejection result
+  panel -> held : Render the held session with reschedule and cancel
+  panel --> actor : Offer change and cancellation rather than a further booking
+else No booking is held and the allowance remains
+  policy --> handler : Permitted
+  handler -> db : Write the session against the slot
+  db --> handler : Commit result
+  handler --> controller : SessionResponse
+  controller --> client : 201 with the session
+  client --> panel : Booking result
+  panel -> held : Render the new session as the next session (L2-018)
+  panel --> actor : Present the booked date, time, mentor, and duration
+end
+@enduml

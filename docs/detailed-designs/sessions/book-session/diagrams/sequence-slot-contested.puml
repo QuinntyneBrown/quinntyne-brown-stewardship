@@ -1,0 +1,49 @@
+@startuml
+title UML sequence behaviour — Two participants confirm the same slot
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Participant A" as first
+actor "Participant B" as second
+box "Frontend — Stewardship web client" #E0F2FE
+  participant "BookingPanelComponent" as panel
+  participant "SlotConflictNoticeComponent" as conflict
+end box
+box "Backend — Stewardship API application" #D1FADF
+  participant "SessionsController" as controller
+end box
+box "Backend — Stewardship Application and Domain" #ECFDF3
+  participant "BookSessionCommandHandler" as handler
+end box
+box "Backend — Stewardship Infrastructure" #FFF4E5
+  database "Stewardship database" as db
+end box
+
+first -> controller : POST /sessions for slot S
+second -> controller : POST /sessions for slot S
+controller -> handler : Send BookSessionCommand for A
+controller -> handler : Send BookSessionCommand for B
+handler -> db : Write the session for A against slot S
+db --> handler : Commit succeeds
+handler --> controller : SessionResponse for A
+handler -> db : Write the session for B against slot S
+db --> handler : Uniqueness violation on the slot (L2-024 criterion 1)
+handler --> controller : SlotNoLongerAvailable, no session created for B
+controller --> panel : 409 stating the slot is no longer available
+panel -> conflict : Render the conflict notice
+conflict --> second : State that the slot is no longer available
+panel -> controller : Re-request availability
+controller --> panel : Slot S now marked taken (L2-024 criterion 2)
+panel --> second : Present slot S as taken, held-session state unchanged
+@enduml

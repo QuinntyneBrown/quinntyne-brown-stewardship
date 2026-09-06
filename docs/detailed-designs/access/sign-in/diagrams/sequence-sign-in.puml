@@ -1,0 +1,74 @@
+@startuml
+title UML sequence behaviour — Sign in
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Participant" as actor
+box "Frontend — Stewardship web client" #E0F2FE
+  participant "SignInPageComponent" as page
+  participant "AuthenticationService" as client
+end box
+box "Backend — Stewardship API application" #D1FADF
+  participant "AuthenticationController" as controller
+  participant "SignInCommandValidator" as validator
+end box
+box "Backend — Stewardship Application and Domain" #ECFDF3
+  participant "SignInCommandHandler" as handler
+  participant "IPasswordHasher" as hasher
+end box
+box "Backend — Stewardship Infrastructure" #FFF4E5
+  database "Stewardship database" as db
+end box
+
+actor -> page : Enter email address and password
+page -> client : Build typed sign-in request
+client -> controller : POST /authentication/sign-in
+controller -> validator : Validate SignInCommand
+alt L2-001 criterion 4 — a field is empty
+  validator --> controller : Invalid, naming the empty field
+  controller --> client : 400 ProblemDetails
+  client --> page : Field-level failure
+  page --> actor : Mark the empty field
+else Both fields present
+  validator --> controller : Valid
+  controller -> handler : Send SignInCommand
+  handler -> db : Count failed attempts in the last 15 minutes
+  db --> handler : Attempt count
+  alt L2-038 criterion 1 — 10 or more failures
+    handler -> db : Record the refused attempt with time and address
+    handler --> controller : Refused for the cooling-off period
+    controller --> client : 429 with the cooling-off period
+    client --> page : Cooling-off result
+    page --> actor : State the cooling-off period without disclosing password correctness
+  else Below the threshold
+    handler -> db : Load the participant by email address
+    db --> handler : Credential record, or none
+    handler -> hasher : Verify the password against the stored hash
+    hasher --> handler : Verification outcome
+    alt Credential verified
+      handler -> db : Record the successful attempt
+      handler --> controller : Authenticated identity
+      controller --> client : 200 with the session cookie
+      client --> page : Authenticated result
+      page --> actor : Present the curriculum
+    else L2-001 criteria 2 and 3 — verification failed or no such address
+      handler -> db : Record the failed attempt
+      handler --> controller : Failure, indistinguishable between the two causes
+      controller --> client : 401 with "Email address or password is incorrect"
+      client --> page : Failure result
+      page --> actor : Present the identical message
+    end
+  end
+end
+@enduml

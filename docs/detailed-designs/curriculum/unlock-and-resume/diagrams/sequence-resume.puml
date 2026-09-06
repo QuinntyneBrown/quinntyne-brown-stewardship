@@ -1,0 +1,55 @@
+@startuml
+title UML sequence behaviour — Resume the current module
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Participant" as actor
+box "Frontend — Stewardship web client" #E0F2FE
+  participant "CurriculumPageComponent" as page
+  participant "ModulePageComponent" as target
+  participant "CurriculumService" as client
+end box
+box "Backend — Stewardship API application" #D1FADF
+  participant "ModulesController" as controller
+end box
+box "Backend — Stewardship Application and Domain" #ECFDF3
+  participant "GetModuleQueryHandler" as handler
+  participant "ModuleAccessPolicy" as policy
+  participant "ResumePoint" as resume
+end box
+box "Backend — Stewardship Infrastructure" #FFF4E5
+  database "Stewardship database" as db
+end box
+
+actor -> page : Activate the continue action
+page -> client : Request the current module
+client -> controller : GET /modules/current
+controller -> handler : Send GetModuleQuery
+handler -> db : Read the cohort modules and the participant completion records
+db --> handler : Modules with sections, and completion
+handler -> policy : Resolve the current module ordinal
+policy --> handler : Earliest module not yet complete
+handler -> resume : Resolve the returning section (L2-011)
+alt Some sections complete
+  resume --> handler : First incomplete section
+else No section complete
+  resume --> handler : Section 1
+else Every section complete, module not yet marked complete
+  resume --> handler : Last section
+end
+handler --> controller : Module content with the resume section ordinal
+controller --> client : 200 with the module
+client --> target : Module result
+target --> actor : Open the module at the resumed section
+@enduml

@@ -1,0 +1,25 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Guard routes and authorise requests
+
+Container_Boundary(spa, "Stewardship web client") {
+  Component(guard, "authGuard", "Angular CanActivateFn", "Refuses a programme route without a session and retains the requested URL")
+  Component(routes, "appRoutes", "Angular route table", "Declares every participant-facing destination")
+}
+
+Container_Boundary(api, "Stewardship API") {
+  Component(middleware, "SessionAuthenticationMiddleware", "ASP.NET Core middleware", "Answers 401 when no valid session is presented")
+  Component(controller, "ProgrammeControllers", "ASP.NET Core controllers", "Carry the authorisation policy on every programme endpoint")
+  Component(current, "ICurrentParticipant", "Application abstraction", "Resolves the acting participant from the session alone")
+  Component(handler, "ProgrammeHandlers", "MediatR handlers", "Scope every query and command to the acting participant")
+  ComponentDb(db, "Stewardship database", "SQL Server", "Persists participant-owned data")
+}
+
+Rel(routes, guard, "Activates each programme route through")
+Rel(guard, middleware, "Confirms the session with", "JSON/HTTPS")
+Rel(middleware, controller, "Passes the authenticated request to")
+Rel(controller, handler, "Sends the command or query")
+Rel(handler, current, "Reads the acting participant from")
+Rel(handler, db, "Filters every read and write by the acting participant", "EF Core")
+@enduml

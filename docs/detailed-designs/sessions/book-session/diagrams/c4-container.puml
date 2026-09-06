@@ -1,0 +1,18 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Book a session
+
+Person(participant, "Participant", "Confirms a selected open slot")
+Person_Ext(other, "Another participant", "May confirm the same slot first")
+System_Boundary(stewardship, "Stewardship") {
+  Container(spa, "Stewardship web client", "Angular", "Offers confirm only while no booking is held")
+  Container(api, "Stewardship API", "ASP.NET Core", "Enforces one open booking and settles contested slots")
+  ContainerDb(db, "Stewardship database", "SQL Server", "Sessions, with one active session per slot")
+}
+
+Rel(participant, spa, "Confirms the selection", "HTTPS")
+Rel(other, spa, "Confirms the same selection", "HTTPS")
+Rel(spa, api, "Posts the booking", "JSON/HTTPS")
+Rel(api, db, "Writes the session against a uniquely constrained slot", "EF Core")
+@enduml

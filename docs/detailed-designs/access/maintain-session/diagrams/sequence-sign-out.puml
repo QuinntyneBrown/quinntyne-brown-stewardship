@@ -1,0 +1,49 @@
+@startuml
+title UML sequence behaviour — Sign out
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Participant" as actor
+box "Frontend — Stewardship web client" #E0F2FE
+  participant "AppShellComponent" as shell
+  participant "SignInService" as client
+end box
+box "Backend — Stewardship API application" #D1FADF
+  participant "AuthenticationController" as controller
+end box
+box "Backend — Stewardship Application and Domain" #ECFDF3
+  participant "SignOutCommandHandler" as handler
+  participant "ParticipantSession" as session
+end box
+box "Backend — Stewardship Infrastructure" #FFF4E5
+  database "Stewardship database" as db
+end box
+
+actor -> shell : Activate sign out
+shell -> client : Request sign out
+client -> controller : POST /authentication/sign-out
+controller -> handler : Send SignOutCommand for the calling session
+handler -> db : Load the session record for this device
+db --> handler : Session record
+handler -> session : Revoke, applying L2-003 to this device alone
+session --> handler : Revoked
+handler -> db : Save the revocation
+db --> handler : Commit result
+handler --> controller : Signed out
+controller --> client : 200 with the session cookie cleared
+client --> shell : Signed-out result
+shell -> shell : Discard cached programme state
+shell --> actor : Present the sign-in screen
+note over db : Session records on other devices are untouched\nand remain valid (L2-003 criterion 3)
+@enduml

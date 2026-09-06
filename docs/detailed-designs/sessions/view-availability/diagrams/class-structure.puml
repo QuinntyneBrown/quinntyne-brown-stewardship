@@ -1,0 +1,92 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — View a mentor's availability
+
+enum SlotState {
+  Open
+  Taken
+  Selected
+}
+
+class AvailabilitySlot {
+  +Guid Id
+  +Guid MentorId
+  +DateTimeOffset StartsAt
+  +int DurationMinutes
+  +bool IsPublished
+}
+
+class Session {
+  +Guid Id
+  +Guid ParticipantId
+  +Guid SlotId
+  +DateTimeOffset StartsAt
+  +SessionStatus Status
+}
+
+class Cohort {
+  +int DurationWeeks
+  +int SessionCadenceWeeks
+  +SessionAllowance(): int
+}
+
+class AllowanceSummary {
+  +int BookedCount
+  +int Allowance
+  +bool IsExhausted()
+  +string Label()
+}
+
+class SlotOption {
+  +Guid SlotId
+  +DateTimeOffset StartsAt
+  +int DurationMinutes
+  +SlotState State
+  +string StateLabel
+}
+
+class DayOption {
+  +DateOnly Date
+  +bool IsSelected
+  +int OpenSlotCount
+}
+
+class GetAvailabilityQuery {
+  +DateOnly? SelectedDay
+}
+
+class GetAvailabilityQueryHandler {
+  -ICurrentParticipant _participant
+  +Handle(query: GetAvailabilityQuery, token: CancellationToken): Task<AvailabilityResponse>
+}
+
+class AvailabilityResponse {
+  +IReadOnlyList<DayOption> Days
+  +IReadOnlyList<SlotOption> Slots
+  +AllowanceSummary Allowance
+}
+
+note right of SlotOption
+  A taken slot carries no participant identifier,
+  so the response discloses nothing about who
+  booked it (L2-017 criterion 3).
+end note
+
+AvailabilitySlot "1" --> "0..1" Session : occupied by
+SlotOption --> SlotState : carries
+Cohort ..> AllowanceSummary : supplies the denominator to
+GetAvailabilityQueryHandler ..> GetAvailabilityQuery : handles
+GetAvailabilityQueryHandler --> AvailabilityResponse : returns
+AvailabilityResponse *-- DayOption : holds the booking week
+AvailabilityResponse *-- SlotOption : holds the selected day
+AvailabilityResponse *-- AllowanceSummary : holds
+@enduml

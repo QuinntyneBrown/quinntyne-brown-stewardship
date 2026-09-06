@@ -1,0 +1,89 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Book a session
+
+enum SessionStatus {
+  Booked
+  Held
+  Cancelled
+}
+
+class Session {
+  +Guid Id
+  +Guid ParticipantId
+  +Guid SlotId
+  +Guid MentorId
+  +DateTimeOffset StartsAt
+  +int DurationMinutes
+  +SessionStatus Status
+  +bool IsFuture(now: DateTimeOffset)
+}
+
+class AvailabilitySlot {
+  +Guid Id
+  +Guid MentorId
+  +DateTimeOffset StartsAt
+  +int DurationMinutes
+  +bool IsPublished
+}
+
+class HeldBookingPolicy {
+  +MayBook(held: Session?, booked: int, allowance: int, now: DateTimeOffset): BookingDecision
+}
+
+class BookingDecision {
+  +bool Permitted
+  +string? Reason
+}
+
+class BookSessionCommand {
+  +Guid SlotId
+}
+
+class BookSessionCommandValidator {
+  +Validate(command: BookSessionCommand): ValidationResult
+}
+
+class BookSessionCommandHandler {
+  -ICurrentParticipant _participant
+  -HeldBookingPolicy _policy
+  -ISystemClock _clock
+  +Handle(command: BookSessionCommand, token: CancellationToken): Task<Result<SessionResponse>>
+}
+
+class SessionResponse {
+  +Guid SessionId
+  +DateTimeOffset StartsAt
+  +int DurationMinutes
+  +string MentorDisplayName
+}
+
+class SlotNoLongerAvailable {
+  +Guid SlotId
+}
+
+note bottom of Session
+  A unique constraint over SlotId for sessions that are
+  not Cancelled makes the database the single arbiter of
+  a contested slot (L2-024).
+end note
+
+Session --> SessionStatus : carries
+AvailabilitySlot "1" --> "0..1" Session : occupied by
+BookSessionCommandValidator ..> BookSessionCommand : validates
+BookSessionCommandHandler ..> BookSessionCommand : handles
+BookSessionCommandHandler --> HeldBookingPolicy : applies
+BookSessionCommandHandler --> Session : creates
+BookSessionCommandHandler --> SessionResponse : returns
+BookSessionCommandHandler ..> SlotNoLongerAvailable : returns on a lost race
+HeldBookingPolicy --> BookingDecision : returns
+@enduml

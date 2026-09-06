@@ -1,0 +1,73 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Secure boundary
+
+class ValidationBehavior<TRequest, TResponse> {
+  -IEnumerable<IValidator<TRequest>> _validators
+  +Handle(request: TRequest, next: RequestHandlerDelegate<TResponse>, token: CancellationToken): Task<TResponse>
+}
+
+interface IPasswordHasher {
+  +Hash(password: string): string
+  +Verify(password: string, hash: string): bool
+}
+
+class PasswordHasher {
+  -IOptions<PasswordHashingOptions> _options
+  +Hash(password: string): string
+  +Verify(password: string, hash: string): bool
+}
+
+class PasswordHashingOptions {
+  +string Algorithm
+  +int WorkFactor
+  +int SaltBytes
+}
+
+class ContentLimitsOptions {
+  +int NoteBodyMaxLength
+  +int RequestBodyMaxBytes
+}
+
+class ProblemDetailsExceptionHandler {
+  +TryHandleAsync(context: HttpContext, exception: Exception, token: CancellationToken): ValueTask<bool>
+  -Sanitize(exception: Exception): ProblemDetails
+}
+
+class CookiePolicyOptions {
+  +bool HttpOnly
+  +CookieSecurePolicy SecurePolicy
+  +SameSiteMode SameSite
+}
+
+class ValidationProblem {
+  +IReadOnlyDictionary<string, string[]> Errors
+}
+
+note right of ProblemDetailsExceptionHandler
+  Sanitize removes stack traces, connection strings,
+  and internal identifiers, leaving a correlation
+  identifier the participant can quote (L2-037
+  criterion 4).
+end note
+
+note bottom of PasswordHashingOptions
+  Algorithm, work factor, and salt length are
+  configuration. Their values are <TO SUPPLY>.
+end note
+
+IPasswordHasher <|.. PasswordHasher
+PasswordHasher ..> PasswordHashingOptions : reads
+ValidationBehavior ..> ValidationProblem : raises
+ValidationBehavior ..> ContentLimitsOptions : enforces lengths from
+ProblemDetailsExceptionHandler ..> ValidationProblem : renders
+@enduml

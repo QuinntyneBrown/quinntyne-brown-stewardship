@@ -1,0 +1,73 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Complete a section
+
+class MarkSectionCompleteCommand {
+  +Guid SectionId
+}
+
+class MarkSectionCompleteCommandValidator {
+  +Validate(command: MarkSectionCompleteCommand): ValidationResult
+}
+
+class MarkSectionCompleteCommandHandler {
+  -ICurrentParticipant _participant
+  -ISystemClock _clock
+  +Handle(command: MarkSectionCompleteCommand, token: CancellationToken): Task<CompletionResponse>
+}
+
+class CompletionResponse {
+  +SectionProgress Progress
+  +bool ModuleComplete
+  +int? NextSectionOrdinal
+}
+
+class SectionCompletion {
+  +Guid Id
+  +Guid ParticipantId
+  +Guid SectionId
+  +DateTimeOffset CompletedAt
+}
+
+class SectionProgress {
+  +int CompletedCount
+  +int TotalCount
+  +int Percentage()
+  +string Label()
+}
+
+class CurriculumModule {
+  +Guid Id
+  +IReadOnlyList<ModuleSection> Sections
+  +IsComplete(completed: IReadOnlySet<Guid>): bool
+}
+
+class ModuleSection {
+  +Guid Id
+  +int Ordinal
+}
+
+note right of CurriculumModule
+  Completion is derived from the section set
+  on every read. No module completion row exists,
+  so adding a section reopens the module (L2-016).
+end note
+
+MarkSectionCompleteCommandValidator ..> MarkSectionCompleteCommand : validates
+MarkSectionCompleteCommandHandler ..> MarkSectionCompleteCommand : handles
+MarkSectionCompleteCommandHandler --> SectionCompletion : records
+MarkSectionCompleteCommandHandler --> CompletionResponse : returns
+CompletionResponse *-- SectionProgress : holds
+CurriculumModule "1" *-- "*" ModuleSection : owns
+ModuleSection "1" --> "*" SectionCompletion : completed by
+CurriculumModule ..> SectionCompletion : derives completion from
+@enduml

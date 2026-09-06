@@ -1,0 +1,16 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Change or cancel a booking
+
+Person(participant, "Participant", "Reschedules or cancels a held session")
+System_Boundary(stewardship, "Stewardship") {
+  Container(spa, "Stewardship web client", "Angular", "Offers the actions only while the window is open, and states the reason otherwise")
+  Container(api, "Stewardship API", "ASP.NET Core", "Enforces the 24-hour window independently of the client")
+  ContainerDb(db, "Stewardship database", "SQL Server", "Sessions and the slots they occupy")
+}
+
+Rel(participant, spa, "Requests a change or a cancellation", "HTTPS")
+Rel(spa, api, "Posts the change", "JSON/HTTPS")
+Rel(api, db, "Moves or cancels the session and releases the slot", "EF Core")
+@enduml

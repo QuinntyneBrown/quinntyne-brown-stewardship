@@ -1,0 +1,31 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Complete a section
+
+Container_Boundary(spa, "Stewardship web client") {
+  Component(page, "ModulePageComponent", "Angular routed component", "Offers the action only while the section is incomplete")
+  Component(button, "CompleteSectionButtonComponent", "Angular presentational component", "Emits the completion intent")
+  Component(bar, "ModuleProgressBarComponent", "Angular presentational component", "Renders the derived fill and its label")
+}
+
+Container_Boundary(api, "Stewardship API") {
+  Component(controller, "SectionsController", "ASP.NET Core controller", "Exposes POST /sections/{id}/completion")
+  Component(validator, "MarkSectionCompleteCommandValidator", "FluentValidation validator", "Rejects an unknown or unreachable section")
+  Component(handler, "MarkSectionCompleteCommandHandler", "MediatR handler", "Records completion and re-derives module state")
+  Component(completion, "SectionCompletion", "Domain entity", "One record per participant and section")
+  Component(progress, "SectionProgress", "Domain value object", "Derives the fill and the section label")
+  Component(module, "CurriculumModule", "Domain entity", "Derives its own completion from its sections")
+  ComponentDb(db, "Stewardship database", "SQL Server", "Persists completion records")
+}
+
+Rel(page, button, "Composes while the section is incomplete")
+Rel(page, bar, "Composes")
+Rel(page, controller, "Posts the completion", "JSON/HTTPS")
+Rel(controller, validator, "Validates the command with")
+Rel(controller, handler, "Sends MarkSectionCompleteCommand")
+Rel(handler, completion, "Records")
+Rel(handler, progress, "Derives the indicator with")
+Rel(handler, module, "Asks whether every section is now complete")
+Rel(handler, db, "Reads and writes", "EF Core")
+@enduml

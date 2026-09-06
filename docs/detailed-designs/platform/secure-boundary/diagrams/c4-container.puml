@@ -1,0 +1,18 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Secure boundary
+
+Person(participant, "Participant", "Submits forms and note text")
+Person_Ext(attacker, "Untrusted caller", "Submits malformed, oversized, or marked-up input")
+System_Boundary(stewardship, "Stewardship") {
+  Container(spa, "Stewardship web client", "Angular", "Renders stored text as literal text")
+  Container(api, "Stewardship API", "ASP.NET Core", "Redirects to HTTPS and validates before any handler runs")
+  ContainerDb(db, "Stewardship database", "SQL Server", "Holds password hashes, never passwords")
+}
+
+Rel(participant, spa, "Submits over HTTPS", "HTTPS")
+Rel(attacker, api, "Calls directly with crafted input", "HTTPS")
+Rel(spa, api, "Sends requests carrying a HttpOnly, Secure, SameSite cookie", "JSON/HTTPS")
+Rel(api, db, "Stores salted one-way hashes and validated content", "EF Core")
+@enduml

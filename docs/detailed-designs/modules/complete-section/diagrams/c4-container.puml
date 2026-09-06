@@ -1,0 +1,16 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Complete a section
+
+Person(participant, "Participant", "Marks a section complete when finished with it")
+System_Boundary(stewardship, "Stewardship") {
+  Container(spa, "Stewardship web client", "Angular", "Offers the completion action and shows derived progress")
+  Container(api, "Stewardship API", "ASP.NET Core", "Records completion and derives module state from it")
+  ContainerDb(db, "Stewardship database", "SQL Server", "One completion record per participant and section")
+}
+
+Rel(participant, spa, "Marks a section complete", "HTTPS")
+Rel(spa, api, "Posts the completion", "JSON/HTTPS")
+Rel(api, db, "Writes the completion record and reads the section set", "EF Core")
+@enduml

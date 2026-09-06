@@ -1,0 +1,16 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Accessible interaction
+
+Person(participant, "Participant", "May navigate by keyboard, use assistive technology, or read with reduced vision")
+System_Boundary(stewardship, "Stewardship") {
+  Container(spa, "Stewardship web client", "Angular", "Renders state as text, traps focus, and honours the target minimum")
+  Container(ds, "Stewardship design system", "Static site and CSS custom properties", "Owns contrast-tested colour pairs, the focus ring, and the target minimum")
+  Container(api, "Stewardship API", "ASP.NET Core", "Supplies a text label for every state it reports")
+}
+
+Rel(participant, spa, "Operates by pointer, keyboard, or assistive technology", "HTTPS")
+Rel(spa, ds, "Reads colour, focus, and target tokens from", "CSS custom properties")
+Rel(spa, api, "Receives states carrying their own labels from", "JSON/HTTPS")
+@enduml

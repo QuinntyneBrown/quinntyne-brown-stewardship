@@ -1,0 +1,12 @@
+@startuml
+!include <C4/C4_Context>
+LAYOUT_WITH_LEGEND()
+title System Context — Prepare for a session
+
+Person(participant, "Participant", "Arrives at a session having answered its prompts")
+Person_Ext(mentor, "Mentor", "Meets a prepared participant; their own experience is outside this design")
+System(stewardship, "Stewardship", "Curriculum, learning modules, and 1-on-1 sessions")
+
+Rel(participant, stewardship, "Answers module prompts and reviews them before a session in", "HTTPS")
+Rel(stewardship, mentor, "Presents the prepared session to")
+@enduml

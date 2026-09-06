@@ -1,0 +1,81 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Review sessions held
+
+class Session {
+  +Guid Id
+  +Guid ParticipantId
+  +DateTimeOffset StartsAt
+  +int DurationMinutes
+  +SessionStatus Status
+  +bool IsPast(now: DateTimeOffset)
+}
+
+class CurrentModuleAtResolver {
+  +Resolve(modules: IReadOnlyList<CurriculumModule>, completions: IReadOnlyList<SectionCompletion>, at: DateTimeOffset): CurriculumModule
+}
+
+class SectionCompletion {
+  +Guid SectionId
+  +DateTimeOffset CompletedAt
+}
+
+class CurriculumModule {
+  +int Ordinal
+  +string Title
+}
+
+class Note {
+  +Guid Id
+  +Guid? SessionId
+  +DateTimeOffset RevisedAt
+}
+
+class SessionHistoryItem {
+  +Guid SessionId
+  +DateTimeOffset StartsAt
+  +int DurationMinutes
+  +int ModuleOrdinal
+  +string ModuleTitle
+  +Guid? NoteId
+}
+
+class GetSessionHistoryQuery {
+}
+
+class GetSessionHistoryQueryHandler {
+  -ICurrentParticipant _participant
+  -ISystemClock _clock
+  -CurrentModuleAtResolver _resolver
+  +Handle(query: GetSessionHistoryQuery, token: CancellationToken): Task<SessionHistoryResponse>
+}
+
+class SessionHistoryResponse {
+  +IReadOnlyList<SessionHistoryItem> Items
+  +bool IsEmpty()
+}
+
+note right of CurrentModuleAtResolver
+  The module current at a past instant is derived from
+  completion timestamps, not stored on the session, so it
+  agrees with the curriculum path (L2-009, L2-016).
+end note
+
+CurrentModuleAtResolver ..> SectionCompletion : reads timestamps from
+CurrentModuleAtResolver --> CurriculumModule : returns
+GetSessionHistoryQueryHandler ..> GetSessionHistoryQuery : handles
+GetSessionHistoryQueryHandler --> CurrentModuleAtResolver : applies per session
+GetSessionHistoryQueryHandler --> SessionHistoryResponse : returns
+SessionHistoryResponse *-- SessionHistoryItem : holds
+SessionHistoryItem ..> Session : describes
+SessionHistoryItem ..> Note : routes to
+@enduml

@@ -1,0 +1,16 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Read a module
+
+Person(participant, "Participant", "Reads a module on a phone or a desktop browser")
+System_Boundary(stewardship, "Stewardship") {
+  Container(spa, "Stewardship web client", "Angular", "Renders one payload at every viewport size")
+  Container(api, "Stewardship API", "ASP.NET Core", "Serves module sections with reading content and practice")
+  ContainerDb(db, "Stewardship database", "SQL Server", "Module sections, practice assignments, and completion records")
+}
+
+Rel(participant, spa, "Reads a module from any device", "HTTPS")
+Rel(spa, api, "Requests the module once, regardless of viewport", "JSON/HTTPS")
+Rel(api, db, "Reads sections, practice steps, and completion", "EF Core")
+@enduml

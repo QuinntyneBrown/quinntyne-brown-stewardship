@@ -1,0 +1,54 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Maintain and end a session
+
+class ParticipantSession {
+  +Guid Id
+  +Guid ParticipantId
+  +DateTimeOffset EstablishedAt
+  +DateTimeOffset LastActiveAt
+  +DateTimeOffset? RevokedAt
+  +IsExpired(now: DateTimeOffset, idleTimeout: TimeSpan): bool
+  +Touch(now: DateTimeOffset): void
+  +Revoke(now: DateTimeOffset): void
+}
+
+class SessionLifetimeOptions {
+  +TimeSpan IdleTimeout
+  +TimeSpan PersistentCookieLifetime
+}
+
+class SessionAuthenticationMiddleware {
+  -IOptions<SessionLifetimeOptions> _options
+  -ISystemClock _clock
+  +InvokeAsync(context: HttpContext, next: RequestDelegate): Task
+}
+
+class SignOutCommand {
+  +Guid SessionId
+}
+
+class SignOutCommandHandler {
+  +Handle(command: SignOutCommand, token: CancellationToken): Task
+}
+
+class Participant {
+  +Guid Id
+  +string EmailAddress
+}
+
+SessionAuthenticationMiddleware ..> SessionLifetimeOptions : reads
+SessionAuthenticationMiddleware --> ParticipantSession : loads and refreshes
+SignOutCommandHandler ..> SignOutCommand : handles
+SignOutCommandHandler --> ParticipantSession : revokes
+Participant "1" --> "*" ParticipantSession : holds one per device
+@enduml

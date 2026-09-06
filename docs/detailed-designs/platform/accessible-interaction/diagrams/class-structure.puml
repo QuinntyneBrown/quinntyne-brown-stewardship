@@ -1,0 +1,85 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Accessible interaction
+
+class ColourPair <<design system token>> {
+  +string ForegroundToken
+  +string BackgroundToken
+  +decimal MeasuredRatio
+  +ContrastRole Role
+}
+
+enum ContrastRole {
+  BodyText
+  LargeText
+  MeaningfulNonText
+}
+
+class TargetTokens <<design system token>> {
+  +--stw-target-min : 44px
+}
+
+class FocusTokens <<design system token>> {
+  +--stw-focus-ring-width
+  +--stw-focus-ring-colour
+}
+
+class StateLabels {
+  +Module(state: ModuleState): string
+  +Section(state: SectionState): string
+  +Slot(state: SlotState): string
+}
+
+class ModuleMarkerComponent {
+  +ordinal: InputSignal<number>
+  +state: InputSignal<ModuleState>
+  +stateLabel: InputSignal<string>
+  +shapeFor(state: ModuleState): MarkerShape
+}
+
+enum MarkerShape {
+  Filled
+  Ringed
+  Outlined
+}
+
+class FocusTrapDirective {
+  +activate(container: HTMLElement): void
+  +release(): void
+}
+
+class DialogComponent {
+  -opener: HTMLElement
+  +open(): void
+  +close(): void
+}
+
+note right of ColourPair
+  Every pair carries the ratio it was measured at.
+  BodyText requires 4.5:1; LargeText and
+  MeaningfulNonText require 3:1 (L2-031).
+end note
+
+note bottom of MarkerShape
+  Shape distinguishes the states independently of
+  lightness, so they survive greyscale (L2-031
+  criterion 4, L2-034 criterion 3).
+end note
+
+ColourPair --> ContrastRole : carries
+ModuleMarkerComponent ..> ColourPair : reads
+ModuleMarkerComponent ..> TargetTokens : reads
+ModuleMarkerComponent --> MarkerShape : renders
+ModuleMarkerComponent ..> StateLabels : renders the label from
+DialogComponent --> FocusTrapDirective : applies
+DialogComponent ..> FocusTokens : reads
+@enduml

@@ -1,0 +1,16 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Responsive shell
+
+Person(participant, "Participant", "Uses the same application on a phone and a desktop browser")
+System_Boundary(stewardship, "Stewardship") {
+  Container(spa, "Stewardship web client", "Angular", "One route table and one payload, laid out per breakpoint")
+  Container(ds, "Stewardship design system", "Static site and CSS custom properties", "Owns the breakpoints, spacing, and type scale")
+  Container(api, "Stewardship API", "ASP.NET Core", "Returns the same content whatever the viewport")
+}
+
+Rel(participant, spa, "Uses at any viewport from XS to XL", "HTTPS")
+Rel(spa, ds, "Reads breakpoint and layout tokens from", "CSS custom properties")
+Rel(spa, api, "Requests content without describing the viewport", "JSON/HTTPS")
+@enduml

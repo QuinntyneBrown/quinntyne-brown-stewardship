@@ -1,0 +1,56 @@
+@startuml
+title UML sequence behaviour — Authorise a request against the session
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Participant A" as actor
+box "Frontend — Stewardship web client" #E0F2FE
+  participant "NotesPageComponent" as page
+  participant "NoteService" as client
+end box
+box "Backend — Stewardship API application" #D1FADF
+  participant "NotesController" as controller
+  participant "SessionAuthenticationMiddleware" as middleware
+end box
+box "Backend — Stewardship Application and Domain" #ECFDF3
+  participant "GetNoteQueryHandler" as handler
+  participant "ICurrentParticipant" as current
+end box
+box "Backend — Stewardship Infrastructure" #FFF4E5
+  database "Stewardship database" as db
+end box
+
+actor -> page : Open a note by its identifier
+page -> client : Build the typed request
+client -> controller : GET /notes/{id} with the session cookie
+controller -> middleware : Resolve the session
+middleware --> controller : Authenticated identity of participant A
+controller -> handler : Send GetNoteQuery
+handler -> current : Read the acting participant
+current --> handler : Participant A, from the session alone (L2-035 criterion 4)
+note right of handler : Any participant identifier carried in the\nrequest is ignored (L2-035 criterion 1)
+handler -> db : Read the note filtered by the acting participant
+db --> handler : The note, or no row
+alt The note belongs to another participant
+  handler --> controller : Not found
+  controller --> client : 404 with no note content
+  client --> page : Not-found result
+  page --> actor : State that the note is unavailable
+else The note belongs to participant A
+  handler --> controller : Note
+  controller --> client : 200 with the note
+  client --> page : Note result
+  page --> actor : Present the note
+end
+@enduml

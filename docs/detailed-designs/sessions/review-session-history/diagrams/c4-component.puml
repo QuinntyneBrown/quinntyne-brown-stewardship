@@ -1,0 +1,29 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Review sessions held
+
+Container_Boundary(spa, "Stewardship web client") {
+  Component(page, "SessionsPageComponent", "Angular routed component", "Composes the sessions screen")
+  Component(list, "SessionHistoryListComponent", "Angular domain component", "Injects SESSION_SERVICE and lists held sessions")
+  Component(empty, "EmptyStateComponent", "Angular presentational component", "States that no session has yet been held")
+}
+
+Container_Boundary(api, "Stewardship API") {
+  Component(controller, "SessionsController", "ASP.NET Core controller", "Exposes GET /sessions/history")
+  Component(handler, "GetSessionHistoryQueryHandler", "MediatR handler", "Returns past sessions, most recent first")
+  Component(resolver, "CurrentModuleAtResolver", "Domain service", "Resolves which module was current at a past instant")
+  Component(session, "Session", "Domain entity", "A session with its start and status")
+  Component(note, "Note", "Domain entity", "Notes attached to a session")
+  ComponentDb(db, "Stewardship database", "SQL Server", "Persists sessions, completion, and notes")
+}
+
+Rel(page, list, "Composes")
+Rel(list, empty, "Renders when no session has been held")
+Rel(list, controller, "Requests the history", "JSON/HTTPS")
+Rel(controller, handler, "Sends GetSessionHistoryQuery")
+Rel(handler, session, "Reads past sessions of the acting participant")
+Rel(handler, resolver, "Resolves the module current at each session with")
+Rel(handler, note, "Reads the note reference for each session")
+Rel(handler, db, "Reads", "EF Core")
+@enduml

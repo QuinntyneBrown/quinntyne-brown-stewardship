@@ -1,0 +1,16 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — View the curriculum path
+
+Person(participant, "Participant", "Sees their standing across the twelve modules")
+System_Boundary(stewardship, "Stewardship") {
+  Container(spa, "Stewardship web client", "Angular", "Renders the twelve markers and the progress figures")
+  Container(api, "Stewardship API", "ASP.NET Core", "Derives every count and proportion from completion records")
+  ContainerDb(db, "Stewardship database", "SQL Server", "Curriculum modules and section completion records")
+}
+
+Rel(participant, spa, "Opens the curriculum", "HTTPS")
+Rel(spa, api, "Requests the curriculum path", "JSON/HTTPS")
+Rel(api, db, "Reads modules and recorded completion", "EF Core")
+@enduml

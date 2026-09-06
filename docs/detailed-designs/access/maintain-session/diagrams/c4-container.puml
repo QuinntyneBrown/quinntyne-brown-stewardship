@@ -1,0 +1,16 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Maintain and end a session
+
+Person(participant, "Participant", "Returns across visits and signs out deliberately")
+System_Boundary(stewardship, "Stewardship") {
+  Container(spa, "Stewardship web client", "Angular", "Participant single-page application")
+  Container(api, "Stewardship API", "ASP.NET Core", "Application and domain logic")
+  ContainerDb(db, "Stewardship database", "SQL Server", "One record per device session")
+}
+
+Rel(participant, spa, "Returns to, and signs out from", "HTTPS")
+Rel(spa, api, "Sends the session cookie with every call", "JSON/HTTPS")
+Rel(api, db, "Reads, refreshes, and revokes the session record", "EF Core")
+@enduml

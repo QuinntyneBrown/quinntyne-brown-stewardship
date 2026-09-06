@@ -1,0 +1,32 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Write and retrieve notes
+
+Container_Boundary(spa, "Stewardship web client") {
+  Component(page, "NotesPageComponent", "Angular routed component", "The Notes destination")
+  Component(editor, "NoteEditorComponent", "Angular domain component", "Injects NOTE_SERVICE and holds the draft")
+  Component(list, "NoteListComponent", "Angular domain component", "Lists every note with what it belongs to")
+  Component(guard, "unsavedChangesGuard", "Angular CanDeactivateFn", "Warns before leaving an unsaved draft")
+}
+
+Container_Boundary(api, "Stewardship API") {
+  Component(controller, "NotesController", "ASP.NET Core controller", "Exposes GET and POST /notes and GET /notes/{id}")
+  Component(validator, "SaveNoteCommandValidator", "FluentValidation validator", "Rejects an empty body and an absent attachment")
+  Component(handler, "SaveNoteCommandHandler", "MediatR handler", "Creates or revises the note and records the revision time")
+  Component(policy, "NoteVisibilityPolicy", "Domain service", "Admits the owner and their cohort mentor, and no one else")
+  Component(note, "Note", "Domain entity", "Body, attachment, and revision time")
+  ComponentDb(db, "Stewardship database", "SQL Server", "Persists notes")
+}
+
+Rel(page, editor, "Composes")
+Rel(page, list, "Composes")
+Rel(page, guard, "Is guarded on deactivation by")
+Rel(editor, controller, "Saves the note", "JSON/HTTPS")
+Rel(list, controller, "Requests every note", "JSON/HTTPS")
+Rel(controller, validator, "Validates the command with")
+Rel(controller, handler, "Sends SaveNoteCommand")
+Rel(handler, note, "Creates or revises")
+Rel(controller, policy, "Resolves visibility with")
+Rel(handler, db, "Reads and writes", "EF Core")
+@enduml

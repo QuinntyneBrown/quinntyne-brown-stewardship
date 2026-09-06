@@ -1,0 +1,17 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Sign in
+
+Person(participant, "Participant", "Presents credentials")
+System_Boundary(stewardship, "Stewardship") {
+  Container(spa, "Stewardship web client", "Angular", "Participant single-page application")
+  Container(api, "Stewardship API", "ASP.NET Core", "Application and domain logic")
+  ContainerDb(db, "Stewardship database", "SQL Server", "Participants, credentials, and sign-in attempts")
+}
+
+Rel(participant, spa, "Submits the sign-in form to", "HTTPS")
+Rel(spa, api, "Posts credentials to", "JSON/HTTPS")
+Rel(api, db, "Reads the credential record and records the attempt", "EF Core")
+Rel_Back(participant, spa, "Returns a session cookie or an identical failure message")
+@enduml

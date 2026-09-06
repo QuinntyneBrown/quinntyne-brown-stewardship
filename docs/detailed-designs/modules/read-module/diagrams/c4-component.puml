@@ -1,0 +1,31 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Read a module
+
+Container_Boundary(spa, "Stewardship web client") {
+  Component(page, "ModulePageComponent", "Angular routed component", "Requests the module and composes the reading view")
+  Component(nav, "SectionListComponent", "Angular presentational component", "Lists sections in order with their state")
+  Component(reading, "SectionContentComponent", "Angular presentational component", "Renders the reading content of one section")
+  Component(practice, "PracticeAssignmentComponent", "Angular presentational component", "Renders every practice step and the effort estimate")
+}
+
+Container_Boundary(api, "Stewardship API") {
+  Component(controller, "ModulesController", "ASP.NET Core controller", "Exposes GET /modules/{ordinal}")
+  Component(handler, "GetModuleQueryHandler", "MediatR handler", "Assembles sections with content, practice, and state")
+  Component(module, "CurriculumModule", "Domain entity", "Owns its ordered sections")
+  Component(section, "ModuleSection", "Domain entity", "Carries reading content and one practice assignment")
+  Component(assignment, "PracticeAssignment", "Domain entity", "Ordered practice steps with an effort estimate")
+  ComponentDb(db, "Stewardship database", "SQL Server", "Persists module content")
+}
+
+Rel(page, nav, "Composes")
+Rel(page, reading, "Composes")
+Rel(page, practice, "Composes")
+Rel(page, controller, "Requests the module", "JSON/HTTPS")
+Rel(controller, handler, "Sends GetModuleQuery")
+Rel(handler, module, "Reads")
+Rel(module, section, "Owns in order")
+Rel(section, assignment, "Carries")
+Rel(handler, db, "Reads", "EF Core")
+@enduml

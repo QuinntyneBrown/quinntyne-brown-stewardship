@@ -1,0 +1,68 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Read a module
+
+enum SectionState {
+  Complete
+  Current
+  NotStarted
+}
+
+class CurriculumModule {
+  +Guid Id
+  +int Ordinal
+  +string Title
+  +IReadOnlyList<ModuleSection> Sections
+}
+
+class ModuleSection {
+  +Guid Id
+  +int Ordinal
+  +string Title
+  +string ReadingContent
+  +PracticeAssignment Practice
+}
+
+class PracticeAssignment {
+  +Guid Id
+  +string EffortEstimate
+  +IReadOnlyList<PracticeStep> Steps
+}
+
+class PracticeStep {
+  +int Ordinal
+  +string Instruction
+}
+
+class SectionResponse {
+  +int Ordinal
+  +string Title
+  +SectionState State
+  +string StateLabel
+  +string ReadingContent
+  +PracticeAssignment Practice
+}
+
+class ModuleResponse {
+  +int Ordinal
+  +string Title
+  +IReadOnlyList<SectionResponse> Sections
+  +int ResumeSectionOrdinal
+}
+
+CurriculumModule "1" *-- "*" ModuleSection : owns in order
+ModuleSection "1" *-- "1" PracticeAssignment : carries
+PracticeAssignment "1" *-- "*" PracticeStep : owns in order
+SectionResponse --> SectionState : carries
+SectionResponse --> PracticeAssignment : carries unabridged
+ModuleResponse *-- SectionResponse : holds every section
+@enduml

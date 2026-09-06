@@ -1,0 +1,63 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Sign in
+
+class SignInCommand {
+  +string EmailAddress
+  +string Password
+}
+
+class SignInCommandValidator {
+  +Validate(command: SignInCommand): ValidationResult
+}
+
+class SignInCommandHandler {
+  -IPasswordHasher _hasher
+  -IStewardshipDbContext _context
+  -ISystemClock _clock
+  +Handle(command: SignInCommand, token: CancellationToken): Task<SignInResponse>
+  -IsCoolingOff(emailAddress: string): bool
+}
+
+class SignInResponse {
+  +bool Succeeded
+  +string Message
+  +DateTimeOffset? CoolingOffEndsAt
+}
+
+class Participant {
+  +Guid Id
+  +string EmailAddress
+  +string PasswordHash
+}
+
+class SignInAttempt {
+  +Guid Id
+  +string EmailAddress
+  +bool Succeeded
+  +DateTimeOffset OccurredAt
+  +string OriginatingAddress
+}
+
+interface IPasswordHasher {
+  +Hash(password: string): string
+  +Verify(password: string, hash: string): bool
+}
+
+SignInCommandValidator ..> SignInCommand : validates
+SignInCommandHandler ..> SignInCommand : handles
+SignInCommandHandler --> SignInResponse : returns
+SignInCommandHandler ..> IPasswordHasher : uses
+SignInCommandHandler --> Participant : loads
+SignInCommandHandler --> SignInAttempt : records
+Participant "1" --> "*" SignInAttempt : attributed to
+@enduml

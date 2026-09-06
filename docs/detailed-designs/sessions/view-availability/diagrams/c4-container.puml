@@ -1,0 +1,18 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — View a mentor's availability
+
+Person(participant, "Participant", "Selects a day and reviews its slots")
+Person_Ext(mentor, "Mentor", "Publishes open times")
+System_Boundary(stewardship, "Stewardship") {
+  Container(spa, "Stewardship web client", "Angular", "Renders the day strip, the slot grid, and the allowance")
+  Container(api, "Stewardship API", "ASP.NET Core", "Resolves slot state and derives the allowance from the cohort")
+  ContainerDb(db, "Stewardship database", "SQL Server", "Availability slots, sessions, and cohorts")
+}
+
+Rel(participant, spa, "Opens the sessions screen", "HTTPS")
+Rel(spa, api, "Requests availability for the selected day", "JSON/HTTPS")
+Rel(api, db, "Reads published slots, existing sessions, and the cohort", "EF Core")
+Rel(mentor, api, "Publishes availability slots to", "JSON/HTTPS")
+@enduml

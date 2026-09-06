@@ -1,0 +1,27 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Resolve the cohort
+
+Container_Boundary(spa, "Stewardship web client") {
+  Component(shell, "AppShellComponent", "Angular routed component", "Holds the enrollment context in a signal")
+  Component(notice, "NotEnrolledNoticeComponent", "Angular presentational component", "States that no cohort has been assigned")
+}
+
+Container_Boundary(api, "Stewardship API") {
+  Component(controller, "EnrollmentController", "ASP.NET Core controller", "Exposes GET /enrollment")
+  Component(handler, "GetEnrollmentQueryHandler", "MediatR handler", "Resolves the active enrollment for the acting participant")
+  Component(enrollment, "Enrollment", "Domain entity", "Binds one participant to exactly one active cohort")
+  Component(cohort, "Cohort", "Domain entity", "Owns start date, duration, cadence, and mentor, and derives week and allowance")
+  Component(mentor, "Mentor", "Domain entity", "The single mentor a cohort meets")
+  ComponentDb(db, "Stewardship database", "SQL Server", "Persists enrollments, cohorts, and mentors")
+}
+
+Rel(shell, controller, "Requests the enrollment context", "JSON/HTTPS")
+Rel(shell, notice, "Renders when no cohort is resolved")
+Rel(controller, handler, "Sends GetEnrollmentQuery")
+Rel(handler, enrollment, "Resolves the active enrollment")
+Rel(enrollment, cohort, "Names")
+Rel(cohort, mentor, "Is met by")
+Rel(handler, db, "Reads", "EF Core")
+@enduml

@@ -1,0 +1,78 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Write and retrieve notes
+
+class Note {
+  +Guid Id
+  +Guid ParticipantId
+  +Guid? ModuleId
+  +Guid? SessionId
+  +string Body
+  +DateTimeOffset CreatedAt
+  +DateTimeOffset RevisedAt
+  +Revise(body: string, now: DateTimeOffset): void
+  +NoteAttachment Attachment()
+}
+
+class NoteAttachment {
+  +NoteAttachmentKind Kind
+  +Guid TargetId
+  +string Label
+}
+
+enum NoteAttachmentKind {
+  Module
+  Session
+}
+
+class NoteVisibilityPolicy {
+  +MayRead(note: Note, participantId: Guid, cohortId: Guid, isMentor: bool): bool
+}
+
+class SaveNoteCommand {
+  +Guid? NoteId
+  +Guid? ModuleId
+  +Guid? SessionId
+  +string Body
+}
+
+class SaveNoteCommandValidator {
+  +Validate(command: SaveNoteCommand): ValidationResult
+}
+
+class SaveNoteCommandHandler {
+  -ICurrentParticipant _participant
+  -ISystemClock _clock
+  +Handle(command: SaveNoteCommand, token: CancellationToken): Task<NoteResponse>
+}
+
+class NoteResponse {
+  +Guid Id
+  +string Body
+  +DateTimeOffset RevisedAt
+  +NoteAttachment Attachment
+}
+
+note right of NoteVisibilityPolicy
+  A refusal is answered as not found, so an unowned
+  note and an absent note are indistinguishable
+  (L2-028 criteria 1 and 3).
+end note
+
+Note --> NoteAttachment : resolves to
+NoteAttachment --> NoteAttachmentKind : carries
+SaveNoteCommandValidator ..> SaveNoteCommand : validates
+SaveNoteCommandHandler ..> SaveNoteCommand : handles
+SaveNoteCommandHandler --> Note : creates or revises
+SaveNoteCommandHandler --> NoteResponse : returns
+NoteVisibilityPolicy ..> Note : admits or refuses
+@enduml

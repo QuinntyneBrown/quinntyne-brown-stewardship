@@ -1,0 +1,18 @@
+@startuml
+!include <C4/C4_Container>
+LAYOUT_WITH_LEGEND()
+title Containers — Write and retrieve notes
+
+Person(participant, "Participant", "Composes and revises notes")
+Person_Ext(mentor, "Mentor", "Reads notes of their own cohort")
+System_Boundary(stewardship, "Stewardship") {
+  Container(spa, "Stewardship web client", "Angular", "Editor, list, and the unsaved-changes warning")
+  Container(api, "Stewardship API", "ASP.NET Core", "Applies the visibility policy and records revisions")
+  ContainerDb(db, "Stewardship database", "SQL Server", "Notes attached to a module or a session")
+}
+
+Rel(participant, spa, "Writes and revises notes in", "HTTPS")
+Rel(spa, api, "Saves and retrieves notes", "JSON/HTTPS")
+Rel(api, db, "Reads and writes notes owned by the acting participant", "EF Core")
+Rel(mentor, api, "Reads notes of their own cohort from", "JSON/HTTPS")
+@enduml

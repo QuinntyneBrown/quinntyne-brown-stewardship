@@ -1,0 +1,52 @@
+@startuml
+title UML sequence behaviour — View the curriculum path
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Participant" as actor
+box "Frontend — Stewardship web client" #E0F2FE
+  participant "CurriculumPageComponent" as page
+  participant "ModulePathComponent" as path
+  participant "CurriculumService" as client
+end box
+box "Backend — Stewardship API application" #D1FADF
+  participant "CurriculumController" as controller
+end box
+box "Backend — Stewardship Application and Domain" #ECFDF3
+  participant "GetCurriculumQueryHandler" as handler
+  participant "ProgressSummary" as summary
+end box
+box "Backend — Stewardship Infrastructure" #FFF4E5
+  database "Stewardship database" as db
+end box
+
+actor -> page : Open the curriculum
+page -> path : Request the path
+path -> client : Build the typed request
+client -> controller : GET /curriculum
+controller -> handler : Send GetCurriculumQuery
+handler -> db : Read the twelve modules of the cohort in ordinal order
+db --> handler : Ordered modules with their sections
+handler -> db : Read the section completion records of the acting participant
+db --> handler : Completion records
+handler -> handler : Resolve each module to complete, current, or locked (L2-008)
+handler -> summary : Derive counts from recorded completion (L2-009)
+summary --> handler : Completed, remaining, and proportion
+handler --> controller : Path of twelve items with the progress summary
+controller --> client : 200 with the curriculum
+client --> path : Curriculum result held in a signal
+path -> path : Render one marker per module, state carried as text (L2-008 criterion 3)
+path --> page : Rendered path
+page --> actor : Present the path, the counts, and the proportion
+@enduml

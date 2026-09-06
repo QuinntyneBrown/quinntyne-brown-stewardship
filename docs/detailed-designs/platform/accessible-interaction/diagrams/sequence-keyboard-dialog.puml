@@ -1,0 +1,43 @@
+@startuml
+title UML sequence behaviour — Operate a dialog by keyboard
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Participant" as actor
+box "Frontend — Stewardship web client" #E0F2FE
+  participant "SessionsPageComponent" as page
+  participant "HeldSessionCardComponent" as card
+  participant "DialogComponent" as dialog
+  participant "FocusTrapDirective" as trap
+end box
+box "Frontend — Stewardship design system" #ECFDF3
+  participant "focus.css" as focus
+end box
+
+actor -> page : Traverse the screen with the Tab key
+page -> focus : Read the focus ring tokens
+focus --> page : Ring width and colour at 3:1 or better
+page --> actor : Move focus in document order, each stop visibly indicated (L2-033 criteria 1 and 2)
+actor -> card : Activate cancel from the keyboard
+card -> dialog : Open the confirmation dialog
+dialog -> dialog : Record the triggering element
+dialog -> trap : Activate the focus trap
+trap --> dialog : Tab traversal confined to the dialog (L2-033 criterion 3)
+dialog --> actor : Present the dialog with focus inside it
+actor -> dialog : Confirm from the keyboard
+dialog -> trap : Release the focus trap
+dialog -> dialog : Return focus to the triggering element
+dialog --> card : Confirmed
+card --> actor : Complete the action reached by keyboard alone (L2-033 criterion 4)
+@enduml

@@ -1,0 +1,14 @@
+@startuml
+!include <C4/C4_Context>
+LAYOUT_WITH_LEGEND()
+title System Context — Book a session
+
+Person(participant, "Participant", "Books one session at a time with their mentor")
+Person_Ext(other, "Another participant", "Competes for the same published slot")
+Person_Ext(mentor, "Mentor", "Meets the participant at the booked time")
+System(stewardship, "Stewardship", "Curriculum, learning modules, and 1-on-1 sessions")
+
+Rel(participant, stewardship, "Confirms a selected slot in", "HTTPS")
+Rel(other, stewardship, "Confirms the same slot in", "HTTPS")
+Rel(stewardship, mentor, "Reserves the published time with")
+@enduml

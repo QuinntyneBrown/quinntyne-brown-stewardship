@@ -1,0 +1,69 @@
+@startuml
+title UML sequence behaviour — Write and revise a note
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Participant" as actor
+box "Frontend — Stewardship web client" #E0F2FE
+  participant "NoteEditorComponent" as editor
+  participant "unsavedChangesGuard" as guard
+  participant "NoteService" as client
+end box
+box "Backend — Stewardship API application" #D1FADF
+  participant "NotesController" as controller
+  participant "SaveNoteCommandValidator" as validator
+end box
+box "Backend — Stewardship Application and Domain" #ECFDF3
+  participant "SaveNoteCommandHandler" as handler
+  participant "Note" as note
+end box
+box "Backend — Stewardship Infrastructure" #FFF4E5
+  database "Stewardship database" as db
+end box
+
+actor -> editor : Compose a note against the module in view
+opt Participant navigates away with an unsaved draft
+  editor -> guard : Report the draft as dirty
+  guard --> actor : Warn that unsaved text will be lost (L2-025 criterion 3)
+end
+actor -> editor : Save
+editor -> client : Post the note
+client -> controller : POST /notes
+controller -> validator : Validate SaveNoteCommand
+alt L2-025 criterion 4 — the body is empty
+  validator --> controller : Invalid
+  controller --> client : 400, no note created
+  client --> editor : Validation failure
+  editor --> actor : Mark the empty body
+else The body has content
+  validator --> controller : Valid
+  controller -> handler : Send SaveNoteCommand
+  alt An existing note is being revised
+    handler -> db : Load the note owned by the acting participant
+    db --> handler : Note
+    handler -> note : Revise the body and stamp the revision time (L2-025 criterion 2)
+    note --> handler : Revised
+  else A new note is being written
+    handler -> note : Create against the module or the session (L2-026)
+    note --> handler : Created
+  end
+  handler -> db : Save the note
+  db --> handler : Commit result
+  handler --> controller : NoteResponse with the attachment and revision time
+  controller --> client : 200 with the note
+  client --> editor : Save result
+  editor -> guard : Report the draft as clean
+  editor --> actor : Present the saved note against its module or session
+end
+@enduml
