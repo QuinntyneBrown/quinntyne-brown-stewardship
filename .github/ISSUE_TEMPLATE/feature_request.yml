@@ -1,0 +1,89 @@
+name: Feature request
+description: Propose new or changed behaviour
+title: "[Feature]: "
+labels: ["enhancement", "needs triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Stewardship is built with acceptance test-driven development, so a
+        feature starts as a requirement, not as code. Describe the participant
+        need first; the implementation can follow once we agree on the behaviour.
+
+        Note that the mentor and administrator experience — authoring curriculum,
+        managing cohorts, setting availability, reviewing progress — is
+        deliberately out of scope for the current requirement set and is served
+        by the CLI.
+
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Preflight
+      options:
+        - label: I searched existing issues and discussions and did not find this proposal.
+          required: true
+        - label: I read the high-level requirements in `docs/specs/L1.md`.
+          required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: Describe the participant need. Avoid describing a solution here.
+      placeholder: >
+        A participant returning after a week cannot tell which section they had
+        reached without opening each module in turn.
+    validations:
+      required: true
+
+  - type: textarea
+    id: criteria
+    attributes:
+      label: Proposed behaviour
+      description: >
+        State the behaviour as Given–When–Then acceptance criteria if you can.
+        One scenario per line is fine.
+      value: |
+        Given ...
+        When ...
+        Then ...
+    validations:
+      required: true
+
+  - type: input
+    id: requirement
+    attributes:
+      label: Related requirement
+      description: >
+        If this extends an existing requirement, name it (for example L1-003 or
+        L2-014). Leave blank if it is genuinely new.
+      placeholder: L1-003
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - API (backend)
+        - Web application (frontend)
+        - Design system
+        - Administration CLI
+        - Documentation
+        - Not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: >
+        What else would address the need, and why is this better? A change that
+        can be achieved with existing behaviour is usually preferred.
+
+  - type: checkboxes
+    id: contribute
+    attributes:
+      label: Contribution
+      options:
+        - label: I am willing to open a pull request for this.

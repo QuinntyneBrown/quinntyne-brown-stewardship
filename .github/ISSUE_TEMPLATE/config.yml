@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question or idea
+    url: https://github.com/QuinntyneBrown/quinntyne-brown-stewardship/discussions
+    about: Ask a question or discuss an idea before it becomes an issue.
+  - name: Documentation
+    url: https://github.com/QuinntyneBrown/quinntyne-brown-stewardship/blob/main/docs/README.md
+    about: Setup, architecture, testing, and deployment guides.
+  - name: Report a security vulnerability
+    url: https://github.com/QuinntyneBrown/quinntyne-brown-stewardship/security/advisories/new
+    about: Report privately. Please do not open a public issue.

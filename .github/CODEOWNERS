@@ -1,0 +1,27 @@
+# Code owners for Stewardship.
+#
+# These owners are requested for review automatically when a pull request
+# changes matching files. See:
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owner for everything in the repository.
+*                       @QuinntyneBrown
+
+# Architectural rules and agent guidance.
+/AGENTS.md              @QuinntyneBrown
+/CLAUDE.md              @QuinntyneBrown
+/GEMINI.md              @QuinntyneBrown
+/.github/               @QuinntyneBrown
+
+# Requirements and design records.
+/docs/specs/            @QuinntyneBrown
+/docs/detailed-designs/ @QuinntyneBrown
+
+# Authoritative design tokens.
+/design-system/         @QuinntyneBrown
+
+# Community health and policy.
+/SECURITY.md            @QuinntyneBrown
+/GOVERNANCE.md          @QuinntyneBrown
+/CODE_OF_CONDUCT.md     @QuinntyneBrown
+/LICENSE                @QuinntyneBrown

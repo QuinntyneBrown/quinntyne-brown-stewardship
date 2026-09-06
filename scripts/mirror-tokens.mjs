@@ -10,3 +10,4 @@ await cp(
   `${root}/frontend/projects/quinntyne-brown-stewardship/public/fonts`,
   { recursive: true },
 );
+await copyFile(`${root}/design-system/favicon.svg`, `${root}/frontend/projects/quinntyne-brown-stewardship/public/favicon.svg`);
