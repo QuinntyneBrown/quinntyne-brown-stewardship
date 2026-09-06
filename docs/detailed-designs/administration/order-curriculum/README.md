@@ -78,7 +78,11 @@ feature.
 - **`OrdinalSequence`** — domain service holding the staged reassignment. It writes each
   affected row to a negative staging position, flushes, and then writes the final positions
   from 1 upward. It is the single place the two-pass rule lives, so the module and section
-  handlers cannot drift apart.
+  handlers cannot drift apart. It also exposes `Compact`, which renumbers the remaining
+  children from 1 after a removal. Compaction needs no staging pass, because a removal frees
+  its position before any remaining row claims it, so the unique index is never contested.
+  `administration/author-section` and `administration/author-module` use `Compact` for that
+  reason and never the two-pass path.
 - **`ICurriculumStore`** — application abstraction. `Transaction` wraps both passes in one
   unit of work and takes the existing programme-write application lock.
 - **`ProgrammeException`** — raised with `409` when the submitted list is not a permutation

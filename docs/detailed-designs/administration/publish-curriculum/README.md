@@ -57,6 +57,17 @@ The publication panel also reports how many active cohorts follow the programme.
 changes what those cohorts read on their next request, and L1-013 requires the act to be
 deliberate; an administrator cannot act deliberately without knowing who is affected.
 
+One consequence of publishing deserves its own warning, because it moves a participant
+rather than merely adding to what they read. The current module is the first incomplete
+module by position, so publishing a module into a position a participant has already passed
+makes that new module their current one. Their completed modules stay complete and their
+totals grow, but their next action moves backwards through the path (L2-055 criterion 5).
+That is the correct outcome for content an administrator has decided is required, and it is
+still a surprise worth stating before it happens: the panel names how many enrolled
+participants a publication would move backwards, and which position it would move them to.
+An administrator who did not intend it can move the module to the end of the order before
+publishing.
+
 What is published is authored in `administration/author-programme`,
 `administration/author-module`, and `administration/author-section`. How a participant reads
 a published path belongs to `curriculum/view-path`, how unlocking follows the order belongs
@@ -81,8 +92,9 @@ to `curriculum/unlock-and-resume`, and how the allowance governs booking belongs
 - **`PublicationResult`** — `api` result type carrying the outcome and, when publication is
   refused, the reason.
 - **`ReadinessResult`** — `api` result type carried on the draft response, holding whether
-  the programme may be published, the reason it may not, and the number of active cohorts
-  that follow it. It is what lets the panel report readiness before an attempt.
+  the programme may be published, the reason it may not, the number of active cohorts that
+  follow it, and the number of enrolled participants a publication would move backwards. It
+  is what lets the panel report readiness, and consequence, before an attempt.
 
 **API.**
 
@@ -95,6 +107,10 @@ to `curriculum/unlock-and-resume`, and how the allowance governs booking belongs
   programme may be published and, when it may not, which module is empty. Holding the rule
   in the domain keeps L2-054 out of the handler and out of the controller, and lets
   `GetCurriculumDraftQueryHandler` report the same answer the command enforces.
+- **`Progress`** — existing domain service resolving the current module as the first
+  incomplete module by position. Publication changes what it resolves to, which is the
+  mechanism behind L2-055 criterion 5; this feature reads it to report the consequence and
+  does not alter it.
 - **`Curriculum`** — domain entity owning `State` and `PublishedAt`.
 - **`CurriculumModule`** — domain entity owning its own `State`, which is what lets a new
   module stay invisible inside a published programme.

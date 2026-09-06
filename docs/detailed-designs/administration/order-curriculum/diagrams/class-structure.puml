@@ -30,6 +30,7 @@ class ModuleSection {
 class OrdinalSequence {
   +{static} Stage<T>(items: IReadOnlyList<T>): void
   +{static} Assign<T>(items: IReadOnlyList<T>, ordered: IReadOnlyList<Guid>): void
+  +{static} Compact<T>(items: IReadOnlyList<T>): void
 }
 
 class ReorderModulesCommand {

@@ -16,6 +16,13 @@ publication state
 **programme list** — the administrator's index of every programme, each with its title,
 its key, its module count, and its publication state
 
+The domain type behind a programme is `Curriculum`, not `Programme`. The `Programme` prefix
+is already taken in this codebase by `ProgrammeReader`, `IProgrammeStore` and
+`ProgrammeException`, which concern a participant's progress through a cohort rather than
+the content a cohort follows. Every type this subsystem introduces for authored content
+therefore carries the `Curriculum` prefix, matching `CurriculumModule` and `CurriculumKey`
+already in the domain.
+
 A programme is created with a key and a title, and the key is unique (L2-044). A second
 programme offering a key already taken is refused, the refusal names the conflict, and
 nothing is stored. Uniqueness is enforced by a unique index on the column rather than by a
@@ -61,8 +68,10 @@ to `administration/authorise-administrator`.
 - **`IAuthoringService`** / **`AUTHORING_SERVICE`** / **`AuthoringService`** — the
   contract, its `InjectionToken`, and the HTTP implementation, each in its own file in the
   `api` library. `AuthoringServiceMock` binds to the same token under Playwright.
-- **`ProgrammeSummary`** and **`ProgrammeDraftResult`** — `api` result types carrying a
-  programme row and the full authored programme.
+- **`CurriculumSummaryResult`** and **`CurriculumDraftResult`** — `api` result types
+  carrying one programme row and the full authored programme. They take the `Curriculum`
+  prefix rather than a `Programme` one, so they match the response records they deserialise
+  and the existing `CurriculumResult` beside them in the `api` library.
 
 **API.**
 

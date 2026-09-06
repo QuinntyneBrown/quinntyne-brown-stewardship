@@ -106,8 +106,9 @@ completion belongs to `modules/complete-section`.
   slice needs beyond the participant store.
 - **`ProgrammeException`** — existing application exception carrying an HTTP status code
   and a message. A refused removal raises it with `409`.
-- **`OrdinalSequence`** — domain service assigning contiguous positions after a removal,
-  described in `administration/order-curriculum`.
+- **`OrdinalSequence`** — domain service assigning contiguous positions. This slice calls
+  its `Compact` operation, which renumbers the remaining sections from 1 after a removal and
+  needs no staging pass. The service is described in `administration/order-curriculum`.
 
 `ModuleSection.CreatedAt` already exists and already matters: the participant progress
 calculation filters completion by it so that appending a section does not retroactively

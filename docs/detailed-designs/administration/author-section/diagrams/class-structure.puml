@@ -74,7 +74,7 @@ interface ICurriculumStore {
 }
 
 class OrdinalSequence {
-  +{static} Assign<T>(items: IReadOnlyList<T>, position): void
+  +{static} Compact<T>(items: IReadOnlyList<T>): void
 }
 
 CurriculumModule "1" *-- "*" ModuleSection : owns
@@ -84,7 +84,7 @@ AddSectionCommandHandler --> ModuleSection : appends
 RemoveSectionCommandHandler ..> RemoveSectionCommand : handles
 RemoveSectionCommandHandler --> SectionCompletion : counts
 RemoveSectionCommandHandler ..> ProgrammeException : raises when dependent
-RemoveSectionCommandHandler ..> OrdinalSequence : closes the gap with
+RemoveSectionCommandHandler ..> OrdinalSequence : compacts the order with
 RemoveSectionCommandHandler --> ICurriculumStore : reads and writes through
 ReviseSectionCommand ..> ModuleSection : revises
 @enduml
