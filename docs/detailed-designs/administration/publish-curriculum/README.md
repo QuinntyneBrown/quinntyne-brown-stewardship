@@ -57,6 +57,14 @@ The publication panel also reports how many active cohorts follow the programme.
 changes what those cohorts read on their next request, and L1-013 requires the act to be
 deliberate; an administrator cannot act deliberately without knowing who is affected.
 
+The module count and the cohort duration are independent, and the publication panel reports
+where they differ. A cohort runs for the weeks its record carries and a participant advances
+by completing modules, so a fifteen-module programme published to a twelve-week cohort is
+permitted and produces no contradiction: the week number and the module position are
+separate figures and neither is derived from the other. It is still worth an administrator
+knowing, because the pace a programme was written for is one module per week, so the panel
+names any cohort whose duration differs from the module count it would be publishing.
+
 One consequence of publishing deserves its own warning, because it moves a participant
 rather than merely adding to what they read. The current module is the first incomplete
 module by position, so publishing a module into a position a participant has already passed

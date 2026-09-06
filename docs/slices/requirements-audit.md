@@ -1,7 +1,8 @@
 # Participant requirements audit
 
-This audit uses `docs/specs/L1.md`, all forty L2 requirements and `AGENTS.md` as
-the scope. Administration screens remain outside the participant requirements.
+This audit uses `docs/specs/L1.md`, the forty L2 requirements then present and
+`AGENTS.md` as the scope. The curriculum authoring requirements added later,
+`L1-011` through `L1-014` and `L2-041` onward, are outside it. Administration screens remain outside the participant requirements.
 The source and behavioral evidence below were inspected on 2026-09-06. All forty
 participant requirements are implemented and their verification gates pass. The
 performance evidence covers the documented normal-load and device simulation.

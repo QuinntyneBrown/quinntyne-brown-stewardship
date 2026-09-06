@@ -60,6 +60,15 @@ class RenameCurriculumCommand {
   +string Title
 }
 
+class RemoveCurriculumCommand {
+  +Guid Id
+}
+
+class RemoveCurriculumCommandHandler {
+  -ICurriculumStore _store
+  +Handle(command: RemoveCurriculumCommand, token: CancellationToken): Task<Unit>
+}
+
 class GetCurriculaQuery {
 }
 
@@ -98,4 +107,7 @@ CreateCurriculumCommandHandler --> Curriculum : creates
 GetCurriculaQuery ..> CurriculumSummary : yields
 CurriculumDraftResponse --> Curriculum : projects
 RenameCurriculumCommand ..> Curriculum : revises the title of
+RemoveCurriculumCommandHandler ..> RemoveCurriculumCommand : handles
+RemoveCurriculumCommandHandler --> Curriculum : removes when no cohort follows
+RemoveCurriculumCommandHandler --> Cohort : counts the followers of
 @enduml

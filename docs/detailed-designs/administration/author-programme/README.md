@@ -41,6 +41,23 @@ The programme record replaces the `CurriculumKey` string on both `CurriculumModu
 removes the `"starter"` literal from the domain, and it is the reason this feature is a
 prerequisite for the other five.
 
+A programme is removable while no cohort follows it (L2-044 criterion 5). A key is typed by
+hand and a mistyped one would otherwise be permanent, so the screen offers removal for the
+programme nothing depends on. The guard is the cohort rather than the completion record,
+and it is the stronger of the two: a cohort is what binds participants to a programme, so a
+programme no cohort follows can hold no progress to discard. A programme a cohort does
+follow is refused, and the refusal counts the cohorts (L2-044 criterion 6).
+
+One entry point survives from before these screens existed. The command-line tool retains
+its `import-curriculum` verb as the way to bootstrap an environment that has no
+administrator account yet, and the starter curriculum reaches a new database through it
+once. Two things about it change. Its validator no longer requires twelve modules numbered
+1 through 12, because the module count is now a fact about the programme (L2-056). Its
+handler no longer needs the append-only rule that refused removal and reordering, because
+an import now creates a new draft programme rather than merging into an existing one;
+everything after the first import happens on these screens. What it creates is draft like
+anything else, so importing publishes nothing (L2-052).
+
 What a programme contains belongs to `administration/author-module` and
 `administration/author-section`. The order of its modules belongs to
 `administration/order-curriculum`. Its publication state, and what a participant sees as a
@@ -91,6 +108,15 @@ to `administration/authorise-administrator`.
   returns its identifier.
 - **`RenameCurriculumCommand`**, **`RenameCurriculumCommandHandler`**, and
   **`RenameCurriculumCommandValidator`** — the revision slice for the title.
+- **`RemoveCurriculumCommand`** and **`RemoveCurriculumCommandHandler`** — the removal
+  slice. The handler counts the cohorts that follow the programme, refuses with `409` when
+  any do, and otherwise removes the programme with its modules, sections and prompts in one
+  transaction.
+- **`ImportCurriculumCommand`**, **`ImportCurriculumCommandHandler`**, and
+  **`ImportCurriculumCommandValidator`** — the retained bootstrap slice behind the
+  command-line `import-curriculum` verb. The validator drops its twelve-module rule and the
+  handler drops its append-only rule; the command creates one draft programme from a
+  supplied document and does not merge into an existing one.
 - **`Curriculum`** — domain entity for one programme, owning its key, its title, its
   publication state, and its modules.
 - **`PublicationState`** — enumeration of `Draft` and `Published`. A programme holds
@@ -114,7 +140,7 @@ a level-1 (L1) requirement, cited by identifier. Requirement text is quoted from
 
 | L2 ID | Refines (L1) | Requirement |
 |-------|--------------|-------------|
-| `L2-044` | `L1-012` | A programme is the unit a cohort follows. An administrator creates it, titles it, and gives it a key unique across programmes. |
+| `L2-044` | `L1-012` | A programme is the unit a cohort follows. An administrator creates it, titles it, and gives it a key unique across programmes. A programme no cohort follows may be removed. |
 | `L2-051` | `L1-012` | Authored content is checked before it reaches domain logic, and a rejected edit changes nothing. |
 
 ## Diagrams
