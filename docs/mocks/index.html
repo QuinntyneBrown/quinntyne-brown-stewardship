@@ -10,14 +10,25 @@
     * { box-sizing: border-box; }
     a { color: #E0A458; text-decoration: none; }
     a:hover { color: #EFC189; }
-    .sheet { max-width: 680px; margin: 0 auto; }
-    .row { display: flex; align-items: baseline; gap: 24px; padding: 20px 0; border-top: 1px solid #2C2822; color: inherit; }
-    .row:hover { color: inherit; }
-    .row:hover .name { color: #E0A458; }
+    .sheet { max-width: 760px; margin: 0 auto; }
+    .row { padding: 22px 0 20px; border-top: 1px solid #2C2822; }
+    .head { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; }
     .name { font-family: Newsreader, Georgia, serif; font-size: 22px; font-weight: 400; line-height: 1.2; color: #F2EDE3; }
-    .desc { margin-top: 7px; font-size: 14px; line-height: 1.55; color: #A69E8F; }
+    .name:hover { color: #E0A458; }
+    .desc { margin-top: 7px; max-width: 560px; font-size: 14px; line-height: 1.55; color: #A69E8F; text-wrap: pretty; }
     .size { flex-shrink: 0; font-size: 12px; color: #8C8477; font-variant-numeric: tabular-nums; }
+    .states { margin-top: 14px; display: flex; flex-direction: column; gap: 2px; }
+    .state { display: flex; align-items: baseline; justify-content: space-between; gap: 20px; min-height: 26px; }
+    .state a { font-size: 14px; color: #C9C2B4; }
+    .state a:hover { color: #E0A458; }
+    .only { font-size: 14px; color: #8C8477; }
+    .reqs { flex-shrink: 0; font-size: 11px; color: #8C8477; font-variant-numeric: tabular-nums; }
     .label { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: #8C8477; }
+    .cov { display: flex; align-items: baseline; gap: 18px; min-height: 30px; padding: 7px 0; border-top: 1px solid #2C2822; }
+    .cid { flex-shrink: 0; width: 62px; font-size: 12px; color: #C9C2B4; font-variant-numeric: tabular-nums; }
+    .ctitle { flex: 1; font-size: 13px; line-height: 1.5; color: #8C8477; }
+    .cwhere { flex-shrink: 0; width: 300px; text-align: right; font-size: 12px; line-height: 1.5; color: #A69E8F; }
+    .cnone { flex-shrink: 0; width: 300px; text-align: right; font-size: 12px; color: #8C8477; }
   </style>
 </head>
 <body>
@@ -25,57 +36,322 @@
 
     <span class="label">Quinntyne Brown</span>
     <h1 style="margin: 18px 0 0; font-family: Newsreader, Georgia, serif; font-weight: 300; font-size: 48px; line-height: 1.08; letter-spacing: -0.015em;">Stewardship — screen mockups</h1>
-    <p style="margin: 24px 0 0; max-width: 540px; font-size: 16px; line-height: 1.7; color: #A69E8F;">Static mockups of the participant experience: the curriculum, a learning module, and 1-on-1 sessions. Each file is self-contained — open it in a browser.</p>
-    <p style="margin: 18px 0 0; max-width: 540px; font-size: 14px; line-height: 1.7; color: #8C8477;">Curriculum copy is drafted placeholder. Session dates and times are sample values, and [BRACKETED] items are facts still to be filled in.</p>
+    <p style="margin: 24px 0 0; max-width: 560px; font-size: 16px; line-height: 1.7; color: #A69E8F; text-wrap: pretty;">Static mockups of the participant experience: getting in, the curriculum, a learning module, 1-on-1 sessions, and notes. Each file is self-contained — open it in a browser.</p>
+    <p style="margin: 18px 0 0; max-width: 560px; font-size: 14px; line-height: 1.7; color: #8C8477; text-wrap: pretty;">Curriculum copy is drafted placeholder. Session dates and times are sample values, and [BRACKETED] items are facts still to be filled in. Every file names the requirements it discharges, and the coverage table at the foot lists all forty.</p>
 
-    <div style="margin: 56px 0 20px;"><span class="label">Desktop</span></div>
+    <div style="margin: 46px 0 0; padding: 22px 24px 24px; border: 1px solid #2C2822; border-radius: 4px;">
+      <span class="label">Three conventions worth knowing</span>
+      <p style="margin: 14px 0 0; font-size: 14px; line-height: 1.7; color: #A69E8F; text-wrap: pretty;">A screen&#39;s alternate states stack as labelled artboards inside one file rather than one file per state, so shared chrome is written once. Module reading text and practice steps are never shortened at phone width — L2-015 requires them identical at every size; only editorial chrome is rewritten shorter. And <a href="./state-legend.html">state-legend.html</a> is normative for marks, palette roles, focus, and target size.</p>
+    </div>
 
-    <a class="row" href="./curriculum.html">
-      <div style="flex: 1;">
-        <div class="name">Curriculum</div>
-        <div class="desc">Where you are in the twelve, the next session, and the whole path across the bottom.</div>
+    <div style="margin: 56px 0 20px;"><span class="label">Reference</span></div>
+
+    <div class="row">
+      <div class="head">
+        <a class="name" href="./state-legend.html">State legend</a>
+        <span class="size">1440 × 1500</span>
       </div>
-      <span class="size">1440 × 900</span>
-    </a>
-
-    <a class="row" href="./module.html">
-      <div style="flex: 1;">
-        <div class="name">Learning module</div>
-        <div class="desc">A module section in reading view, with its practice block and the prompts to bring to a session.</div>
+      <div class="desc">Normative for every other file: the marks, the palette roles and the size each may be used at, focus, and target size.</div>
+      <div class="states">
+        <div class="state"><span class="only">Marks, contrast, targets</span><span class="reqs">L2-031 · L2-032 · L2-033 AC2 · L2-034</span></div>
       </div>
-      <span class="size">1440 × 1280</span>
-    </a>
+    </div>
 
-    <a class="row" href="./sessions.html">
-      <div style="flex: 1;">
-        <div class="name">1-on-1 sessions</div>
-        <div class="desc">Mentor, day strip, open times, and the record of sessions booked so far.</div>
+    <div style="margin: 48px 0 20px;"><span class="label">Desktop</span></div>
+
+    <div class="row">
+      <div class="head">
+        <a class="name" href="./curriculum.html">Curriculum</a>
+        <span class="size">1440 × 900</span>
       </div>
-      <span class="size">1440 × 900</span>
-    </a>
+      <div class="desc">Where you are in the twelve, the next session, and the whole path across the bottom.</div>
+      <div class="states">
+        <div class="state"><span class="only">Week three, two complete</span><span class="reqs">L2-005 · L2-008 · L2-009 · L2-011 · L2-018 AC2</span></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="head">
+        <a class="name" href="./module.html">Learning module</a>
+        <span class="size">1440 × 1280</span>
+      </div>
+      <div class="desc">A module section in reading view, with its practice block and the prompts to bring to a session.</div>
+      <div class="states">
+        <div class="state"><span class="only">Section two of five</span><span class="reqs">L2-012 · L2-013 · L2-014 · L2-015 AC3</span></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="head">
+        <a class="name" href="./sessions.html">1-on-1 sessions</a>
+        <span class="size">1440 × 900</span>
+      </div>
+      <div class="desc">Mentor, day strip, open times, and the record of sessions held so far.</div>
+      <div class="states">
+        <div class="state"><span class="only">Booking, nothing held</span><span class="reqs">L2-017 · L2-018 · L2-022 · L2-023</span></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="head">
+        <a class="name" href="./sign-in.html">Sign in</a>
+        <span class="size">1440 × 900</span>
+      </div>
+      <div class="desc">The way in. Email address and password, and nothing else on the page.</div>
+      <div class="states">
+        <div class="state"><span class="only">Resting state</span><span class="reqs">L2-001 AC1 · L2-004 AC1</span></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="head">
+        <a class="name" href="./notes.html">Notes</a>
+        <span class="size">1440 × 900</span>
+      </div>
+      <div class="desc">Everything written, most recent first, each note against the module or session it belongs to.</div>
+      <div class="states">
+        <div class="state"><a href="./notes.html#notes-all">All notes</a><span class="reqs">L2-026 AC1 · L2-025 AC2</span></div>
+        <div class="state"><a href="./notes.html#notes-empty">Nothing written yet</a><span class="reqs">L2-026 AC3</span></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="head">
+        <a class="name" href="./note-editor.html">Note editor</a>
+        <span class="size">1440 × 900</span>
+      </div>
+      <div class="desc">Writing against a module, the empty-body refusal, and the warning before unsaved text is lost.</div>
+      <div class="states">
+        <div class="state"><a href="./note-editor.html#note-editor-default">Writing a note</a><span class="reqs">L2-025 AC1 · L2-025 AC2 · L2-026 AC2</span></div>
+        <div class="state"><a href="./note-editor.html#note-editor-empty-body">Empty body refused</a><span class="reqs">L2-025 AC4 · L2-036 AC1</span></div>
+        <div class="state"><a href="./note-editor.html#note-editor-unsaved-dialog">Unsaved changes dialog</a><span class="reqs">L2-025 AC3 · L2-033 AC3</span></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="head">
+        <a class="name" href="./session-detail.html">A session</a>
+        <span class="size">1440 × 900</span>
+      </div>
+      <div class="desc">One session opened, with the module prompts and the answer written beneath the prompt it answers.</div>
+      <div class="states">
+        <div class="state"><span class="only">Next session, one answered</span><span class="reqs">L2-027 AC1 · L2-027 AC2</span></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="head">
+        <a class="name" href="./not-enrolled.html">Not enrolled</a>
+        <span class="size">1440 × 900</span>
+      </div>
+      <div class="desc">What a participant without a cohort is told, in place of the curriculum and in place of sessions.</div>
+      <div class="states">
+        <div class="state"><a href="./not-enrolled.html#not-enrolled-curriculum">Curriculum requested</a><span class="reqs">L2-007 AC1</span></div>
+        <div class="state"><a href="./not-enrolled.html#not-enrolled-sessions">Sessions requested</a><span class="reqs">L2-007 AC2</span></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="head">
+        <a class="name" href="./account-menu.html">Account menu</a>
+        <span class="size">1440 × 900</span>
+      </div>
+      <div class="desc">The avatar opened, showing who is signed in and the way out.</div>
+      <div class="states">
+        <div class="state"><span class="only">Signed in, menu open</span><span class="reqs">L2-003 AC1 · L2-033 AC3</span></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="head">
+        <a class="name" href="./error.html">Something went wrong</a>
+        <span class="size">1440 × 900</span>
+      </div>
+      <div class="desc">The generic failure, carrying a reference the participant can quote and nothing internal.</div>
+      <div class="states">
+        <div class="state"><span class="only">Error with reference</span><span class="reqs">L2-040 AC3 · L2-037 AC4</span></div>
+      </div>
+    </div>
+
+    <div style="margin: 48px 0 20px;"><span class="label">State sheets</span></div>
+
+    <div class="row">
+      <div class="head">
+        <a class="name" href="./curriculum-states.html">Curriculum states</a>
+        <span class="size">1440 × 900 · 5 states</span>
+      </div>
+      <div class="desc">The path at nothing done, just finished, all twelve, past the end date, and after a locked module was asked for.</div>
+      <div class="states">
+        <div class="state"><a href="./curriculum-states.html#curriculum-zero-progress">Nothing completed yet</a><span class="reqs">L2-009 AC3 · L2-010 AC1 · L2-011 AC2</span></div>
+        <div class="state"><a href="./curriculum-states.html#curriculum-just-completed">A module just completed</a><span class="reqs">L2-009 AC2 · L2-010 AC3 · L2-013 AC3</span></div>
+        <div class="state"><a href="./curriculum-states.html#curriculum-all-complete">All twelve, no current marker</a><span class="reqs">L2-008 AC4</span></div>
+        <div class="state"><a href="./curriculum-states.html#curriculum-cohort-closed">Past the cohort end date</a><span class="reqs">L2-006 AC3</span></div>
+        <div class="state"><a href="./curriculum-states.html#curriculum-locked-refusal">A locked module was requested</a><span class="reqs">L2-010 AC2</span></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="head">
+        <a class="name" href="./module-states.html">Module states</a>
+        <span class="size">1440 × 1280 · 2 states</span>
+      </div>
+      <div class="desc">A section already finished, where no second completion is offered, and a whole module reopened to read.</div>
+      <div class="states">
+        <div class="state"><a href="./module-states.html#module-section-complete">This section is already complete</a><span class="reqs">L2-013 AC4 · L2-014 AC1</span></div>
+        <div class="state"><a href="./module-states.html#module-read-only">A completed module, reopened</a><span class="reqs">L2-010 AC4 · L2-014 AC3</span></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="head">
+        <a class="name" href="./sessions-states.html">Session states</a>
+        <span class="size">1440 × 900 · 5 states</span>
+      </div>
+      <div class="desc">Holding a booking, inside the 24-hour close, out of allowance, beaten to a slot, and nothing held yet.</div>
+      <div class="states">
+        <div class="state"><a href="./sessions-states.html#sessions-held-booking">A session is held</a><span class="reqs">L2-019 AC1 · L2-027 AC1 · L2-027 AC2</span></div>
+        <div class="state"><a href="./sessions-states.html#sessions-within-24h">Within 24 hours of the start</a><span class="reqs">L2-020 AC2 · L2-021 AC2</span></div>
+        <div class="state"><a href="./sessions-states.html#sessions-allowance-used">The allowance is exhausted</a><span class="reqs">L2-023 AC3</span></div>
+        <div class="state"><a href="./sessions-states.html#sessions-slot-taken">The slot went while confirming</a><span class="reqs">L2-024 AC1 · L2-024 AC2 · L2-018 AC3</span></div>
+        <div class="state"><a href="./sessions-states.html#sessions-no-history">No sessions held yet</a><span class="reqs">L2-022 AC3 · L2-027 AC3</span></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="head">
+        <a class="name" href="./sign-in-states.html">Sign-in states</a>
+        <span class="size">1440 × 900 · 4 states</span>
+      </div>
+      <div class="desc">An empty field, a refusal that never says which half was wrong, the cooling-off period, and a deep link held.</div>
+      <div class="states">
+        <div class="state"><a href="./sign-in-states.html#sign-in-empty-fields">Empty field marked</a><span class="reqs">L2-001 AC4 · L2-036 AC1</span></div>
+        <div class="state"><a href="./sign-in-states.html#sign-in-incorrect">Credentials refused</a><span class="reqs">L2-001 AC2 · L2-001 AC3</span></div>
+        <div class="state"><a href="./sign-in-states.html#sign-in-locked-out">Cooling-off period</a><span class="reqs">L2-038 AC1 · L2-038 AC2</span></div>
+        <div class="state"><a href="./sign-in-states.html#sign-in-deep-link">Returning to a requested screen</a><span class="reqs">L2-004 AC3</span></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="head">
+        <a class="name" href="./mobile-states.html">Phone states</a>
+        <span class="size">390 × 844 · 2 states</span>
+      </div>
+      <div class="desc">The navigation opened at phone width, and the back affordance out of a module.</div>
+      <div class="states">
+        <div class="state"><a href="./mobile-states.html#mobile-navigation">Navigation opened</a><span class="reqs">L2-030 AC1 · L2-030 AC3 · L2-003 AC1</span></div>
+        <div class="state"><a href="./mobile-states.html#mobile-module-back">Back to the curriculum</a><span class="reqs">L2-030 AC2 · L2-032 AC1</span></div>
+      </div>
+    </div>
 
     <div style="margin: 48px 0 20px;"><span class="label">Phone</span></div>
 
-    <a class="row" href="./curriculum-mobile.html">
-      <div style="flex: 1;">
-        <div class="name">Curriculum</div>
-        <div class="desc">The same screen at phone width. No fake status bar — a real phone draws its own on top.</div>
+    <div class="row">
+      <div class="head">
+        <a class="name" href="./curriculum-mobile.html">Curriculum</a>
+        <span class="size">390 × 844</span>
       </div>
-      <span class="size">390 × 844</span>
-    </a>
-
-    <a class="row" href="./module-mobile.html">
-      <div style="flex: 1;">
-        <div class="name">Learning module</div>
-        <div class="desc">Module reading at phone width, with the completion action held at the bottom of the screen.</div>
+      <div class="desc">The same screen at phone width. No fake status bar — a real phone draws its own on top.</div>
+      <div class="states">
+        <div class="state"><span class="only">Week three, two complete</span><span class="reqs">L2-029 AC1 · L2-009 AC1</span></div>
       </div>
-      <span class="size">390 × 844</span>
-    </a>
+    </div>
 
-    <div style="border-top: 1px solid #2C2822; margin-top: 48px; padding-top: 28px; font-size: 13px; line-height: 1.7; color: #8C8477;">
-      These files are a rendered snapshot. The editable original is the design canvas at
-      <a href="https://claude.ai/code/artifact/743047c6-c414-4866-a267-0d68f447c8dc">claude.ai/code/artifact/743047c6</a> —
-      change the design there, then regenerate these.
+    <div class="row">
+      <div class="head">
+        <a class="name" href="./module-mobile.html">Learning module</a>
+        <span class="size">390 × 1980</span>
+      </div>
+      <div class="desc">Module reading at phone width. The reading text and every practice step are the desktop text, unshortened.</div>
+      <div class="states">
+        <div class="state"><span class="only">Section two of five</span><span class="reqs">L2-015 AC1 · L2-015 AC2 · L2-029 AC2</span></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="head">
+        <a class="name" href="./sessions-mobile.html">1-on-1 sessions</a>
+        <span class="size">390 × 1420</span>
+      </div>
+      <div class="desc">Day strip and slot grid stacked so both fit the 342px column without scrolling sideways.</div>
+      <div class="states">
+        <div class="state"><span class="only">Booking at phone width</span><span class="reqs">L2-029 AC3 · L2-023 AC2</span></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="head">
+        <a class="name" href="./notes-mobile.html">Notes</a>
+        <span class="size">390 × 844</span>
+      </div>
+      <div class="desc">The note list at phone width, and what stands in its place before anything is written.</div>
+      <div class="states">
+        <div class="state"><a href="./notes-mobile.html#notes-mobile-all">All notes</a><span class="reqs">L2-026 AC1 · L2-030 AC3</span></div>
+        <div class="state"><a href="./notes-mobile.html#notes-mobile-empty">Nothing written yet</a><span class="reqs">L2-026 AC3</span></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="head">
+        <a class="name" href="./note-editor-mobile.html">Note editor</a>
+        <span class="size">390 × 844</span>
+      </div>
+      <div class="desc">Writing at phone width, with the save held in the bottom bar and the unsaved warning over it.</div>
+      <div class="states">
+        <div class="state"><a href="./note-editor-mobile.html#note-editor-mobile">Writing a note</a><span class="reqs">L2-025 AC1 · L2-025 AC2</span></div>
+        <div class="state"><a href="./note-editor-mobile.html#note-editor-mobile-unsaved">Unsaved changes dialog</a><span class="reqs">L2-025 AC3 · L2-033 AC3</span></div>
+      </div>
+    </div>
+
+    <div style="margin: 64px 0 20px;"><span class="label">Coverage</span></div>
+    <p style="margin: 0 0 20px; max-width: 560px; font-size: 14px; line-height: 1.7; color: #8C8477; text-wrap: pretty;">Every L2 requirement, and the artboard that shows it. Requirements with no visible surface are marked as such rather than left blank, so a gap is always a gap and never an oversight.</p>
+    <div>
+      <div class="cov"><span class="cid">L2-001</span><span class="ctitle">Sign in with an email address and password</span><span class="cwhere">sign-in.html · sign-in-states.html</span></div>
+      <div class="cov"><span class="cid">L2-002</span><span class="ctitle">Maintain and expire an authenticated session</span><span class="cnone">no UI — API or operations</span></div>
+      <div class="cov"><span class="cid">L2-003</span><span class="ctitle">Sign out</span><span class="cwhere">account-menu.html · mobile-states.html#mobile-navigation</span></div>
+      <div class="cov"><span class="cid">L2-004</span><span class="ctitle">Refuse programme content to unidentified visitors</span><span class="cwhere">sign-in-states.html#sign-in-deep-link</span></div>
+      <div class="cov"><span class="cid">L2-005</span><span class="ctitle">A participant belongs to exactly one cohort</span><span class="cwhere">curriculum.html</span></div>
+      <div class="cov"><span class="cid">L2-006</span><span class="ctitle">A cohort defines duration, cadence, and mentor</span><span class="cwhere">curriculum-states.html#curriculum-cohort-closed</span></div>
+      <div class="cov"><span class="cid">L2-007</span><span class="ctitle">State the absence of a cohort explicitly</span><span class="cwhere">not-enrolled.html</span></div>
+      <div class="cov"><span class="cid">L2-008</span><span class="ctitle">Present the curriculum as an ordered path</span><span class="cwhere">curriculum.html · curriculum-states.html#curriculum-all-complete</span></div>
+      <div class="cov"><span class="cid">L2-009</span><span class="ctitle">Derive every progress figure from recorded completion</span><span class="cwhere">curriculum.html · curriculum-states.html</span></div>
+      <div class="cov"><span class="cid">L2-010</span><span class="ctitle">Unlock modules sequentially</span><span class="cwhere">curriculum-states.html#curriculum-locked-refusal · module-states.html#module-read-only</span></div>
+      <div class="cov"><span class="cid">L2-011</span><span class="ctitle">Resume the current module where the participant stopped</span><span class="cwhere">curriculum.html · curriculum-states.html#curriculum-zero-progress</span></div>
+      <div class="cov"><span class="cid">L2-012</span><span class="ctitle">Deliver a module as an ordered set of sections</span><span class="cwhere">module.html</span></div>
+      <div class="cov"><span class="cid">L2-013</span><span class="ctitle">Record section completion</span><span class="cwhere">module.html · module-states.html#module-section-complete</span></div>
+      <div class="cov"><span class="cid">L2-014</span><span class="ctitle">Derive the section progress indicator</span><span class="cwhere">module.html · module-states.html</span></div>
+      <div class="cov"><span class="cid">L2-015</span><span class="ctitle">Serve identical assignment content at every viewport</span><span class="cwhere">module.html · module-mobile.html</span></div>
+      <div class="cov"><span class="cid">L2-016</span><span class="ctitle">Complete a module when all its sections are complete</span><span class="cwhere">module-states.html#module-read-only</span></div>
+      <div class="cov"><span class="cid">L2-017</span><span class="ctitle">Show the mentor's open times with per-slot state</span><span class="cwhere">sessions.html · state-legend.html</span></div>
+      <div class="cov"><span class="cid">L2-018</span><span class="ctitle">Book an open slot</span><span class="cwhere">sessions.html · curriculum.html · sessions-states.html#sessions-slot-taken</span></div>
+      <div class="cov"><span class="cid">L2-019</span><span class="ctitle">Hold at most one open booking</span><span class="cwhere">sessions-states.html#sessions-held-booking</span></div>
+      <div class="cov"><span class="cid">L2-020</span><span class="ctitle">Reschedule until 24 hours before the start</span><span class="cwhere">sessions-states.html#sessions-within-24h</span></div>
+      <div class="cov"><span class="cid">L2-021</span><span class="ctitle">Cancel until 24 hours before the start</span><span class="cwhere">sessions-states.html#sessions-within-24h</span></div>
+      <div class="cov"><span class="cid">L2-022</span><span class="ctitle">Show the record of sessions held</span><span class="cwhere">sessions.html · sessions-states.html#sessions-no-history</span></div>
+      <div class="cov"><span class="cid">L2-023</span><span class="ctitle">Derive the session allowance</span><span class="cwhere">sessions.html · sessions-states.html#sessions-allowance-used</span></div>
+      <div class="cov"><span class="cid">L2-024</span><span class="ctitle">Refuse a slot taken between display and confirmation</span><span class="cwhere">sessions-states.html#sessions-slot-taken</span></div>
+      <div class="cov"><span class="cid">L2-025</span><span class="ctitle">Write and revise a note</span><span class="cwhere">note-editor.html · note-editor-mobile.html</span></div>
+      <div class="cov"><span class="cid">L2-026</span><span class="ctitle">Attach every note to a module or a session</span><span class="cwhere">notes.html · notes-mobile.html</span></div>
+      <div class="cov"><span class="cid">L2-027</span><span class="ctitle">Carry preparation prompts to the session they inform</span><span class="cwhere">session-detail.html · sessions-states.html#sessions-held-booking</span></div>
+      <div class="cov"><span class="cid">L2-028</span><span class="ctitle">Keep notes private to the participant and their mentor</span><span class="cnone">no UI — API or operations</span></div>
+      <div class="cov"><span class="cid">L2-029</span><span class="ctitle">Present every screen usably from XS to XL</span><span class="cwhere">curriculum-mobile.html · module-mobile.html · sessions-mobile.html</span></div>
+      <div class="cov"><span class="cid">L2-030</span><span class="ctitle">Offer every destination at every viewport</span><span class="cwhere">mobile-states.html#mobile-navigation</span></div>
+      <div class="cov"><span class="cid">L2-031</span><span class="ctitle">Meet contrast minimums</span><span class="cwhere">state-legend.html</span></div>
+      <div class="cov"><span class="cid">L2-032</span><span class="ctitle">Meet minimum target size</span><span class="cwhere">state-legend.html</span></div>
+      <div class="cov"><span class="cid">L2-033</span><span class="ctitle">Operate by keyboard</span><span class="cwhere">state-legend.html · note-editor.html#note-editor-unsaved-dialog</span></div>
+      <div class="cov"><span class="cid">L2-034</span><span class="ctitle">Convey state by more than colour</span><span class="cwhere">state-legend.html · curriculum.html</span></div>
+      <div class="cov"><span class="cid">L2-035</span><span class="ctitle">Authorise every request against the requesting participant</span><span class="cnone">no UI — API or operations</span></div>
+      <div class="cov"><span class="cid">L2-036</span><span class="ctitle">Validate every input at the boundary</span><span class="cwhere">sign-in-states.html#sign-in-empty-fields · note-editor.html#note-editor-empty-body</span></div>
+      <div class="cov"><span class="cid">L2-037</span><span class="ctitle">Protect credentials and data in transit and at rest</span><span class="cwhere">error.html</span></div>
+      <div class="cov"><span class="cid">L2-038</span><span class="ctitle">Limit repeated sign-in attempts</span><span class="cwhere">sign-in-states.html#sign-in-locked-out</span></div>
+      <div class="cov"><span class="cid">L2-039</span><span class="ctitle">Respond within stated budgets</span><span class="cnone">no UI — API or operations</span></div>
+      <div class="cov"><span class="cid">L2-040</span><span class="ctitle">Emit operational signals</span><span class="cwhere">error.html</span></div>
+      <div style="border-top: 1px solid #2C2822;"></div>
+    </div>
+
+    <div style="border-top: 1px solid #2C2822; margin-top: 48px; padding-top: 28px; max-width: 560px; font-size: 13px; line-height: 1.7; color: #8C8477; text-wrap: pretty;">
+      These HTML files are the working source and are edited directly. An earlier design canvas at
+      <a href="https://claude.ai/code/artifact/743047c6-c414-4866-a267-0d68f447c8dc">claude.ai/code/artifact/743047c6</a>
+      seeded the first six screens and is now behind — do not regenerate from it without reconciling these changes back into it first.
     </div>
 
   </div>
