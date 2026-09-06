@@ -297,10 +297,11 @@ the API returned one.
 
 Open a [feature request](https://github.com/QuinntyneBrown/quinntyne-brown-stewardship/issues/new?template=feature_request.yml).
 State the participant need before the solution, and express the behaviour you
-want as Given–When–Then criteria if you can. Note that the mentor and
-administrator experience — authoring curriculum, managing cohorts, setting
-availability, reviewing progress — is deliberately out of scope for the current
-requirement set and is handled by the CLI.
+want as Given–When–Then criteria if you can. Note that curriculum authoring is in
+scope and specified by `L1-011` through `L1-014`, while the remaining
+administrator tasks — managing cohorts, enrolling participants, setting mentor
+availability, provisioning mentors — stay out of scope for the current
+requirement set and are handled by the CLI.
 
 ## Reporting security issues
 

@@ -31,17 +31,18 @@ Everything written down about this project, indexed. Start with the
 Requirements come before code in this project. They are the source the acceptance
 tests are written against.
 
-| Document                                                         | Contents                                                           |
-| ---------------------------------------------------------------- | ------------------------------------------------------------------ |
-| [specs/L1.md](specs/L1.md)                                       | Ten high-level requirements describing the participant experience. |
-| [specs/L2.md](specs/L2.md)                                       | Forty detailed requirements with acceptance criteria.              |
-| [slices/programme-completion.md](slices/programme-completion.md) | Acceptance slices for the participant programme.                   |
-| [slices/awaiting-enrollment.md](slices/awaiting-enrollment.md)   | Acceptance slices for a participant with no cohort.                |
-| [slices/requirements-audit.md](slices/requirements-audit.md)     | Coverage of requirements by slice.                                 |
+| Document                                                         | Contents                                                                            |
+| ---------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| [specs/L1.md](specs/L1.md)                                       | Fourteen high-level requirements covering the participant and authoring experience. |
+| [specs/L2.md](specs/L2.md)                                       | Sixty-two detailed requirements with acceptance criteria.                           |
+| [slices/programme-completion.md](slices/programme-completion.md) | Acceptance slices for the participant programme.                                    |
+| [slices/awaiting-enrollment.md](slices/awaiting-enrollment.md)   | Acceptance slices for a participant with no cohort.                                 |
+| [slices/requirements-audit.md](slices/requirements-audit.md)     | Coverage of requirements by slice.                                                  |
 
-The mentor and administrator experience — authoring curriculum, managing cohorts,
-setting availability, reviewing progress — is deliberately out of scope for this
-requirement set and is served by the CLI.
+Curriculum authoring is in scope and is specified by `L1-011` through `L1-014`. The
+remaining administrator tasks — managing cohorts, enrolling participants, setting mentor
+availability, provisioning mentors — stay out of scope for this requirement set and are
+served by the CLI.
 
 ## Detailed designs
 
@@ -49,15 +50,16 @@ Per-feature designs under [`detailed-designs/`](detailed-designs/). Each carries
 README and rendered PlantUML: C4 container and component diagrams, a class
 structure, and one sequence diagram per significant path.
 
-| Subsystem                                  | Features                                                                               |
-| ------------------------------------------ | -------------------------------------------------------------------------------------- |
-| [access](detailed-designs/access/)         | `sign-in`, `maintain-session`, `guard-routes`                                          |
-| [enrollment](detailed-designs/enrollment/) | `resolve-cohort`                                                                       |
-| [curriculum](detailed-designs/curriculum/) | `view-path`, `unlock-and-resume`                                                       |
-| [modules](detailed-designs/modules/)       | `read-module`, `complete-section`                                                      |
-| [sessions](detailed-designs/sessions/)     | `view-availability`, `book-session`, `change-booking`, `review-session-history`        |
-| [notes](detailed-designs/notes/)           | `write-note`, `prepare-for-session`                                                    |
-| [platform](detailed-designs/platform/)     | `secure-boundary`, `responsive-shell`, `accessible-interaction`, `operate-and-observe` |
+| Subsystem                                          | Features                                                                                                                   |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| [access](detailed-designs/access/)                 | `sign-in`, `maintain-session`, `guard-routes`                                                                              |
+| [enrollment](detailed-designs/enrollment/)         | `resolve-cohort`                                                                                                           |
+| [curriculum](detailed-designs/curriculum/)         | `view-path`, `unlock-and-resume`                                                                                           |
+| [modules](detailed-designs/modules/)               | `read-module`, `complete-section`                                                                                          |
+| [sessions](detailed-designs/sessions/)             | `view-availability`, `book-session`, `change-booking`, `review-session-history`                                            |
+| [notes](detailed-designs/notes/)                   | `write-note`, `prepare-for-session`                                                                                        |
+| [administration](detailed-designs/administration/) | `authorise-administrator`, `author-programme`, `author-module`, `author-section`, `order-curriculum`, `publish-curriculum` |
+| [platform](detailed-designs/platform/)             | `secure-boundary`, `responsive-shell`, `accessible-interaction`, `operate-and-observe`                                     |
 
 ## Content and reference
 

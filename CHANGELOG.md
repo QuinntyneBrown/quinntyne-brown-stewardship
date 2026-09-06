@@ -78,8 +78,21 @@ and will form the initial `0.1.0` release.
   using the Page Object Model, production HTTP adapter tests, design system
   tests, and API and browser performance harnesses with explicit budgets.
 
+**Curriculum administration (requirements and design only)**
+
+- Requirements `L1-011` through `L1-014` and `L2-041` through `L2-062` covering
+  administrator access, curriculum authoring, publication, and derived programme
+  shape.
+- Detailed designs under `docs/detailed-designs/administration` for six authoring
+  features, with rendered C4, class, and sequence diagrams.
+- No implementation is included. The curriculum is still imported through the CLI.
+
 ### Changed
 
+- The requirement set no longer fixes the programme shape. `L2-006`, `L2-008`,
+  `L2-009`, `L2-010`, `L2-021` and `L2-023` were amended so the module count, the
+  cohort duration, the session cadence and the session allowance are read from
+  records rather than written into the acceptance criteria.
 - Frontend service contract files were renamed to the `<entity>-service.contract.ts`
   convention.
 - Progress labels were aligned with the values they describe, and programme route

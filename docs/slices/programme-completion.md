@@ -1,8 +1,10 @@
 # Programme completion
 
 This delivery completes the participant programme described by `docs/specs/L1.md`
-and all forty requirements in `docs/specs/L2.md`. Programme administration uses the
-CLI; mentor access is an authenticated read API. No administration UI is introduced.
+and all forty requirements then in `docs/specs/L2.md`. Programme administration uses
+the CLI; mentor access is an authenticated read API. No administration UI is
+introduced by this delivery; curriculum authoring is specified separately by `L1-012`
+and designed under `docs/detailed-designs/administration`.
 
 ## Acceptance slices
 

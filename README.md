@@ -232,7 +232,7 @@ quinntyne-brown-stewardship/
 | [Deployment](docs/deployment.md)         | Artifacts, configuration, TLS, health checks, operations.        |
 | [Design system](design-system/README.md) | Tokens, fonts, catalogue, publishing.                            |
 | [Live walkthrough](docs/live-demo.md)    | Five-minute feature demonstration, recording, and verification.  |
-| [Requirements](docs/specs/L1.md)         | Ten high-level and forty detailed requirements.                  |
+| [Requirements](docs/specs/L1.md)         | Fourteen high-level and sixty-two detailed requirements.         |
 
 ## Testing
 
@@ -275,10 +275,11 @@ Stewardship is pre-1.0 and under active development. The participant experience
 described in [`docs/specs/L1.md`](docs/specs/L1.md) is complete and covered by the
 acceptance suite.
 
-The mentor and administrator experience — authoring curriculum, managing cohorts,
-setting availability, reviewing participant progress — is deliberately out of
-scope for the current requirement set and is served by the CLI. It will arrive as
-a later set of high-level requirements.
+Curriculum authoring is specified by `L1-011` through `L1-014` and designed under
+[`docs/detailed-designs/administration`](docs/detailed-designs/administration/), and
+its implementation is in progress. The remaining administrator tasks — managing
+cohorts, enrolling participants, setting mentor availability, provisioning mentors —
+stay out of scope for the current requirement set and are served by the CLI.
 
 Breaking changes may occur in minor versions before 1.0. They are announced in
 [CHANGELOG.md](CHANGELOG.md).
