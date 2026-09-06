@@ -1,0 +1,18 @@
+<div class="stack reading-column"><a class="action-link" routerLink="/sessions">← Back to sessions</a>
+@if (error()) { <qbs-retry-notice [message]="error()" (retry)="load()" /> }
+@else if (data(); as data) {
+  <p class="eyebrow">{{ data.session.status }} · {{ data.session.timeZone }}</p><h1>A conversation about the work</h1>
+  <p class="lead">{{ date(data.session.startsAt, data.session.timeZone) }}</p><p>{{ data.session.durationMinutes }} minutes with {{ data.session.mentorName }}</p>
+  @if (data.moduleTitle) { <p>Alongside module {{ data.moduleOrdinal }}: {{ data.moduleTitle }}</p> }
+  @if (data.prompts.length) { <section class="stack"><h2>Before your session</h2>
+    @for (prompt of data.prompts; track prompt.id) { <article class="panel stack"><h3>{{ prompt.text }}</h3>
+      @if (prompt.answer; as answer) { <p class="note-body">{{ answer.body }}</p><a class="action-link" [routerLink]="['/notes', answer.id]">Edit answer</a> }
+      @else { <a class="action-link" routerLink="/notes/new" [queryParams]="{ moduleId: moduleId(), promptId: prompt.id }">Write an answer</a> }
+    </article> }
+  </section> }
+  <section class="stack"><h2>Session notes</h2><a class="action-link" routerLink="/notes/new" [queryParams]="{ sessionId: data.session.id }">Add a session note</a>
+    @for (note of data.notes; track note.id) { <article class="panel stack compact"><p class="note-body">{{ note.body }}</p><a class="action-link" [routerLink]="['/notes', note.id]">Edit note</a></article> }
+    @empty { <p class="muted">No notes for this session yet.</p> }
+  </section>
+} @else { <qbs-status-message message="Loading your session…" /> }
+</div>

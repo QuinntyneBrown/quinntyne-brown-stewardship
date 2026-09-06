@@ -1,0 +1,2 @@
+@if (authenticationRequired()) { <p class="notice" role="alert">Your session expired. Your draft is still here. <a href="/sign-in" target="_blank" rel="noopener">Sign in in another tab</a>, then save again.</p> }
+<qbs-note-editor [id]="id" [moduleId]="moduleId" [sessionId]="sessionId" [promptId]="promptId" (expired)="expired()" (saved)="saved()" />

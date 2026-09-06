@@ -8,7 +8,22 @@ export const routes: Routes = [
         (m) => m.SignInPageComponent,
       ),
   },
-  ...["curriculum", "modules/:id", "sessions", "notes"].map((path) => ({
+  {
+    path: '',
+    canActivate: [authGuard],
+    canActivateChild: [authGuard],
+    loadComponent: () => import('./programme-shell/programme-shell.component').then(m => m.ProgrammeShellComponent),
+    children: [
+      { path: 'curriculum', loadComponent: () => import('./curriculum/curriculum-page.component').then(m => m.CurriculumPageComponent) },
+      { path: 'modules/:id', loadComponent: () => import('./module/module-page.component').then(m => m.ModulePageComponent) },
+      { path: 'sessions', loadComponent: () => import('./sessions/sessions-page.component').then(m => m.SessionsPageComponent) },
+      { path: 'sessions/:id', loadComponent: () => import('./session-detail/session-detail-page.component').then(m => m.SessionDetailPageComponent) },
+      { path: 'notes', loadComponent: () => import('./notes/notes-page.component').then(m => m.NotesPageComponent) },
+      { path: 'notes/new', canDeactivate: [(component: { canLeave(): boolean }) => component.canLeave()], loadComponent: () => import('./note-editor/note-editor-page.component').then(m => m.NoteEditorPageComponent) },
+      { path: 'notes/:id', canDeactivate: [(component: { canLeave(): boolean }) => component.canLeave()], loadComponent: () => import('./note-editor/note-editor-page.component').then(m => m.NoteEditorPageComponent) },
+    ],
+  },
+  ...["sessions", "notes"].map((path) => ({
     path,
     canActivate: [authGuard],
     runGuardsAndResolvers: "always" as const,

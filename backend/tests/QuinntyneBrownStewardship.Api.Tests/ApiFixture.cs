@@ -29,6 +29,7 @@ public sealed class ApiFixture : WebApplicationFactory<Program>, IAsyncLifetime
     }
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        builder.UseContentRoot(Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../../src/QuinntyneBrownStewardship.Api")));
         builder.UseEnvironment("Testing");
         builder.ConfigureTestServices(services =>
         {
@@ -56,6 +57,14 @@ public sealed class ApiFixture : WebApplicationFactory<Program>, IAsyncLifetime
         Clock.UtcNow = DateTimeOffset.UtcNow;
         using var scope = Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<StewardshipDbContext>();
+        await db.Notes.ExecuteDeleteAsync();
+        await db.BookingAudits.ExecuteDeleteAsync();
+        await db.Bookings.ExecuteDeleteAsync();
+        await db.Availability.ExecuteDeleteAsync();
+        await db.Completions.ExecuteDeleteAsync();
+        await db.Prompts.ExecuteDeleteAsync();
+        await db.Sections.ExecuteDeleteAsync();
+        await db.Modules.ExecuteDeleteAsync();
         await db.Enrollments.ExecuteDeleteAsync();
         await db.Cohorts.ExecuteDeleteAsync();
         await db.Sessions.ExecuteDeleteAsync();

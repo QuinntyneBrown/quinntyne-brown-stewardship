@@ -17,7 +17,9 @@ a:hover {
   color: var(--qbs-accent-hover);
 }
 button,
-input {
+input,
+textarea,
+select {
   font: inherit;
 }
 button,
@@ -93,3 +95,26 @@ h2 {
 .muted {
   color: var(--qbs-muted);
 }
+.stack { display: flex; flex-direction: column; align-items: stretch; gap: var(--qbs-space-lg); min-width: var(--qbs-space-none); }
+.stack.compact { gap: var(--qbs-space-sm); }
+.stack > .button, .stack > button { align-self: flex-start; }
+.stack .eyebrow, .stack .lead { margin: var(--qbs-space-none); }
+.programme-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(var(--qbs-full), var(--qbs-column-min)), var(--qbs-track))); gap: var(--qbs-layout-gap); align-items: start; }
+.panel { padding: var(--qbs-space-xl); border: var(--qbs-border-width) solid var(--qbs-line); background: var(--qbs-surface); border-radius: var(--qbs-radius); }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--qbs-space-sm); }
+.action-link, .button { display: inline-flex; align-items: center; min-height: var(--qbs-control-min); }
+.button { text-decoration: none; }
+.button:hover { color: var(--qbs-on-accent); background: var(--qbs-accent-hover); }
+.secondary { background: var(--qbs-transparent); border-color: var(--qbs-control-border); color: var(--qbs-text); }
+.secondary:hover { color: var(--qbs-on-accent); }
+.notice { border-left: var(--qbs-focus-width) solid var(--qbs-accent); padding: var(--qbs-space-md); background: var(--qbs-surface); }
+.reading { font-size: var(--qbs-type-lead); color: var(--qbs-body); }
+.reading-column { max-width: var(--qbs-reading-max); }
+.note-body { white-space: pre-wrap; overflow-wrap: anywhere; }
+textarea, select { width: var(--qbs-full); min-width: var(--qbs-space-none); border: var(--qbs-border-width) solid var(--qbs-control-border); padding: var(--qbs-space-md); border-radius: var(--qbs-radius); color: var(--qbs-text); background: var(--qbs-surface); }
+textarea { min-height: var(--qbs-textarea-height); resize: vertical; }
+select { min-height: var(--qbs-control-min); }
+button:disabled { cursor: not-allowed; }
+h1, h2, h3, p, a { overflow-wrap: anywhere; }
+dialog { max-width: min(var(--qbs-dialog-max), calc(var(--qbs-full) - var(--qbs-space-xl))); padding: var(--qbs-space-xl); background: var(--qbs-surface); color: var(--qbs-text); border: var(--qbs-border-width) solid var(--qbs-control-border); border-radius: var(--qbs-radius); }
+dialog::backdrop { background: var(--qbs-backdrop); }

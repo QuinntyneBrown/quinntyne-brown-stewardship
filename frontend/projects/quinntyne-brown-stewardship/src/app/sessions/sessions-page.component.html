@@ -1,0 +1,2 @@
+<qbs-sessions-panel (expired)="expired()" (requestCancel)="requestCancel($event)" />
+<dialog #cancelDialog aria-labelledby="cancel-title" (cancel)="close()"><div class="stack"><h2 id="cancel-title">Cancel this session?</h2><p>Your slot will become available to someone else. The cancelled session will not count against your allowance.</p><div class="actions"><button type="button" class="secondary" autofocus (click)="close()">Keep session</button><button type="button" [disabled]="panel().busy()" (click)="confirmCancel()">Yes, cancel session</button></div></div></dialog>

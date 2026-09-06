@@ -11,3 +11,8 @@ export * from "./text-field/text-field.component";
 export * from "./sign-in-form/sign-in-form.component";
 export * from "./not-enrolled-notice/not-enrolled-notice.component";
 export * from "./cohort-summary/cohort-summary.component";
+
+export * from "./progress-summary/progress-summary.component";
+export * from "./module-path/module-path.component";
+
+export * from "./slot-picker/slot-picker.component";

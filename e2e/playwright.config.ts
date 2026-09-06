@@ -3,6 +3,7 @@ import { defineConfig, devices } from "@playwright/test";
 export default defineConfig({
   testDir: "./specs",
   fullyParallel: true,
+  workers: 2,
   reporter: [["list"], ["html", { open: "never" }]],
   use: { baseURL: "http://localhost:4317", trace: "retain-on-failure" },
   projects: [

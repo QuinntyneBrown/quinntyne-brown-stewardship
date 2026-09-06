@@ -15,6 +15,7 @@ export class CohortServiceMock implements ICohortService {
       this.state.update({ enrollmentFailsOnce: false });
       throw new ServiceError(503);
     }
+    if (state.enrolled) return { isEnrolled: true, cohortId: 'cohort', mentorName: 'Quinntyne Brown', startDate: '2026-09-07', endDate: '2026-11-30', currentWeek: 1, sessionAllowance: 6, hasEnded: false };
     return {
       isEnrolled: false,
       cohortId: null,

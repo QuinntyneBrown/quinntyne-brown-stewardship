@@ -1,0 +1,27 @@
+@if (error()) { <qbs-retry-notice [message]="error()" (retry)="load()" /> }
+@else if (data(); as curriculum) {
+  @if (notice()) { <p role="status" class="notice">{{ notice() }}</p> }
+  <div class="programme-grid">
+    <section class="stack">
+      <p class="eyebrow">Your curriculum · Week {{ curriculum.cohort?.currentWeek }} of 12</p>
+      <h1>{{ current()?.title ?? 'Carry the work forward' }}</h1>
+      <p class="lead">{{ current()?.summary ?? 'All twelve modules are complete. Return to your reading, practice and notes whenever you need them.' }}</p>
+      @if (current()) { <a class="button" routerLink="/modules/current">Continue module</a> }
+      @else { <p class="notice">✓ Curriculum complete</p> }
+      <qbs-progress-summary [completed]="curriculum.completed" [total]="12" [label]="curriculum.completed + ' of 12 complete'" />
+      <p class="muted">{{ curriculum.remaining }} modules remain · {{ curriculum.percent }}%</p>
+      @if (curriculum.cohort; as cohort) {
+        <aside class="panel stack compact" aria-label="Your cohort">
+          <h2>Your cohort</h2><p>Mentored by {{ cohort.mentorName }}</p><p>{{ cohort.startDate }} – {{ cohort.endDate }}</p>
+          <p class="muted">12 weeks · 6 sessions · {{ cohort.timeZone }}</p>
+          @if (cohort.hasEnded) { <p>This cohort has ended. Your completed modules remain available.</p> }
+        </aside>
+      }
+      @if (curriculum.nextSession; as session) {
+        <aside class="panel stack compact"><p class="eyebrow">Your next session</p><h2>{{ date(session.startsAt, session.timeZone) }}</h2>
+          <p>{{ session.durationMinutes }} minutes with {{ session.mentorName }} · {{ session.timeZone }}</p><a class="action-link" [routerLink]="['/sessions', session.id]">Prepare for your session</a></aside>
+      } @else if (!curriculum.cohort?.hasEnded) { <a class="action-link" routerLink="/sessions">Book a session with your mentor</a> }
+    </section>
+    <section class="stack"><h2>Twelve weeks of practice</h2><qbs-module-path [items]="curriculum.modules" /></section>
+  </div>
+} @else { <qbs-status-message message="Loading your curriculum…" /> }

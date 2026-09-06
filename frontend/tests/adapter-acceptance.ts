@@ -13,7 +13,7 @@ import {
   HttpTestingController,
   provideHttpClientTesting,
 } from "@angular/common/http/testing";
-import { CohortService, ServiceError, SignInService } from "@qbs/api";
+import { CohortService, ServiceError, SignInService, CurriculumService, SessionService, NoteService } from "@qbs/api";
 
 // Traces to: AE-01/04/05/08/09. Exercise the production adapters and Angular HTTP
 // pipeline separately from Playwright's mocked service composition.
@@ -25,6 +25,7 @@ const injector = createEnvironmentInjector(
     provideHttpClientTesting(),
     SignInService,
     CohortService,
+    CurriculumService, SessionService, NoteService,
   ],
   Injector.create({ providers: [] }) as EnvironmentInjector,
 );
@@ -119,6 +120,41 @@ try {
     (await rejected).message,
     "Email address or password is incorrect",
   );
+  http.verify();
+  const curriculum = injector.get(CurriculumService);
+  const sessions = injector.get(SessionService);
+  const notes = injector.get(NoteService);
+  // Traces to: L2-008–028, L2-035–037. The production adapters preserve payloads,
+  // acquire CSRF for every mutation, and retain conflict metadata for recovery.
+  for (const [request, url] of [
+    [() => curriculum.getCurriculum(), '/curriculum'],
+    [() => curriculum.getModule(null), '/modules/current'],
+    [() => curriculum.getModule(3), '/modules/3'],
+    [() => sessions.availability('2026-09-10'), '/sessions/availability?day=2026-09-10'],
+    [() => sessions.history(), '/sessions/history'],
+    [() => sessions.get('session-id'), '/sessions/session-id'],
+    [() => sessions.preparation('session-id'), '/sessions/session-id/preparation'],
+    [() => notes.list('module-id'), '/notes?moduleId=module-id'],
+    [() => notes.get('note-id'), '/notes/note-id'],
+  ] as const) {
+    const pending = request(); http.expectOne({ method: 'GET', url }).flush({ marker: 'unchanged' });
+    assert.deepEqual(await pending, { marker: 'unchanged' });
+  }
+  const body = { body: '<script>literal</script>', moduleId: 'module-id', sessionId: null };
+  for (const [request, method, url, expected] of [
+    [() => curriculum.completeSection('section-id'), 'POST', '/sections/section-id/completion', {}],
+    [() => sessions.book('slot-id'), 'POST', '/sessions', { slotId: 'slot-id' }],
+    [() => sessions.reschedule('session-id', 'slot-id'), 'PUT', '/sessions/session-id/slot', { slotId: 'slot-id' }],
+    [() => sessions.cancel('session-id'), 'DELETE', '/sessions/session-id', {}],
+    [() => notes.save(body), 'POST', '/notes', body],
+  ] as const) {
+    const pending = request(); http.expectOne('/authentication/csrf').flush({ token: 'programme-token' }); await tick();
+    const sent = http.expectOne({ method, url }); assert.deepEqual(sent.request.body, expected); assert.equal(sent.request.headers.get('X-CSRF-TOKEN'), 'programme-token');
+    sent.flush(null); await pending;
+  }
+  const conflict = sessions.book('contested'); http.expectOne('/authentication/csrf').flush({ token: 'programme-token' }); await tick();
+  http.expectOne('/sessions').flush({ title: 'That slot is no longer available.', correlationId: 'request-42' }, { status: 409, statusText: 'Conflict' });
+  await assert.rejects(conflict, e => e instanceof ServiceError && e.status === 409 && e.message.includes('no longer available') && e.correlationId === 'request-42');
   http.verify();
   console.log(
     "PASS: production adapters preserve credential, CSRF, session, enrollment, sign-out, and error contracts.",

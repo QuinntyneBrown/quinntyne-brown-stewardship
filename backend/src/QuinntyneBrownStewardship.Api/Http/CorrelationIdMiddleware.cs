@@ -11,6 +11,13 @@ public sealed class CorrelationIdMiddleware(RequestDelegate next, ILogger<Correl
             return Task.CompletedTask;
         });
         using var scope = logger.BeginScope(new Dictionary<string, object> { ["CorrelationId"] = context.TraceIdentifier });
-        await next(context);
+        var started = System.Diagnostics.Stopwatch.GetTimestamp();
+        try { await next(context); }
+        finally
+        {
+            logger.LogInformation("{Method} {Path} returned {StatusCode} in {ElapsedMilliseconds} ms. Correlation identifier: {CorrelationId}",
+                context.Request.Method, context.Request.Path, context.Response.StatusCode,
+                System.Diagnostics.Stopwatch.GetElapsedTime(started).TotalMilliseconds, context.TraceIdentifier);
+        }
     }
 }

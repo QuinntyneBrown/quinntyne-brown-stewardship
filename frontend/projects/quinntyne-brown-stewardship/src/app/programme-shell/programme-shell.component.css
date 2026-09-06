@@ -1,0 +1,2 @@
+main { max-width: var(--qbs-content-max); margin: auto; padding: var(--qbs-page-top) var(--qbs-page-gutter) var(--qbs-space-3xl); }
+qbs-error-message { margin-bottom: var(--qbs-space-lg); }

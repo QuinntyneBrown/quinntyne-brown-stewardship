@@ -8,7 +8,11 @@ public sealed class ProblemDetailsExceptionHandler(ILogger<ProblemDetailsExcepti
     public async ValueTask<bool> TryHandleAsync(HttpContext context, Exception exception, CancellationToken ct)
     {
         ProblemDetails problem;
-        if (exception is ValidationException validation)
+        if (exception is QuinntyneBrownStewardship.Application.Common.ProgrammeException programme)
+        {
+            problem = new() { Status = programme.StatusCode, Title = programme.Message };
+        }
+        else if (exception is ValidationException validation)
         {
             var errors = validation.Errors.GroupBy(x => char.ToLowerInvariant(x.PropertyName[0]) + x.PropertyName[1..]).ToDictionary(x => x.Key, x => x.Select(e => e.ErrorMessage).ToArray());
             problem = new ValidationProblemDetails(errors) { Status = 400, Title = "Check the highlighted fields." };

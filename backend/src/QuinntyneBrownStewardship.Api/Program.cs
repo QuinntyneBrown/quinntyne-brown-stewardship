@@ -3,6 +3,8 @@ using QuinntyneBrownStewardship.Application;
 using QuinntyneBrownStewardship.Infrastructure;
 using QuinntyneBrownStewardship.Infrastructure.Access;
 using QuinntyneBrownStewardship.Api.Http;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using QuinntyneBrownStewardship.Infrastructure.Persistence;
 namespace QuinntyneBrownStewardship.Api;
 
 public partial class Program
@@ -18,18 +20,37 @@ public partial class Program
         builder.Services.AddExceptionHandler<ProblemDetailsExceptionHandler>();
         builder.Services.AddProblemDetails();
         builder.Services.AddHttpsRedirection(options => options.HttpsPort = builder.Configuration.GetValue<int?>("HttpsPort") ?? 7240);
-        builder.WebHost.ConfigureKestrel(options => options.Limits.MaxRequestBodySize = 16384);
+        builder.WebHost.ConfigureKestrel(options => options.Limits.MaxRequestBodySize = 65536);
+        builder.Services.AddResponseCompression(options => options.EnableForHttps = true);
+        builder.Services.AddHealthChecks().AddCheck<DatabaseHealthCheck>("database", timeout: TimeSpan.FromSeconds(5));
         var app = builder.Build();
         app.UseMiddleware<CorrelationIdMiddleware>();
         app.UseExceptionHandler();
         if (!app.Environment.IsDevelopment()) app.UseHsts();
         app.UseHttpsRedirection();
+        app.UseResponseCompression();
+        // Browser document navigations share screen paths with JSON endpoints.
+        app.Use(async (context, next) =>
+        {
+            if (HttpMethods.IsGet(context.Request.Method) && context.Request.GetTypedHeaders().Accept?.Any(x => x.MediaType == "text/html") == true
+                && new[] { "/curriculum", "/modules", "/sessions", "/notes" }.Any(x => context.Request.Path.StartsWithSegments(x)))
+                context.Request.Path = "/index.html";
+            await next();
+        });
         app.UseDefaultFiles();
         app.UseStaticFiles();
         app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
+        app.MapHealthChecks("/health", new HealthCheckOptions
+        {
+            ResponseWriter = (context, report) => context.Response.WriteAsJsonAsync(new
+            {
+                status = report.Status.ToString(),
+                checks = report.Entries.ToDictionary(x => x.Key, x => x.Value.Status.ToString())
+            })
+        });
         app.MapFallbackToFile("index.html");
         app.Run();
     }

@@ -6,4 +6,6 @@ public sealed class Participant
     public string EmailAddress { get; set; } = "";
     public string NormalizedEmail { get; set; } = "";
     public string PasswordHash { get; set; } = "";
+    public bool IsMentor { get; set; }
+    public string DisplayName { get; set; } = "";
 }

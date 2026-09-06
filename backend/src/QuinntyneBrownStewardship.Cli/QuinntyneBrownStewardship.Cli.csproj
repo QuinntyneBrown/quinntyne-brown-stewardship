@@ -1,5 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 <PropertyGroup><OutputType>Exe</OutputType></PropertyGroup>
+<ItemGroup><Content Include="Content/starter-curriculum.json" CopyToOutputDirectory="PreserveNewest" /></ItemGroup>
 <ItemGroup>
 <ProjectReference Include="../QuinntyneBrownStewardship.Application/QuinntyneBrownStewardship.Application.csproj" />
 <ProjectReference Include="../QuinntyneBrownStewardship.Infrastructure/QuinntyneBrownStewardship.Infrastructure.csproj" />

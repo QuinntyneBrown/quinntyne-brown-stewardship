@@ -1,0 +1,10 @@
+<div class="stack reading-column"><p class="eyebrow">A record of attention</p><h1>What you have written</h1>
+<p class="lead">Keep the questions, observations and decisions that deserve another look. Your notes are shared only with your assigned mentor.</p>
+<a class="button" routerLink="/notes/new" [queryParams]="{ moduleId: moduleId(), sessionId: sessionId() }">Write a note</a>
+@if (moduleId() || sessionId()) { <a class="action-link" routerLink="/notes">Show all notes</a> }
+@if (error()) { <qbs-retry-notice [message]="error()" (retry)="load()" /> }
+@else if (data(); as data) {
+  @for (note of data.notes; track note.id) { <article class="panel stack"><h2>{{ note.attachmentTitle }}</h2><p class="muted">Revised {{ date(note.revisedAt) }}</p><p class="note-body">{{ note.body }}</p><a class="action-link" [routerLink]="['/notes', note.id]">Edit note</a></article> }
+  @empty { <p class="notice">No notes yet. Start with something you noticed in a module or a conversation.</p> }
+} @else { <qbs-status-message message="Loading your notes…" /> }
+</div>

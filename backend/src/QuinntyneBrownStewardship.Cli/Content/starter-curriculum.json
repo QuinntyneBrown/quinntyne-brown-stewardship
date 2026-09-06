@@ -1,0 +1,737 @@
+{
+  "key": "starter",
+  "modules": [
+    {
+      "id": "255f8135-1a56-5cdd-a4cd-a5a41dcfab0c",
+      "ordinal": 1,
+      "title": "Begin with stewardship",
+      "summary": "Treat technical work as a responsibility for people, resources and consequences that extends beyond the moment of delivery.",
+      "effortEstimate": "45–60 minutes",
+      "practiceSteps": [
+        "Choose one ordinary task in a system you can observe without collecting private information. Describe the promise the system makes to the person doing it.",
+        "Record three entrusted resources and one point where the person carries avoidable work. Separate observations from your explanations.",
+        "Propose one reversible improvement. Write a Given–When–Then example of success and an example of failure, then ask an affected person whether the examples reflect their experience."
+      ],
+      "sections": [
+        {
+          "id": "d9ede8ac-b826-5b6b-8cb5-e8d3e2de1295",
+          "ordinal": 1,
+          "title": "What has been entrusted",
+          "reading": "A system is never only its source code. It includes the time people spend learning it, the information they trust it with, and the work someone performs when it fails. Stewardship begins by naming those things. Ownership asks who may decide. Stewardship also asks who will live with the decision, and what the decision maker owes them.\n\nConsider a small community programme that replaces telephone registration with an online form. The form may reduce administrative work. It may also transfer work to someone who shares a phone, struggles with a language, or needs help describing an unusual situation. Neither outcome follows from the technology alone. The details of the service determine which people benefit.\n\nChoose a system you know. Write down three things people entrust to it: perhaps attention, money, personal information, confidence, or access to an opportunity. Name the person responsible for each. If a responsibility has no owner, the system already has a design problem worth investigating."
+        },
+        {
+          "id": "41817514-dca0-5b15-954d-00c0c53ae2af",
+          "ordinal": 2,
+          "title": "People before categories",
+          "reading": "Product work often groups people into roles such as user, administrator or customer. Roles help explain permissions, but they do not explain a person's whole situation. Two people with the same account may have different resources, obligations and reasons to distrust a process. Treat a category as a starting point for inquiry, not a complete description.\n\nImagine a participant who stops halfway through a learning module. An activity chart records an incomplete module. It cannot tell whether the reading was confusing, a shift at work changed, a child needed care, or the participant deliberately paused to think. Responding responsibly means distinguishing observation from interpretation.\n\nWrite two columns about a behaviour you have noticed. In the first, record only what the system reveals. In the second, list possible explanations. Before choosing an intervention, identify a respectful way to learn which explanation fits. The person affected should have room to correct the story being told about them."
+        },
+        {
+          "id": "579e8330-132e-525b-a136-82661a2fcfef",
+          "ordinal": 3,
+          "title": "Redemptive work in ordinary decisions",
+          "reading": "In this programme, redemptive technology means work that helps repair harm, restores people's ability to act, and makes service more dependable. It is a direction for practice, not a label that makes a product automatically good. The same feature can help in one setting and impose costs in another.\n\nA useful repair may be modest: a clear explanation of a refusal, a way to correct a mistaken record, or a reliable route to a person who can help. These changes matter because they return agency to someone who otherwise has to accommodate a system's limitations. Grand intentions do not substitute for that ordinary work.\n\nLook for a point where someone has to repeat themselves, hide uncertainty, or work around an unexplained rule. Describe one improvement in terms of what that person would be able to do afterwards. Keep the description concrete enough that they could disagree with it. A claim about service becomes useful when another person can evaluate it."
+        },
+        {
+          "id": "4b6880f7-2312-5ed8-b4fd-94434d883ca1",
+          "ordinal": 4,
+          "title": "A bounded promise",
+          "reading": "Every product makes promises, including promises it never states. A save button promises that work will remain available. A booking confirmation promises that the time belongs to the person who booked it. A private note promises that its audience is limited. Technical choices either support those promises or leave people carrying the gap.\n\nA bounded promise states both the service and its limits. For example: a participant may change a session until more than twenty-four hours remain, and the interface explains when that window closes. The limit may be inconvenient, but a consistent, visible rule gives the participant something dependable to plan around.\n\nChoose one action in your system. Write its promise in everyday language, followed by a situation in which it cannot be fulfilled. Describe what the person should see and what happens to their work in that situation. A useful promise includes failure behaviour; it does not stop at the successful path."
+        },
+        {
+          "id": "31dea770-d528-5e8d-a13c-dc5bb6f4c7c8",
+          "ordinal": 5,
+          "title": "A first practice of attention",
+          "reading": "Stewardship becomes a habit through repeated observation and correction. Start with a small responsibility that can be examined in a week. Avoid choosing a problem so broad that progress can only be described through intention. A narrow task makes it possible to see whether a change actually helped.\n\nKeep a brief decision record: the person affected, the difficulty observed, the change proposed, the evidence expected, and the person who will maintain it. Record uncertainty in plain language. This is not paperwork to defend a decision after the fact. It is an invitation to revise a decision while revision is still inexpensive.\n\nReturn to the original promise after making the change. Ask whether the improvement reduced work for one person by increasing it for someone else. If it did, describe that tradeoff openly. Responsible practice does not require a perfect first answer. It requires an honest account of consequences and a willingness to make the next repair."
+        }
+      ],
+      "preparationPrompts": [
+        {
+          "id": "ca48561c-a006-5f34-b7ff-5709cbb78de4",
+          "ordinal": 1,
+          "text": "What responsibility became visible when you looked beyond the code?"
+        },
+        {
+          "id": "18f71926-44bc-5b5a-bf9b-7f7c0693ef1f",
+          "ordinal": 2,
+          "text": "Which explanation about someone's behaviour remains an assumption?"
+        },
+        {
+          "id": "1929be7c-d116-53e7-a22c-9e7f206bbcb1",
+          "ordinal": 3,
+          "text": "What evidence would persuade you to revise your proposed improvement?"
+        }
+      ]
+    },
+    {
+      "id": "1de3209d-8451-56a8-9b0c-4e71ac215350",
+      "ordinal": 2,
+      "title": "Listen before you build",
+      "summary": "Learn from people's actual work, invite correction, and translate observations into a small, testable service improvement.",
+      "effortEstimate": "60–75 minutes",
+      "practiceSteps": [
+        "With permission, ask someone about a recent attempt at your chosen task. Record the surrounding work and the person's own definition of success without collecting unnecessary personal details.",
+        "Write a five-sentence account and invite a correction. Convert the corrected difficulty into one successful and one unsuccessful Given–When–Then example.",
+        "Sketch the smallest change that satisfies both examples. Explain to the participant what the sketch addresses and what remains unresolved."
+      ],
+      "sections": [
+        {
+          "id": "20ccc7a1-5124-5253-b528-5138e0d218d7",
+          "ordinal": 1,
+          "title": "Ask for an account, not an endorsement",
+          "reading": "When a builder presents a solution before understanding a problem, a conversation can become a search for approval. People may be polite, defer to technical expertise, or answer the question they think is expected. An enthusiastic response to an idea is different from evidence that the idea serves an actual need.\n\nBegin with a recent experience. Ask a person to describe the last time they completed the relevant task: what prompted it, what they tried, where they waited, and how they knew it was finished. Invite them to skip anything private. Ask permission before recording or taking identifiable notes, and make declining participation easy.\n\nListen for the person's own definition of success. A builder may value speed while the person values confidence that a request reached the right place. Write down the words that explain that difference. Those words can change both the feature and the way its success is evaluated."
+        },
+        {
+          "id": "50c33e0b-48ad-5d11-a454-451da4d9c52d",
+          "ordinal": 2,
+          "title": "Notice the surrounding work",
+          "reading": "The visible interaction is often a small part of a larger task. Before submitting a form, someone may gather documents, ask another person for help, or check whether they are eligible. After submitting it, they may watch for a reply and keep a separate record because the service provides no receipt.\n\nMap the task before, during and after the screen. Include work done by staff and by informal helpers. A feature that shortens one screen but creates more follow-up calls may make the overall service less dependable. Looking only at the interface can hide that transfer.\n\nChoose one transition in the map where responsibility changes hands. Ask how each person knows what happens next. If there is no shared answer, a clear handoff or acknowledgement may be more useful than a larger redesign. The surrounding work is part of the product experience even when it is outside the product's code."
+        },
+        {
+          "id": "6a483fe7-1bbf-5e30-b280-0b4e412842ab",
+          "ordinal": 3,
+          "title": "Invite a correction",
+          "reading": "An interview produces an interpretation, not direct access to another person's needs. Summarize what you heard and ask the person to correct it. Use a short account of the task and difficulty rather than a long document full of product terminology. Make disagreement easy to express.\n\nFor example: “You needed to know whether your booking was confirmed before arranging transport. The page showed a spinner, so you called to check.” This account is specific enough to correct. “Users need better engagement” is not; it replaces experience with a builder's category.\n\nRecord the correction alongside the original interpretation. A changed understanding is useful evidence, not an embarrassment to remove from the record. When two accounts differ, keep both until the context explains the difference. The aim is to understand variation well enough to serve it, rather than averaging people into an experience nobody actually has."
+        },
+        {
+          "id": "a794a872-d671-5bfa-9029-ce29f48de1d3",
+          "ordinal": 4,
+          "title": "Turn learning into acceptance examples",
+          "reading": "Acceptance examples connect an observed need to behaviour that a person can evaluate. Given describes the relevant situation. When describes an action or event. Then describes the result, including what the person sees and what persists. Keep the example focused on one promise.\n\nFor a booking receipt: given a participant who selects an open time, when confirmation succeeds, then the page shows the agreed date, duration and mentor, and the same session appears when the participant returns. A companion example covers a slot that became unavailable before confirmation.\n\nReview both examples with someone who understands the task. Ask what important condition is missing. This is the bridge between listening and ATDD: a failing automated example makes an agreed expectation visible before implementation. Passing the test establishes a behaviour. Returning to people establishes whether that behaviour was the right thing to build."
+        },
+        {
+          "id": "5e911536-2e4e-5c0c-b462-b65e876a9e6d",
+          "ordinal": 5,
+          "title": "Close the listening loop",
+          "reading": "People who share their experience contribute work to a product. A responsible process acknowledges that contribution and explains what happened to it. A brief follow-up can state what changed, what remains unresolved, and where the person's account altered the decision. Avoid promising a feature that has not been authorized or built.\n\nShow a working change with a real task rather than a guided demonstration designed to succeed. Allow pauses and mistakes. Notice whether the person needs the builder to explain an action that the interface should explain itself. Do not treat assistance during the review as evidence that the design is clear.\n\nFinish by asking what burden remains. The answer may concern a process outside the current slice. Record it without expanding the slice indiscriminately. A complete small improvement and an honest remaining question are more useful than a broad promise whose edges nobody owns."
+        }
+      ],
+      "preparationPrompts": [
+        {
+          "id": "28fd7bd6-cedb-5437-aaeb-a9362a0388c7",
+          "ordinal": 1,
+          "text": "What did the person value that your original solution overlooked?"
+        },
+        {
+          "id": "b886c843-6c1d-56c9-b8d9-64897ee29ede",
+          "ordinal": 2,
+          "text": "Which correction changed an acceptance example?"
+        },
+        {
+          "id": "6b87b2a3-46e4-5527-a814-1ab83d160b7f",
+          "ordinal": 3,
+          "text": "How will you return the result of this work to the person who helped you understand it?"
+        }
+      ]
+    },
+    {
+      "id": "ab6339ae-6f59-5871-9588-e2f11806e7b4",
+      "ordinal": 3,
+      "title": "The cost of what we build",
+      "summary": "Every technical choice distributes work and risk. Learn to see who pays for a default and make those costs part of the design decision.",
+      "effortEstimate": "60–75 minutes",
+      "practiceSteps": [
+        "Audit one default and list its benefits, costs, affected people and reversal effort. Include a person who is interrupted or unfamiliar with the service.",
+        "Compare two alternatives using the same categories. Identify one externality and a nonintrusive way to observe it.",
+        "Propose a reversible change with an owner, a review date and a failure example that protects the person carrying the greatest avoidable burden."
+      ],
+      "sections": [
+        {
+          "id": "422e8b12-5b3d-5a82-baca-c17570d786c9",
+          "ordinal": 1,
+          "title": "The bill arrives",
+          "reading": "A feature has more than a development cost. Someone learns it, maintains it, explains it, and recovers when it fails. Those costs may fall on people who were absent when the feature was approved. A system can look efficient from one team's position while making the wider service more expensive to use.\n\nConsider a rule that automatically closes an incomplete application after seven days. It may simplify an administrator's queue. It also asks applicants to monitor a deadline, gather information quickly, and restart if circumstances interrupt them. The rule has not removed work; it has distributed it differently.\n\nWrite a cost account for one decision. Include time, attention, uncertainty, recovery work and ongoing maintenance. Name who experiences each cost and who has authority to change it. Where those are different people, the decision deserves closer examination. The account should make hidden work discussable, not imply that all costs can be eliminated."
+        },
+        {
+          "id": "002edcd1-3cff-5b35-a3a1-418d4d00b3e1",
+          "ordinal": 2,
+          "title": "Who pays for the default?",
+          "reading": "A default is an action the system takes when a person does not make an explicit choice. Defaults matter because people often accept them under pressure or without noticing. A technically reversible setting may still shape behaviour for years if changing it requires knowledge the interface never supplies.\n\nSuppose a service enables public sharing of a learning reflection by default. The builder may see discoverability. The participant may see a private act of thinking. Requiring the participant to discover and change the setting transfers responsibility for the mismatch to the person with less information about the system.\n\nInspect a default in your chosen task. State what happens if the person does nothing, how the consequence is explained, and how much work reversal requires. Then consider a person who is interrupted or unfamiliar with the service. A defensible default reflects the promise made to that person, including the cost of a mistaken assumption."
+        },
+        {
+          "id": "6dcbb369-f86c-5cf9-bca4-17f31607d9e0",
+          "ordinal": 3,
+          "title": "Externality as a design choice",
+          "reading": "An externality is a consequence borne by someone who did not choose the action that produced it. In software, examples include support work caused by unclear errors, environmental cost from unnecessary processing, and exclusion caused by an inaccessible interaction. Naming an externality helps bring it into the decision rather than leaving it outside a team's success measure.\n\nNot every consequence is predictable. That is a reason to create feedback and recovery mechanisms, not to ignore consequences until someone complains loudly enough. A person who lacks time or confidence to report difficulty still experiences it. Complaint volume is an incomplete account of harm.\n\nChoose one suspected externality. Describe a way to observe it without intrusive monitoring, such as a voluntary task review or an aggregate count of recoverable failures. Pair the observation with an owner who can change the relevant rule. Information without a route to action can become another form of work imposed on the affected person."
+        },
+        {
+          "id": "51db16bc-ec44-5057-b7c8-7ca83468eb96",
+          "ordinal": 4,
+          "title": "Make a tradeoff visible",
+          "reading": "A tradeoff becomes more honest when alternatives are described in the same terms. Comparing the cost of one option with only the benefit of another creates an appearance of reasoning while hiding the actual choice. Include the people served, likely failure, recovery effort and ongoing responsibility for each option.\n\nFor an unreliable integration, alternatives might include automatic retries, a manual review queue, or removing the dependency from the task. Automatic retries can reduce staff work but may duplicate an operation unless it is idempotent. A queue may improve control while adding delay and requiring a named operator.\n\nWrite a short comparison with the evidence currently available. Identify which uncertainty could reverse the decision. Choose the smallest experiment that would reduce that uncertainty. A visible tradeoff is not a defence against criticism; it gives other people a concrete basis for improving the decision."
+        },
+        {
+          "id": "f337707e-4555-557d-b968-9f8132c868c9",
+          "ordinal": 5,
+          "title": "Return costs to the decision",
+          "reading": "After a change ships, compare the expected distribution of work with what actually happened. Ask the people who handle exceptions, not only the people who approved the feature. Maintenance and support often reveal costs that were invisible during a demonstration.\n\nIf a burden increased, decide whether to reduce it, accept it explicitly, or stop the change. Acceptance should include an owner and a review point. “Temporary” work without a date or decision maker tends to become permanent work performed by someone with little authority to remove it.\n\nUpdate the cost account with one concrete observation. The record should show how an affected person's experience changed the design. This closes the loop between intention and responsibility. It also gives the next maintainer a reason for a choice that might otherwise look arbitrary in the code."
+        }
+      ],
+      "preparationPrompts": [
+        {
+          "id": "c8d6fac5-285b-5566-8465-c316be7b46d4",
+          "ordinal": 1,
+          "text": "Which cost was absent from the original description of the feature?"
+        },
+        {
+          "id": "76d502ba-a9f1-5e27-86d9-7ec8cdddbcf5",
+          "ordinal": 2,
+          "text": "Who has authority to change the default, and who experiences its consequences?"
+        },
+        {
+          "id": "7744a7fb-e236-5ba8-b954-1d108f8406dd",
+          "ordinal": 3,
+          "text": "What observation would justify stopping or reversing the change?"
+        }
+      ]
+    },
+    {
+      "id": "069c3484-6a51-5d72-827b-908de3e2a120",
+      "ordinal": 4,
+      "title": "Repair as a discipline",
+      "summary": "Design recovery as part of the service, preserve people's work, and make failures understandable enough to act on.",
+      "effortEstimate": "60–90 minutes",
+      "practiceSteps": [
+        "Choose a recoverable failure and write the person's experience alongside the system's state changes.",
+        "Write a failing acceptance test for preservation and recovery. Include a repeated request or a precise time boundary where it matters.",
+        "Implement the smallest complete repair, verify the stored result, and write a short operational note explaining how to confirm recovery."
+      ],
+      "sections": [
+        {
+          "id": "5f944d8b-b641-547e-b3d9-b26bfa26bcad",
+          "ordinal": 1,
+          "title": "Begin where something broke",
+          "reading": "Repair starts with the actual failure and the people affected by it. A technical symptom such as an exception or timeout is useful evidence, but it is not the whole event. Someone may have lost a draft, missed an opportunity, or spent time checking whether an action succeeded.\n\nChoose a failure that can be examined without exposing private records. Describe the system's state before and after the event, then describe the person's experience in the same order. Compare the two accounts. A successful database write followed by a lost response creates a different problem from a write that never happened.\n\nAvoid assigning blame before understanding the sequence. The useful question is how the system allowed the difficulty and what would make recovery dependable. Repair may involve code, language, an operational procedure, or a change to a promise that could not be reliably kept."
+        },
+        {
+          "id": "279dd255-fa1c-558d-9b88-a93de65463e7",
+          "ordinal": 2,
+          "title": "Preserve work at the boundary",
+          "reading": "The moment a person submits work is a point of trust. A system should not discard a draft because a connection fails or validation finds one incorrect field. Preserve what remains valid and explain what the person can do next. Recovery that requires re-entering everything makes the person pay for a failure they did not cause.\n\nDistinguish a failed operation from an uncertain result. If a request may have succeeded, immediately repeating it can duplicate a payment, booking or message. Idempotent commands, persisted receipts and explicit status checks help the service determine what happened before asking the person to act again.\n\nWrite a failure example for a submitted task. State what persists, what stays visible, and how a retry behaves. Include a browser reload where appropriate. The example should be precise enough that a test can demonstrate that the repair protects the person's work rather than merely changing an error message."
+        },
+        {
+          "id": "3053f524-9894-5026-bdb7-970df114756d",
+          "ordinal": 3,
+          "title": "Explain enough to recover",
+          "reading": "An error message serves a person trying to finish a task. It should name the relevant problem, explain whether the action happened, and offer a useful next step. Internal exception details rarely help that person and can expose information the service should protect.\n\n“That time is no longer available; choose another slot” explains a booking conflict better than “request failed.” It also requires the interface to refresh availability. Language and behaviour work together. A helpful sentence above stale controls leaves the person facing the same uncertainty.\n\nSeparate user-facing explanation from diagnostic detail. A correlation identifier can connect a safe response to protected operational logs. Do not put note bodies, passwords or other private content into those logs. The aim is to make repair possible without creating another problem in the records collected to diagnose it."
+        },
+        {
+          "id": "0a00c23e-7fc3-5ae8-8c3c-230075140416",
+          "ordinal": 4,
+          "title": "Test the repair, including repetition",
+          "reading": "A repair is incomplete until the failure can be reproduced and the corrected behaviour can be observed. Start with an acceptance example that fails for the original reason. Use a controlled clock, a competing request, or a dependency that returns an error to make the condition repeatable.\n\nTest the boundary as well as the common case. If a booking can change only while more than twenty-four hours remain, test exactly twenty-four hours and one minute on either side. If a completion request is safe to repeat, send it twice and inspect the persisted result.\n\nKeep the test focused on behaviour. A test that checks a class name or folder arrangement does not prove the person can recover. The strongest repair evidence shows both the correct response and the preserved state after the failure. This makes the promise useful to future maintainers as well as today's participant."
+        },
+        {
+          "id": "74542af3-6973-5fea-94f0-0ba8e481bb39",
+          "ordinal": 5,
+          "title": "Leave a repairable system",
+          "reading": "Repairability is a design property. Clear boundaries, small commands, explicit state transitions and observable outcomes make future problems easier to understand. A clever implementation that only its author can diagnose shifts a cost into the future.\n\nLeave a concise record of the failure, the corrected behaviour, the acceptance example and any remaining limitation. Name the operation that confirms recovery. Another maintainer should be able to use that record without reconstructing an entire conversation or reading private production data.\n\nReturn to the affected task and verify that the person can complete it with ordinary guidance. The absence of an exception is not enough if the person still does not know whether their work is safe. The repair is finished when the service's promise is again understandable and dependable."
+        }
+      ],
+      "preparationPrompts": [
+        {
+          "id": "9550ff3b-7d06-5c25-b0aa-791378bd524d",
+          "ordinal": 1,
+          "text": "What did the original failure cost the person beyond an error message?"
+        },
+        {
+          "id": "ee8fe242-1fc7-50e9-9b65-81c66c0c010c",
+          "ordinal": 2,
+          "text": "How does the repair distinguish failure from an uncertain result?"
+        },
+        {
+          "id": "e70f3e01-cd9d-5b7a-8d1c-b81e38bfe6dc",
+          "ordinal": 3,
+          "text": "Could another maintainer reproduce and verify the repair without your help?"
+        }
+      ]
+    },
+    {
+      "id": "f9f6de79-b56f-5317-8204-c12abea1ab02",
+      "ordinal": 5,
+      "title": "Who is not in the room",
+      "summary": "Recognize whose experience is missing from a decision and create practical ways for that experience to change the work.",
+      "effortEstimate": "45–75 minutes",
+      "practiceSteps": [
+        "Map who uses, supports and maintains your service. Mark whose direct experience has informed the current decision and choose one consequential gap.",
+        "Design a voluntary, bounded way to review the task with that perspective. Offer an accessible format and explain which decision can still change.",
+        "Revise one acceptance example from what is learned, or document the specific unresolved assumption and the event that should trigger a review."
+      ],
+      "sections": [
+        {
+          "id": "4c07cc09-b86a-59a6-9a05-29eab27a0f17",
+          "ordinal": 1,
+          "title": "An incomplete picture",
+          "reading": "The people available for a design meeting rarely represent everyone affected by the result. Schedules, language, authority, disability, access to equipment and confidence can all shape who participates. An empty chair does not imply that the absent person's needs are unimportant.\n\nList the people who use, support, maintain and depend on your chosen service. Then mark whose account has actually informed the decision. Distinguish direct experience from a colleague speaking on someone's behalf. An informed proxy can help, but it remains a proxy.\n\nChoose one missing perspective that could materially change the design. Explain why it matters to the task, and identify an appropriate way to learn about it. Do not infer a person's experience from a demographic label. The goal is a better account of the work, grounded in what people choose to share."
+        },
+        {
+          "id": "dc6ea953-3ec2-551e-93c9-1e88fc40140e",
+          "ordinal": 2,
+          "title": "Participation has a cost",
+          "reading": "Asking someone to contribute to a design process asks for time and effort. A long workshop, an unfamiliar collaboration tool, or a meeting during working hours may make participation possible for some people and impractical for others. The research process can repeat the exclusion it is trying to understand.\n\nOffer more than one way to contribute when the context allows: a short conversation, an asynchronous response, or a review using a familiar task. Explain what information is needed and how it will be used. Respect a refusal without making the person responsible for the resulting gap.\n\nIf the work depends on substantial specialist or lived-experience input, account for that contribution in the project's resources. Good intentions do not remove its cost. For a small practice exercise, keep the request modest, voluntary and bounded, and make clear that no private story is required."
+        },
+        {
+          "id": "c6f98ad8-b84e-54f1-83ea-1f7b3b937dc7",
+          "ordinal": 3,
+          "title": "Look for burdens hidden by averages",
+          "reading": "An average completion time can improve while a minority of people become unable to finish at all. Aggregate results are useful, but they can hide a failure concentrated in a particular situation. Examine the distribution of outcomes and the circumstances behind failures, using only information appropriate to collect.\n\nFor example, a redesigned navigation may work well on a large screen and become unreachable with keyboard focus on a small one. Reporting the average across successful desktop visits does not reveal the missing mobile journey. A complete acceptance set includes the situations in which the service promises to work.\n\nChoose one measure used to describe your task. State what it includes, what it excludes, and which failure could disappear inside it. Add a direct task check for that failure. The purpose is not to collect every possible attribute about people, but to avoid treating a convenient aggregate as proof of universal service."
+        },
+        {
+          "id": "c1b27705-82d1-58b4-8c35-771c4439c915",
+          "ordinal": 4,
+          "title": "Share a consequential decision",
+          "reading": "Participation matters when it can change something. Asking people to comment on colours after the underlying service rule is fixed provides little influence over a rule that creates the main burden. Be honest about which decisions are open and who has authority to make them.\n\nPresent an actual tradeoff in plain language. Explain the alternatives, constraints and likely consequences. Invite a correction to those consequences before asking for a preference. People may identify an option the original framing omitted.\n\nRecord how the contribution affected the decision. If a suggestion is not adopted, explain the reason without implying that participation guaranteed a particular outcome. Accountability includes an intelligible response. A person should be able to see whether their account was understood, even when the final choice remains a compromise."
+        },
+        {
+          "id": "9ee0b30c-598d-5d5e-9d60-4fa23e583c74",
+          "ordinal": 5,
+          "title": "Carry absence into the record",
+          "reading": "Some perspectives will remain unavailable within a slice. Record that limitation specifically: whose task remains unexamined, what assumption is being made, and what would trigger a review. Avoid a generic statement that more research would be useful; it gives the next person little direction.\n\nChoose conservative, reversible behaviour where the cost of an unexamined assumption is high. Provide a way to report difficulty and a person responsible for responding. A feedback channel without attention or authority is only another form for someone to fill out.\n\nAfter delivery, review whether the missing perspective is still missing. A small improvement can create trust that makes later participation possible. The commitment is to keep widening the account of the service while finishing concrete work, rather than treating one consultation as permanent permission to speak for everyone."
+        }
+      ],
+      "preparationPrompts": [
+        {
+          "id": "cc49ce2e-bb91-57c9-b15b-2281a31c4b13",
+          "ordinal": 1,
+          "text": "Whose absence could change your understanding of success?"
+        },
+        {
+          "id": "e0dae91e-d6fc-55e8-8d31-f73ce8310739",
+          "ordinal": 2,
+          "text": "What does participation in your process cost that person?"
+        },
+        {
+          "id": "df9730ce-cce7-503c-9db0-df5dd1a15c4b",
+          "ordinal": 3,
+          "text": "Which decision changed, or remains explicitly open, because of the missing perspective?"
+        }
+      ]
+    },
+    {
+      "id": "0d4c7302-01e5-5351-b4b5-95d1170e5ef7",
+      "ordinal": 6,
+      "title": "Handle data with care",
+      "summary": "Collect only what a service needs, keep its audience explicit, and make retention and correction part of the design.",
+      "effortEstimate": "60–75 minutes",
+      "practiceSteps": [
+        "Trace one piece of information through entry, storage, display, logs and correction. Name its purpose and audience at each point.",
+        "Remove one unnecessary collection or diagnostic copy in a reversible development change, or document why each existing copy is needed.",
+        "Add an acceptance test for an unauthorized read and edit using invented accounts. Verify that no private body escapes in either the response or diagnostic output."
+      ],
+      "sections": [
+        {
+          "id": "83309181-53eb-5df8-833f-702051ea48c2",
+          "ordinal": 1,
+          "title": "Start with a purpose",
+          "reading": "Information often accumulates because storage is easy and a future use sounds plausible. A responsible design begins with the current service purpose. For each field, explain what action it enables and what would fail if it were absent. If no present task depends on it, collecting it creates responsibility without an established benefit.\n\nA learning note is a place for reflection, not an invitation to collect everything about a participant. The service needs enough information to attach the note to the right module or session and preserve revisions. It does not need a hidden analysis of the participant's personality to fulfil that promise.\n\nReview one data entry point. Mark required information, optional information and information that should not be requested. Explain the distinction beside the task where it helps the person decide what to share. Avoid relying on a long policy document to explain an unexpected collection at the moment it occurs."
+        },
+        {
+          "id": "1add6f6c-5147-5820-9193-8c806d6d8f20",
+          "ordinal": 2,
+          "title": "Trace the audience",
+          "reading": "Privacy is shaped by the routes through which information travels. A field may appear private in the interface and still be copied into logs, analytics, exports or support messages. Trace an item from entry to storage, display, diagnostics and eventual removal.\n\nName the people or roles allowed to read and change it. Then examine the actual enforcement point. Hiding a link does not prevent a direct request. Authorization belongs on every server operation, using the authenticated identity and the ownership or assignment recorded by the service.\n\nWrite an acceptance example involving two participants and two mentors. The owner and assigned mentor can read the note; the unrelated identities receive no content. Include an attempted edit by the mentor if the promise is read-only access. Test the audience as behaviour rather than assuming the interface establishes it."
+        },
+        {
+          "id": "e24b60d0-ffba-558a-ac53-835a6753270f",
+          "ordinal": 3,
+          "title": "Keep diagnostics proportionate",
+          "reading": "Operational records help a maintainer understand failures, but they are another copy of information with their own audience and lifetime. Logging an entire request is convenient during development and dangerous when the request contains a password or private reflection.\n\nPrefer metadata that answers a diagnostic question: operation name, status, duration and a correlation identifier. Add details only when their purpose is clear. Protect log access and decide how long the records remain useful. A diagnostic system should help repair the service without becoming an unexamined archive of people's lives.\n\nInspect a failed operation in a development environment using invented data. Compare the client response and the log. Confirm that the client receives a safe explanation and that the log can identify the operation without repeating private content. This is a concrete way to evaluate the boundary between useful observability and unnecessary exposure."
+        },
+        {
+          "id": "9582abdb-4357-581b-a5ce-d3ad24c32bc4",
+          "ordinal": 4,
+          "title": "Plan for mistakes and endings",
+          "reading": "People enter incorrect information, change their minds, and finish using services. A design that only considers creation leaves correction and endings to improvisation. Decide which data can be edited, which records need an audit, and which relationships prevent immediate deletion.\n\nPreserving a booking audit does not require preserving the text of every note in that audit. Different records have different purposes. Describe those purposes separately and choose a retention approach appropriate to the actual operating context. Where a policy decision is needed, name it explicitly rather than inventing a legal requirement.\n\nWalk through a correction using test data. Check that the revised information appears everywhere it should and that stale copies do not continue shaping the service. Then identify what an operator would do when the programme ends. A documented, reviewable procedure is better than a database edit known only to one developer."
+        },
+        {
+          "id": "7fc63756-03fd-50bf-8361-541e9613b7b3",
+          "ordinal": 5,
+          "title": "Make restraint visible",
+          "reading": "Restraint can be hard to notice because its result is information never collected or copied. Record the decision briefly so a future feature does not reintroduce the same collection without reconsidering its cost. Explain the purpose that remains satisfied by the smaller data set.\n\nTell people what matters at the point of use. A note editor can say who may read a note. A required field can explain why it is needed. A clear audience statement is useful only if the server enforces it, so connect the statement to acceptance evidence.\n\nReview the design when the purpose or audience changes. A new mentor role, integration or export is a new decision about information, even if the database schema barely changes. Treat that decision as part of the feature rather than an incidental implementation detail."
+        }
+      ],
+      "preparationPrompts": [
+        {
+          "id": "7faae77f-240b-5c7d-af9a-298ae5b3bb54",
+          "ordinal": 1,
+          "text": "Which copy of the information was least visible to the person providing it?"
+        },
+        {
+          "id": "9b21d763-22ae-5377-a8ab-b6f6324cfdb5",
+          "ordinal": 2,
+          "text": "What can the service stop collecting without weakening its promise?"
+        },
+        {
+          "id": "6c3caf56-1b36-534f-b32f-79bfe7418ee7",
+          "ordinal": 3,
+          "text": "What change in purpose or audience should require a fresh review?"
+        }
+      ]
+    },
+    {
+      "id": "a9af83f7-1e2e-5ac3-9ef1-798e11d2cf42",
+      "ordinal": 7,
+      "title": "Make access ordinary",
+      "summary": "Build complete tasks that remain usable across devices, input methods and different ways of perceiving an interface.",
+      "effortEstimate": "60–90 minutes",
+      "practiceSteps": [
+        "Complete one journey by keyboard at a narrow viewport. Include an error or dialog and record any lost focus, unreachable action or missing explanation.",
+        "Correct one complete accessibility issue using the design system's tokens and native semantics. Preserve all reading and practice content.",
+        "Run an automated accessibility check and a manual keyboard review. Record what each method established and what still requires a person's judgment."
+      ],
+      "sections": [
+        {
+          "id": "48fdb960-0bbe-5e2e-be33-913861c11962",
+          "ordinal": 1,
+          "title": "Follow the whole task",
+          "reading": "Accessibility is a property of a journey, not a badge attached to individual controls. A labelled input helps, but the task still fails if a later dialog cannot be closed by keyboard or an error is announced without a way to correct it. Follow the person from entry to a confirmed result.\n\nUse the simplest interaction that expresses the task. A native button already supports keyboard activation, focus and disabled state. Recreating it with a generic element adds responsibilities that are easy to miss. Semantic structure lets browsers and assistive technology explain the interface in familiar terms.\n\nChoose a complete task and list the information needed at each step. Check that headings, labels, instructions and status messages provide that information in a meaningful order. The journey should remain understandable when visual positioning and colour are unavailable as clues."
+        },
+        {
+          "id": "8dab7001-b888-567b-b159-b1302d5c5cdf",
+          "ordinal": 2,
+          "title": "Let focus tell a coherent story",
+          "reading": "Keyboard focus shows where an action will occur. Its order should follow the task, and its appearance should be easy to find. After a route change or section advance, focus should not remain on a control that disappeared or jump into an unrelated region.\n\nA modal dialog temporarily creates a smaller interaction space. Keep focus inside it while it is open, provide an obvious way to cancel, and return focus to a useful place afterwards. The least destructive action is often an appropriate initial focus target for a cancellation confirmation.\n\nComplete your task using only the keyboard. Notice every moment when you have to guess where focus moved. Include an error, a dialog and a successful submission. Fix the sequence itself rather than adding instructions that ask the person to compensate for an unpredictable interface."
+        },
+        {
+          "id": "bfab536d-8347-5459-9c19-62c1ca8c7f36",
+          "ordinal": 3,
+          "title": "Preserve content across widths",
+          "reading": "A smaller screen changes available space, not the participant's entitlement to the service. Reading, practice steps, notes and booking actions remain part of the task. Rearrange content into a clear sequence instead of hiding important material to make the layout appear tidy.\n\nUse flexible widths, wrapping actions and a readable line length. Long words and user-entered text need to wrap without forcing the entire page sideways. A day strip may wrap into rows if that makes every date reachable. The design should not require precision scrolling to discover a primary action.\n\nCompare the task at narrow and wide widths using the same content. Check the first and last practice steps, validation text and confirmation details. A screenshot can reveal a layout issue, but completing the interaction reveals whether the responsive design actually preserves the service."
+        },
+        {
+          "id": "445dc89c-640c-58f1-850a-7fa4ad37fafe",
+          "ordinal": 4,
+          "title": "Use redundant signals",
+          "reading": "Colour is useful for emphasis, but it should not carry state alone. A completed module can include a check mark and the word “Complete.” A selected slot can state “Selected” and expose its pressed state. These signals help people who perceive colour differently and people using a nonvisual interface.\n\nContrast supports reading and control recognition. Evaluate text against its actual background, including disabled and secondary states. A token that works on one surface may fail on another. Centralized design tokens make a corrected value consistent, but the combinations still need review.\n\nExamine every state in one screen: loading, empty, current, complete, selected, unavailable and failed. Describe how someone can distinguish each without colour. Where two states become indistinguishable, add language or structure that communicates their practical difference."
+        },
+        {
+          "id": "4a4f2298-bf81-5ef3-804b-8458446bbb44",
+          "ordinal": 5,
+          "title": "Combine automation and use",
+          "reading": "Automated accessibility checks find useful classes of defect, including missing names and some contrast failures. They cannot establish that a task makes sense, that focus returns to the right place, or that an error gives enough information to recover. Use them alongside deliberate interaction.\n\nKeep a repeatable acceptance journey with a page object that owns selectors and interactions. The test should state intent: open the module, complete a section, return to the curriculum. This keeps the evidence focused on behaviour while allowing the underlying markup to improve.\n\nRecord the viewport, input method and states reviewed. When a component changes, revisit the journeys it supports. Accessibility work becomes ordinary when these checks accompany feature completion, rather than waiting for a separate cleanup phase after the main decisions are difficult to change."
+        }
+      ],
+      "preparationPrompts": [
+        {
+          "id": "11014eb5-f6f1-5874-b39a-d79e0515c416",
+          "ordinal": 1,
+          "text": "Where did the interface expect the person to infer meaning from position or colour?"
+        },
+        {
+          "id": "ca436b08-193b-5252-8b9b-f4e6c31bad7a",
+          "ordinal": 2,
+          "text": "Which native browser behaviour reduced the amount of custom code needed?"
+        },
+        {
+          "id": "0bffb160-649d-585f-8367-096562e45503",
+          "ordinal": 3,
+          "text": "What did using the task reveal that the automated check did not?"
+        }
+      ]
+    },
+    {
+      "id": "4c9ac3fa-c26d-516d-a1de-5fde2a2b87e7",
+      "ordinal": 8,
+      "title": "Choose enough",
+      "summary": "Reduce unnecessary complexity while satisfying the whole promise, including failure paths and the work of future maintainers.",
+      "effortEstimate": "60–90 minutes",
+      "practiceSteps": [
+        "Trace one vertical slice from screen to stored result and write its successful, refused and failed outcomes.",
+        "Remove one speculative mechanism or unnecessary round trip while preserving all acceptance behaviour. Measure the relevant change.",
+        "Demonstrate the complete task, including reload and recovery, to someone who did not write the implementation."
+      ],
+      "sections": [
+        {
+          "id": "17b5c90f-b827-5f0e-acab-9840fe0c1c2f",
+          "ordinal": 1,
+          "title": "Simplicity has a recipient",
+          "reading": "Calling a design simple is incomplete without saying for whom it is simple. A short implementation can be difficult to use. A sophisticated abstraction can make one author's code elegant while making an operator's task obscure. Evaluate simplicity across the people who use, change and run the service.\n\nBegin with explicit acceptance criteria. They provide a boundary for removing work that does not support the promised behaviour. They also prevent “simple” from becoming a reason to omit failure paths, accessibility or persistence. A small feature can still be complete.\n\nChoose one slice and describe its trigger, result and important refusal. Ask which proposed elements are necessary for those behaviours. Remove speculative mechanisms only after confirming that they are not carrying an actual requirement. The result should be less code with the same complete promise."
+        },
+        {
+          "id": "9e0b202f-de52-5bd5-8156-6aabb889da0d",
+          "ordinal": 2,
+          "title": "Prefer a visible path through the system",
+          "reading": "A vertical slice follows one capability through the interface, application logic and persistence it needs. That path helps a maintainer answer a concrete question: what happens when the participant marks this section complete? Clear ownership is often more useful than a large collection of generic utilities.\n\nKeep the HTTP boundary thin. Bind the request, dispatch the application command and return its result. Put the decision about eligibility or completion where it can be exercised consistently by the API and operational tools. Keep domain rules independent of transport and storage details.\n\nTrace one action through your code. At each boundary, state what information enters and what responsibility belongs there. If a maintainer has to search unrelated features to understand a small rule, consider whether an abstraction has hidden more than it clarifies. Organize for the work people actually need to do."
+        },
+        {
+          "id": "3d8a34a2-1517-520c-aade-7bdb5dd0ab0a",
+          "ordinal": 3,
+          "title": "Resist speculative machinery",
+          "reading": "An anticipated future requirement can justify almost any amount of infrastructure. Some preparation is sensible, but untested possibilities should not dominate a present service. Each abstraction adds names, failure modes and maintenance obligations that someone must understand.\n\nDistinguish a stable boundary from a speculative generalization. An interface between a domain component and an HTTP adapter gives tests a useful replacement seam today. A configurable workflow language for a single fixed programme may solve no current problem. Both look flexible, but only one has demonstrated value in the slice.\n\nWrite down the concrete second use before generalizing a mechanism. If no second use exists, choose a direct implementation that remains easy to change. This is not a prohibition on architecture. It is a way to ground architectural effort in present responsibilities rather than a story about every possible future."
+        },
+        {
+          "id": "d07112be-3c4d-58d4-bffe-d430f36ce56b",
+          "ordinal": 4,
+          "title": "Spend resources deliberately",
+          "reading": "Technical choices consume processing, storage, bandwidth and human attention. A feature that repeatedly downloads the same information or asks a person to wait through avoidable round trips wastes more than infrastructure capacity. It also changes the conditions under which the service is usable.\n\nMeasure the relevant path before optimizing it. A screen may be slow because of a large initial bundle, a sequence of dependent requests, or a database query that reads unnecessary rows. These causes call for different changes. Optimization based on guesswork can add complexity without improving the task.\n\nChoose one measured cost and reduce it without weakening the acceptance criteria. Keep the before-and-after conditions comparable. Record what improved and what did not. A resource decision becomes useful when it connects a technical measurement to the person's ability to complete the service."
+        },
+        {
+          "id": "28e500b3-8106-5210-9f61-bcf97a01a537",
+          "ordinal": 5,
+          "title": "Stop at a complete boundary",
+          "reading": "A complete slice has a working beginning, result and recovery path. It can be demonstrated and operated without a promise that another layer will arrive later. Stopping at that boundary creates a reviewable unit of progress and a clear basis for deciding what comes next.\n\nBefore declaring completion, check persistence after reload, direct access, invalid input and an unavailable dependency. Review the documentation against the actual behaviour. Remove placeholders and abandoned code that imply a capability the service does not provide.\n\nName any remaining requirement outside the slice rather than quietly incorporating it into a vague claim of completion. Finishing a narrow promise honestly is a discipline. It keeps both ambition and simplicity accountable to the same acceptance evidence."
+        }
+      ],
+      "preparationPrompts": [
+        {
+          "id": "ce5a8c3f-8c0f-5384-b53a-3c37ac7c0546",
+          "ordinal": 1,
+          "text": "For whom did the change make the system simpler?"
+        },
+        {
+          "id": "577e2272-aad2-5677-a13a-e592b0ab303d",
+          "ordinal": 2,
+          "text": "Which abstraction has a concrete use today, and which exists for an imagined future?"
+        },
+        {
+          "id": "9e27dfdb-685e-577c-bb71-3c5e7de019f4",
+          "ordinal": 3,
+          "text": "What evidence shows that the smaller implementation still fulfils the whole promise?"
+        }
+      ]
+    },
+    {
+      "id": "09fa1db4-5864-5a25-8d92-b8f353402da8",
+      "ordinal": 9,
+      "title": "Build for dependable service",
+      "summary": "Make concurrent work, time boundaries and operational failure part of the design rather than exceptions discovered by participants.",
+      "effortEstimate": "60–90 minutes",
+      "practiceSteps": [
+        "Identify one concurrency or time invariant and write a failing integration test using real persistence and a controlled clock.",
+        "Implement the complete transaction, including audit or slot release where relevant. Verify that a rejected request leaves no partial change.",
+        "Rehearse one operational recovery or setup workflow in a disposable environment and record the command, expected result and verification step."
+      ],
+      "sections": [
+        {
+          "id": "8a19135a-068f-5594-9d70-2c4e947d03a9",
+          "ordinal": 1,
+          "title": "A promise under pressure",
+          "reading": "A feature that works for one person in a quiet demonstration may fail when two requests arrive together. Concurrency matters whenever an action claims a limited resource or checks a limit before writing. The relevant promise concerns the combined result, not merely each request in isolation.\n\nTwo participants can view the same open mentor slot. If both requests check availability before either writes, both may conclude the slot is free. A reliable design keeps the eligibility check and the claim within a boundary that the database can enforce across application processes.\n\nIdentify a check-then-write sequence in your service. State which invariant must remain true after competing requests finish. Then decide how to demonstrate it with real persistence. A mock that always accepts the first call cannot establish the database's behaviour under a race."
+        },
+        {
+          "id": "0b2d3f48-cf83-5f74-82e3-b7eef9bc1f7c",
+          "ordinal": 2,
+          "title": "Treat time as data",
+          "reading": "Time-dependent rules need a precise reference. Store instants consistently and distinguish them from local calendar dates. A cohort's start date describes its local programme calendar. A booking start describes a particular instant that people in different places may display differently.\n\nUse an explicit clock in application logic so boundary tests do not have to wait. Define whether a rule is strict or inclusive. “More than twenty-four hours” excludes exactly twenty-four hours. Display the relevant time zone where a person makes a scheduling decision.\n\nTest a daylight-saving transition with two distinct instants, and verify their local labels. Avoid accepting an ambiguous local time without an offset in an operational import. A clear time model reduces the chance that a participant and mentor make different plans from what appears to be the same confirmation."
+        },
+        {
+          "id": "b0d13beb-4641-557a-bee5-a1be487e041a",
+          "ordinal": 3,
+          "title": "Commit the whole change",
+          "reading": "A booking change may update a slot, preserve an allowance and write an audit record. These are parts of one meaningful operation. If only some persist, the system can lose track of what was promised. Use a transaction to make the intended state transition atomic.\n\nAn audit records who performed the action, what changed, when it happened and the correlation identifier used to investigate it. It should be committed with the successful operation. A rejected request should not leave an audit that falsely says a booking was created.\n\nWrite a test that forces a refusal after a competing claim. Verify both the response and the absence of partial writes. Then exercise a successful reschedule and confirm that the former slot is available. The complete result is what makes the service dependable."
+        },
+        {
+          "id": "608b955a-0d85-5ec7-8497-19916d18fff3",
+          "ordinal": 4,
+          "title": "Make readiness observable",
+          "reading": "A process can be running while its database is unreachable. An operational health check should distinguish those conditions using a safe, limited response. The operator needs to know which dependency is unavailable without receiving connection strings or private details.\n\nUse correlation and timing to connect a slow or failed request to diagnostic evidence. Measure named operations rather than logging their entire bodies. A short, consistent record of status and duration often supports investigation better than a large unstructured dump.\n\nRun a health check in a working development environment, then simulate an unavailable dependency in an isolated test. Confirm that the status changes and that the response remains safe. Operational behaviour is part of the delivered service, including the path used when ordinary participant journeys cannot complete."
+        },
+        {
+          "id": "c77dff32-6282-5135-b742-ee0fe769c510",
+          "ordinal": 5,
+          "title": "Rehearse recovery",
+          "reading": "A recovery procedure is useful only if someone can carry it out. Write the prerequisites, command or action, expected result and verification step. Keep credentials outside the document. Prefer a repeatable operation over a sequence of manual database edits.\n\nRehearse against a disposable environment with invented data. Apply migrations, import content, provision an account and complete a representative task. Check that repeating a safe import does not duplicate records or reset progress. This rehearsal exposes assumptions that a successful build cannot reveal.\n\nRecord the environment and limitations of the rehearsal. A local result does not establish the capacity or configuration of an untested hosting platform. It does establish a concrete baseline another operator can reproduce and extend with evidence from the actual deployment."
+        }
+      ],
+      "preparationPrompts": [
+        {
+          "id": "243a08b8-8530-5cc2-8b23-79c47bcb6e11",
+          "ordinal": 1,
+          "text": "Which invariant could fail even when every individual request looks correct?"
+        },
+        {
+          "id": "4d82195e-06f4-50d2-8dbc-8131be0d38aa",
+          "ordinal": 2,
+          "text": "How does the service explain time to a participant in another location?"
+        },
+        {
+          "id": "50e28504-530d-5152-bf42-55946ae12433",
+          "ordinal": 3,
+          "text": "What evidence would an operator use to confirm that recovery is complete?"
+        }
+      ]
+    },
+    {
+      "id": "a55728d7-8ff7-5d72-9c52-63a727f46bea",
+      "ordinal": 10,
+      "title": "Share power through practice",
+      "summary": "Make authority explicit, provide meaningful ways to question a result, and leave maintainers with enough understanding to act responsibly.",
+      "effortEstimate": "45–75 minutes",
+      "practiceSteps": [
+        "Map the read, change and correction authority in one journey. Compare the interface with direct API behaviour.",
+        "Improve one refusal or correction procedure so the requester understands the next legitimate step without exposing someone else's information.",
+        "Ask another person to follow a documented operational task with invented data. Revise the instructions wherever they need assistance."
+      ],
+      "sections": [
+        {
+          "id": "a52dc0e4-00c3-5326-9585-476d7cd02b3b",
+          "ordinal": 1,
+          "title": "Name who may decide",
+          "reading": "A system distributes authority through permissions, defaults and operational tools. Some people can change records; others can only request a change. Those boundaries deserve an explicit account because they shape whose interpretation becomes the service's official state.\n\nList the decisions in one journey. For each, name the person or role allowed to make it and the evidence they use. Distinguish the authority to read information from the authority to change it. A mentor may be allowed to read a reflection without being allowed to rewrite the participant's words.\n\nCheck that the interface and API express the same boundary. An operator's convenience should not silently expand a role's authority. A clear permission is easier to review, test and explain than a collection of exceptions that only appear during support work."
+        },
+        {
+          "id": "86bf6cfd-747a-57a1-a8e8-2faf410026f9",
+          "ordinal": 2,
+          "title": "Give refusals an intelligible shape",
+          "reading": "People encounter rules through specific refusals. A locked module, a closed booking window or an unauthorized note request all refuse an action for different reasons. The explanation should support the person's next legitimate step while preserving information they are not entitled to see.\n\nA participant can be told which module to complete before continuing. A person requesting someone else's private note should receive no confirmation of the note's contents or owner. Good explanations depend on context; maximum disclosure is not always the most respectful response.\n\nReview three refusals in your service. State what the requester is entitled to know and what action remains available. Test the refusal's stored result as well as its message. A polite error is insufficient if the unauthorized change already occurred."
+        },
+        {
+          "id": "d2f0fc0b-8ffe-5291-accb-ec5808797d29",
+          "ordinal": 3,
+          "title": "Provide a route to correction",
+          "reading": "Automated rules cannot anticipate every circumstance. A service should make it possible to identify a mistaken result and reach an appropriate person or procedure. That route should state what information is useful without asking someone to repeat sensitive details unnecessarily.\n\nFor a small programme, the route may be a documented operational process handled by the assigned mentor or programme operator. It does not require a large appeals platform. It does require an owner who understands the request and has a defined way to correct an error.\n\nChoose one mistake that the system cannot automatically repair. Write the correction procedure and the evidence needed to verify it. Distinguish a correction from an exception to a valid rule. Keeping that distinction visible helps the operator act consistently without pretending that every situation is identical."
+        },
+        {
+          "id": "137bc3fc-a60d-5926-bca0-3612bdbeb636",
+          "ordinal": 4,
+          "title": "Make knowledge transferable",
+          "reading": "Authority without understanding can be as limiting as a missing permission. A maintainer who can deploy a system but cannot explain its data or recovery procedure has little practical ability to steward it. Documentation and clear design transfer the ability to act, not just information.\n\nWrite for someone who did not attend the design conversations. Explain the problem, the resulting behaviour, the important rule and the way it is verified. Use the real names of operations and types where they help the reader find the implementation. Avoid a diary of abandoned approaches unless it explains a current tradeoff.\n\nAsk another person to follow a routine task from the document. Record where they need help, then improve the document or tool. The successful handoff is evidence that knowledge has moved beyond its original author."
+        },
+        {
+          "id": "491c9281-8c54-5dac-b425-59f737891584",
+          "ordinal": 5,
+          "title": "Review power when the service changes",
+          "reading": "A new feature can change authority without introducing a new role. An export, search function or bulk command can make information easier to combine or alter. Review the effect on the people represented by the data, not only whether the endpoint is authenticated.\n\nReturn to the decision map when a capability expands. Ask which person gains convenience, which person gains exposure, and which correction path remains available. Include the change in acceptance examples so that authority is tested as part of the feature.\n\nThe purpose is proportionate, understandable power. A focused application can often achieve this with a small permission model and a clear operational process. Simplicity helps when it makes authority visible enough for participants and maintainers to question and improve it."
+        }
+      ],
+      "preparationPrompts": [
+        {
+          "id": "5d04bfff-c01c-5f5f-ba04-940f9e2ac552",
+          "ordinal": 1,
+          "text": "Which permission has a larger practical effect than its name suggests?"
+        },
+        {
+          "id": "3295557f-1788-5efc-a33f-81e2ab3e350d",
+          "ordinal": 2,
+          "text": "Where can a person question or correct a mistaken result?"
+        },
+        {
+          "id": "9968234b-dcd6-5adc-a85e-0c35c01801a1",
+          "ordinal": 3,
+          "text": "What knowledge still depends on the original builder being present?"
+        }
+      ]
+    },
+    {
+      "id": "bb56129e-ed5a-5929-af81-81bc998b63bc",
+      "ordinal": 11,
+      "title": "Measure what matters",
+      "summary": "Use evidence that reflects the service's actual promise, keeps failure visible, and helps decide whether a change should continue.",
+      "effortEstimate": "60–90 minutes",
+      "practiceSteps": [
+        "Choose an outcome tied to the slice's promise. Define a supporting observation, a contradicting observation and a condition for stopping the change.",
+        "Measure a repeatable API or screen workflow, recording environment, sample size and failures. Verify that displayed progress comes from authoritative records.",
+        "Write a short result that separates observations from explanations and states the next decision without overstating what the experiment establishes."
+      ],
+      "sections": [
+        {
+          "id": "df231f75-9393-5d0d-86cf-e5553fe4b895",
+          "ordinal": 1,
+          "title": "Begin with the promised outcome",
+          "reading": "A measure becomes meaningful when it connects to a purpose. Page views, clicks and time spent may be easy to collect, but they do not necessarily show learning, confidence or successful service. More time on a screen can reflect interest or confusion.\n\nReturn to the promise of the slice. A booking feature promises a confirmed, unique time that survives returning to the application. Useful evidence includes successful completion, refused conflicts handled correctly and time to a clear result. The measure should describe what the feature is responsible for delivering.\n\nWrite one outcome in language an affected person could recognize. Then name the observation that would support it and the observation that would contradict it. If the measure can only improve, it may be a promotional number rather than a useful instrument for making decisions."
+        },
+        {
+          "id": "72f6121d-5282-53ef-8c9a-9a5564e59bdb",
+          "ordinal": 2,
+          "title": "Derive figures from source records",
+          "reading": "Progress indicators are claims about a person's work. If completion, percentage and remaining count are stored independently, they can disagree. Derive them from the same source records whenever possible, and make the rounding rule explicit.\n\nIn a twelve-module programme, two completed modules produce seventeen percent when rounded to the nearest whole percent. The completed count remains two and the remaining count ten. If a module gains an incomplete section, the derived status changes without inventing a second flag to reconcile.\n\nInspect a displayed figure in your service. Trace it to its authoritative records and identify any duplicated state. Write an acceptance example that changes the underlying records and checks every related display. Consistency is part of the person's ability to trust what the system says about their work."
+        },
+        {
+          "id": "d8fd5505-0018-59b0-a6ef-91d9c0e3d4e4",
+          "ordinal": 3,
+          "title": "Measure a distribution",
+          "reading": "A mean response time can hide a long tail of slow requests. A percentile describes a point in the distribution: a ninety-fifth percentile of three hundred milliseconds means at least ninety-five percent of the measured requests completed within that time. It says nothing about an unmeasured environment.\n\nRecord the number of requests, concurrency, data volume, warm-up and hardware when measuring an API. For a screen, record network and CPU conditions, cache state and the event counted as interactive. Without those conditions, a precise number can suggest more certainty than the experiment provides.\n\nChoose a repeatable profile and measure the same path before and after a change. Keep failed requests visible rather than dropping them from the report. A fast error does not establish successful service, and a performance budget should not be met by quietly omitting required content."
+        },
+        {
+          "id": "1f44fee6-e630-500d-884b-ed60869903ac",
+          "ordinal": 4,
+          "title": "Combine numbers with accounts",
+          "reading": "Quantitative evidence shows patterns; a person's account helps explain a pattern and identify what the measure misses. Use the two together without treating a single story as a universal result or an aggregate as a complete description of experience.\n\nIf fewer participants finish a module, examine whether the content changed, whether the task remains reachable and whether the recorded completion actually persists. Then invite a bounded, voluntary account of the experience. Do not assume that lower completion means lower motivation.\n\nWrite a brief interpretation with separate statements for observation, possible explanation and next inquiry. This keeps uncertainty visible and prevents a convenient story from becoming an unquestioned product decision. Evidence is most useful when it changes what the team is prepared to believe."
+        },
+        {
+          "id": "f322c0ed-5f54-5de4-98e3-59dcc323176c",
+          "ordinal": 5,
+          "title": "Decide what happens next",
+          "reading": "Measurement should support a decision. Before an experiment, state what result would justify keeping, revising or stopping the change. Include a condition that protects people from a concentrated failure even if an overall measure improves.\n\nAfter the experiment, compare the results with those conditions. Explain any change to the decision rule rather than moving the goalposts silently. Record the remaining uncertainty and the next responsible action. Sometimes the useful result is that the evidence is insufficient to expand the feature.\n\nReturn the findings to the people responsible for the service and, where appropriate, the people who contributed their experience. A short, candid account makes the evidence reviewable. It also helps prevent a successful experiment from turning into a permanent claim that is never checked again."
+        }
+      ],
+      "preparationPrompts": [
+        {
+          "id": "328b9999-1e87-5373-913b-ad603e5df251",
+          "ordinal": 1,
+          "text": "Which convenient metric could tell the wrong story about this task?"
+        },
+        {
+          "id": "e659269a-05d3-576b-acb3-e388639f4323",
+          "ordinal": 2,
+          "text": "What conditions are necessary for someone else to reproduce your result?"
+        },
+        {
+          "id": "1f038a1e-38b0-5586-8aaa-e7656ecf9ef6",
+          "ordinal": 3,
+          "text": "What result would lead you to stop a change you currently favour?"
+        }
+      ]
+    },
+    {
+      "id": "3e6f6773-ca1c-5262-b7a3-8441b7b4d95b",
+      "ordinal": 12,
+      "title": "Carry the work forward",
+      "summary": "Bring the programme's practices together in a finished slice and leave the service, its evidence and its responsibilities ready for the next person.",
+      "effortEstimate": "75–120 minutes",
+      "practiceSteps": [
+        "Demonstrate your completed vertical slice from a clean starting point, including persistence, a refusal and a recovery. Resolve any unfinished acceptance behaviour.",
+        "Assemble a concise handoff with requirement and design links, verification evidence, setup commands and named operational responsibilities. Ask someone else to follow one task.",
+        "Write a personal practice note: one decision that changed during the programme, one responsibility that continues, and one concrete task where you will apply the learning next."
+      ],
+      "sections": [
+        {
+          "id": "df7b8890-a2ba-5503-b8d6-43722109c5aa",
+          "ordinal": 1,
+          "title": "Revisit the original promise",
+          "reading": "Completion is an opportunity to compare the work with the promise that began it. Read the original acceptance examples and the account of the affected person. Identify what changed in your understanding as well as what changed in the implementation.\n\nShow the whole task from a clean starting point. Include entry, ordinary use, persistence after returning and one meaningful failure. Avoid a demonstration that relies on undocumented setup or the builder repairing state between steps. A finished slice should carry its own explanation and recovery behaviour.\n\nWrite a brief account of the resulting service in present tense. State who can do what and under which limits. If part of the original promise remains unmet, name it directly and finish it or revise the agreed scope explicitly. Do not hide unfinished behaviour behind a successful build."
+        },
+        {
+          "id": "69618f37-4bc3-5da4-a6e0-98614b778a1e",
+          "ordinal": 2,
+          "title": "Gather the evidence",
+          "reading": "Collect the evidence needed for another person to assess the work: acceptance results, a representative interaction, relevant performance measurements and operational verification. Keep it focused on the promise rather than the volume of activity performed while building it.\n\nTests establish particular behaviours under particular conditions. Screenshots establish a visual state, not an entire journey. A local publish establishes an artifact, not a successful external deployment. Describe each result at the level its evidence supports.\n\nInclude a refused action and a failure recovery in the review. These often reveal whether the design is complete or merely optimistic. Another reviewer should be able to distinguish what was implemented, what was measured and what remains dependent on an operating environment or a future decision."
+        },
+        {
+          "id": "492508a7-2b16-5df5-ad43-57b3f76c6f0d",
+          "ordinal": 3,
+          "title": "Leave an intelligible handoff",
+          "reading": "A handoff transfers both capability and responsibility. Provide the commands for setup, migration, verification and routine operation. Explain where configuration belongs and how private values are supplied without putting credentials into the repository.\n\nLink requirements to the relevant design and acceptance examples. Keep the design aligned with actual components and interfaces. A diagram that describes an abandoned implementation makes maintenance harder even if it looks polished. Update it when the boundary or behaviour changes.\n\nAsk someone else to perform a routine task using the handoff. Watch where they have to infer a missing step. Fix the instructions or the tool, then repeat the uncertain part. The aim is not a large document; it is a dependable path from a newcomer to a verified result."
+        },
+        {
+          "id": "635e2abb-c0ae-5c76-8d10-238ed7f5b60b",
+          "ordinal": 4,
+          "title": "Set a rhythm of review",
+          "reading": "Stewardship continues after delivery because people, content and operating conditions change. Choose a modest review rhythm tied to actual responsibilities: inspect recurring failures, confirm that correction routes are answered, and revisit costs that were accepted temporarily.\n\nName an owner for each continuing obligation. A shared intention without a person or role responsible can leave work unnoticed. Record how responsibility changes when a maintainer or mentor leaves. The service should not depend indefinitely on one person's memory or goodwill.\n\nSelect one signal that would trigger an earlier review, such as repeated booking conflicts without recovery or a new audience for private notes. Keep the signal connected to a decision. Monitoring is useful when someone knows what action it should prompt."
+        },
+        {
+          "id": "b07b8ffb-9a8f-5895-b18a-c80325ea868b",
+          "ordinal": 5,
+          "title": "Carry a practice, not a label",
+          "reading": "The programme ends with practices that can be repeated in another context: listen before proposing, name entrusted resources, account for costs, make authority visible, preserve work during failure and test the whole promise. No product earns permanent exemption from these questions.\n\nChoose one practice that changed how you build. Describe a concrete moment when it led to a different decision. Then identify a task where you can use it next, including the people whose experience should inform that task. Keep the commitment small enough to begin and specific enough to review.\n\nResponsible technical work grows through attention, evidence and repair. A finished slice is a contribution to that work, not its conclusion. Leave the next person with a system they can understand, a promise they can verify and enough room to improve the decision you made."
+        }
+      ],
+      "preparationPrompts": [
+        {
+          "id": "48dee6f4-e6bd-522f-8a6f-554e9c8de308",
+          "ordinal": 1,
+          "text": "Which decision best shows how your approach changed during the programme?"
+        },
+        {
+          "id": "09435e4e-0213-5635-80f4-4ed2270dc549",
+          "ordinal": 2,
+          "text": "Can the next maintainer verify the promise and recover the service without you?"
+        },
+        {
+          "id": "8f53708b-59d2-5404-a64d-bc6731aa0d0f",
+          "ordinal": 3,
+          "text": "What continuing responsibility has an owner and a clear review trigger?"
+        }
+      ]
+    }
+  ]
+}

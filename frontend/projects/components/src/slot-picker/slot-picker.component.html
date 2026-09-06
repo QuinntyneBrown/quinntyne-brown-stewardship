@@ -1,0 +1,13 @@
+<div class="stack">
+  <div class="days" role="group" aria-label="Booking days">
+    @for (day of days(); track day.id) { <button type="button" class="secondary" [class.selected]="day.id === selectedDay()" [attr.aria-pressed]="day.id === selectedDay()" [disabled]="day.disabled || disabled()" (click)="dayChange.emit(day.id)">{{ day.label }}</button> }
+  </div>
+  <p class="muted">Times shown in {{ timeZone() }}</p>
+  <div class="slots" role="group" aria-label="Available times">
+    @for (slot of slots(); track slot.id) {
+      <button type="button" class="secondary" [class.selected]="slot.id === selectedSlot()" [attr.aria-pressed]="slot.id === selectedSlot()" [disabled]="slot.state === 'Taken' || disabled()" (click)="slotChange.emit(slot.id)">
+        {{ slot.id === selectedSlot() ? 'Selected' : slot.state }} · {{ slot.label }}
+      </button>
+    } @empty { <p>No published times for this day. Try another day.</p> }
+  </div>
+</div>

@@ -18,6 +18,9 @@ public static class DependencyInjection
         services.AddSingleton<ISystemClock, SystemClock>();
         services.AddSingleton<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IAccessStore, AccessStore>();
+        services.AddScoped<IProgrammeStore, ProgrammeStore>();
+        services.AddScoped<ICorrelationContext, CorrelationContext>();
+        services.AddOptions<QuinntyneBrownStewardship.Application.Notes.NoteOptions>().Bind(configuration.GetSection("Notes")).Validate(x => x.MaxLength > 0 && x.MaxLength <= 10000).ValidateOnStart();
         services.AddScoped<ISignInGate, SignInGate>();
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentParticipant, CurrentParticipant>();

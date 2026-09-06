@@ -10,6 +10,18 @@ export class MockBridge {
   signedIn() {
     return this.seed({ signedIn: true });
   }
+  enrolled() {
+    return this.seed({ signedIn: true, enrolled: true });
+  }
+  unavailableSlot() {
+    return this.seed({ slotConflict: true });
+  }
+  failingProgramme() {
+    return this.seed({ programmeFailure: true });
+  }
+  allowProgramme() {
+    return this.apply({ programmeFailure: false });
+  }
   throttledSignIn() {
     return this.seed({ throttled: true });
   }

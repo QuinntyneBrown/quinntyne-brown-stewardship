@@ -29,6 +29,7 @@ export class EnrollmentPage {
     );
   }
   async navigate(name: string) {
+    await this.openMenu();
     await this.page
       .getByRole("navigation")
       .getByRole("link", { name, exact: true })
@@ -75,6 +76,7 @@ export class EnrollmentPage {
     ).toBe(true);
   }
   async expectTouchTargets() {
+    await this.openMenu();
     for (const target of await this.page
       .getByRole("navigation")
       .getByRole("link")
@@ -88,5 +90,9 @@ export class EnrollmentPage {
     await expect(this.page.getByRole("alert")).toContainText(
       "We could not sign you out",
     );
+  }
+  private async openMenu() {
+    const menu = this.page.getByRole('button', { name: 'Menu', exact: true });
+    if (await menu.isVisible() && await menu.getAttribute('aria-expanded') === 'false') await menu.click();
   }
 }

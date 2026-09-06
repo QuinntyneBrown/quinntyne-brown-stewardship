@@ -1,0 +1,3 @@
+.days, .slots { display: flex; flex-wrap: wrap; gap: var(--qbs-space-xs); }
+.selected { background: var(--qbs-accent); color: var(--qbs-on-accent); border-color: var(--qbs-accent); }
+button { flex-grow: var(--qbs-flex-one); }

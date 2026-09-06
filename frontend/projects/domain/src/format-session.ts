@@ -1,0 +1,1 @@
+export function formatSession(value: string, timeZone: string): string { return new Intl.DateTimeFormat('en-CA', { timeZone, weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' }).format(new Date(value)); }

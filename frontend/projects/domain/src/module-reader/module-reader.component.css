@@ -1,0 +1,9 @@
+:host { display: block; }
+.module-title { font-size: var(--qbs-type-module-title); }
+.section-title { font-size: var(--qbs-type-section-title); line-height: var(--qbs-leading-title); }
+.section-navigation { display: grid; gap: var(--qbs-space-xs); }
+.section-link { text-align: left; font-weight: var(--qbs-weight-normal); }
+.section-link span { display: block; color: var(--qbs-muted); font-size: var(--qbs-type-small); }
+.section-link[aria-current="step"] { border-color: var(--qbs-accent); }
+.practice { padding-left: var(--qbs-space-lg); margin: var(--qbs-space-none); }
+.practice li + li { margin-top: var(--qbs-space-md); }

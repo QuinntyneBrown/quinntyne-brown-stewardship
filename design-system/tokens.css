@@ -53,4 +53,20 @@
   --qbs-screen-height: 100dvh;
   --qbs-disabled-opacity: 0.7;
   --qbs-flex-one: 1;
+  --qbs-track: 1fr;
+  --qbs-main-track: 1.2fr;
+  --qbs-side-track: 1fr;
+  --qbs-state-column: 3;
+  --qbs-path-columns: var(--qbs-control-min) var(--qbs-track) auto;
+  --qbs-progress-height: 0.375rem;
+  --qbs-type-module-title: clamp(1.75rem, 3vw, 2.5rem);
+  --qbs-type-section-title: clamp(2rem, 4vw, 2.75rem);
+  --qbs-textarea-height: 18rem;
+  --qbs-nav-display: flex;
+  --qbs-menu-display: none;
+  --qbs-dialog-max: 32rem;
+  --qbs-backdrop: rgb(0 0 0 / 70%);
+}
+@media (width < 48rem) {
+  :root { --qbs-main-track: 1fr; --qbs-side-track: none; --qbs-nav-display: none; --qbs-menu-display: inline-flex; --qbs-path-columns: var(--qbs-control-min) var(--qbs-track); --qbs-state-column: 2; }
 }

@@ -17,10 +17,12 @@ header {
   font: var(--qbs-type-brand) var(--qbs-font-heading);
 }
 nav {
-  display: flex;
+  display: var(--qbs-nav-display);
   flex-wrap: wrap;
   gap: var(--qbs-space-lg);
 }
+.menu-toggle { display: var(--qbs-menu-display); }
+nav.open { display: flex; }
 nav a {
   display: inline-flex;
   align-items: center;

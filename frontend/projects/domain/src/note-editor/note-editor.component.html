@@ -1,0 +1,17 @@
+<div class="stack reading-column"><a class="action-link" routerLink="/notes">Back to notes</a><p class="eyebrow">Private to you and your mentor</p><h1>{{ id() ? 'Return to a thought' : 'Make a note' }}</h1>
+@if (error()) { <p role="alert" class="notice">{{ error() }}</p> }
+@if (ready()) {
+  <form class="stack" (submit)="$event.preventDefault(); save()">
+    <label for="note-attachment">Attach to</label>
+    <select id="note-attachment" [value]="attachment()" (change)="attachment.set($any($event.target).value)" [disabled]="!!note() || !!promptId() || busy()">
+      @for (item of attachments(); track item.moduleId ?? item.sessionId) { <option [value]="item.moduleId ?? item.sessionId">{{ item.title }}</option> }
+    </select>
+    <label for="note-body">Your note</label><textarea id="note-body" [value]="body()" (input)="body.set($any($event.target).value)" [maxLength]="maxLength()" [readOnly]="busy() || note()?.canEdit === false" aria-describedby="note-help" required></textarea>
+    <p id="note-help" class="muted">{{ body().length }} / {{ maxLength() }} characters · Plain text. {{ dirty() ? 'Unsaved changes' : 'All changes saved' }}</p>
+    @if (conflict()) { <button type="button" class="secondary" (click)="compareLatest()">Review latest revision</button> }
+    @if (latest(); as latest) { <aside class="panel stack"><h2>Latest saved revision</h2><p class="note-body">{{ latest.body }}</p><p>Your draft remains in the editor above.</p><button type="button" class="secondary" (click)="keepDraft()">Use my draft after review</button></aside> }
+    <button type="submit" [disabled]="!body().trim() || !attachment() || busy() || conflict() || note()?.canEdit === false">{{ busy() ? 'Saving…' : 'Save note' }}</button>
+  </form>
+} @else if (!error()) { <qbs-status-message message="Opening your note…" /> }
+@else { <button type="button" (click)="load()">Try again</button> }
+</div>

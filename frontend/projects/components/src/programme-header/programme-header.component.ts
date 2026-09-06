@@ -1,4 +1,4 @@
-import { Component, input, output } from "@angular/core";
+import { Component, input, output, signal } from "@angular/core";
 import { RouterLink, RouterLinkActive } from "@angular/router";
 import { NavigationLink } from "../navigation-link";
 @Component({
@@ -11,4 +11,5 @@ export class ProgrammeHeaderComponent {
   readonly links = input.required<readonly NavigationLink[]>();
   readonly pending = input(false);
   readonly signOut = output<void>();
+  readonly expanded = signal(false);
 }

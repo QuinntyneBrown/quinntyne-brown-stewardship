@@ -28,10 +28,18 @@ namespace QuinntyneBrownStewardship.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(254)
+                        .HasColumnType("nvarchar(254)");
+
                     b.Property<string>("EmailAddress")
                         .IsRequired()
                         .HasMaxLength(254)
                         .HasColumnType("nvarchar(254)");
+
+                    b.Property<bool>("IsMentor")
+                        .HasColumnType("bit");
 
                     b.Property<string>("NormalizedEmail")
                         .IsRequired()
@@ -122,6 +130,14 @@ namespace QuinntyneBrownStewardship.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("CurriculumKey")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("MentorId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("MentorName")
                         .IsRequired()
                         .HasMaxLength(254)
@@ -130,7 +146,14 @@ namespace QuinntyneBrownStewardship.Infrastructure.Persistence.Migrations
                     b.Property<DateOnly>("StartDate")
                         .HasColumnType("date");
 
+                    b.Property<string>("TimeZone")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("MentorId");
 
                     b.ToTable("Cohorts");
                 });
@@ -161,6 +184,267 @@ namespace QuinntyneBrownStewardship.Infrastructure.Persistence.Migrations
                     b.ToTable("Enrollments");
                 });
 
+            modelBuilder.Entity("QuinntyneBrownStewardship.Domain.Learning.CurriculumModule", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CurriculumKey")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("EffortEstimate")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Ordinal")
+                        .HasColumnType("int");
+
+                    b.PrimitiveCollection<string>("PracticeSteps")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Summary")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(254)
+                        .HasColumnType("nvarchar(254)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CurriculumKey", "Ordinal")
+                        .IsUnique();
+
+                    b.ToTable("Modules");
+                });
+
+            modelBuilder.Entity("QuinntyneBrownStewardship.Domain.Learning.ModuleSection", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("ModuleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Ordinal")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Reading")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ModuleId", "Ordinal")
+                        .IsUnique();
+
+                    b.ToTable("Sections");
+                });
+
+            modelBuilder.Entity("QuinntyneBrownStewardship.Domain.Learning.PreparationPrompt", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ModuleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Ordinal")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ModuleId", "Ordinal")
+                        .IsUnique();
+
+                    b.ToTable("Prompts");
+                });
+
+            modelBuilder.Entity("QuinntyneBrownStewardship.Domain.Learning.SectionCompletion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CompletedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("EnrollmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SectionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SectionId");
+
+                    b.HasIndex("EnrollmentId", "SectionId")
+                        .IsUnique();
+
+                    b.ToTable("Completions");
+                });
+
+            modelBuilder.Entity("QuinntyneBrownStewardship.Domain.Notes.Note", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("EnrollmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ModuleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("PromptId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("RevisedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("Revision")
+                        .IsConcurrencyToken()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("SessionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ModuleId");
+
+                    b.HasIndex("PromptId");
+
+                    b.HasIndex("SessionId");
+
+                    b.HasIndex("EnrollmentId", "PromptId")
+                        .IsUnique()
+                        .HasFilter("[PromptId] IS NOT NULL");
+
+                    b.HasIndex("EnrollmentId", "RevisedAt");
+
+                    b.ToTable("Notes", t =>
+                        {
+                            t.HasCheckConstraint("CK_Note_Attachment", "([ModuleId] IS NOT NULL AND [SessionId] IS NULL) OR ([ModuleId] IS NULL AND [SessionId] IS NOT NULL)");
+                        });
+                });
+
+            modelBuilder.Entity("QuinntyneBrownStewardship.Domain.Scheduling.AvailabilitySlot", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("DurationMinutes")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("MentorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("StartsAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MentorId", "StartsAt")
+                        .IsUnique();
+
+                    b.ToTable("Availability");
+                });
+
+            modelBuilder.Entity("QuinntyneBrownStewardship.Domain.Scheduling.Booking", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("CancelledAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("EnrollmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SlotId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EnrollmentId");
+
+                    b.HasIndex("SlotId")
+                        .IsUnique()
+                        .HasFilter("[CancelledAt] IS NULL");
+
+                    b.ToTable("Bookings");
+                });
+
+            modelBuilder.Entity("QuinntyneBrownStewardship.Domain.Scheduling.BookingAudit", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("At")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("BookingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CorrelationId")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<Guid?>("PreviousSlotId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("SlotId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookingId", "At");
+
+                    b.ToTable("BookingAudits");
+                });
+
             modelBuilder.Entity("QuinntyneBrownStewardship.Domain.Access.ParticipantSession", b =>
                 {
                     b.HasOne("QuinntyneBrownStewardship.Domain.Access.Participant", null)
@@ -168,6 +452,14 @@ namespace QuinntyneBrownStewardship.Infrastructure.Persistence.Migrations
                         .HasForeignKey("ParticipantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("QuinntyneBrownStewardship.Domain.Enrollment.Cohort", b =>
+                {
+                    b.HasOne("QuinntyneBrownStewardship.Domain.Access.Participant", null)
+                        .WithMany()
+                        .HasForeignKey("MentorId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("QuinntyneBrownStewardship.Domain.Enrollment.Enrollment", b =>
@@ -185,6 +477,105 @@ namespace QuinntyneBrownStewardship.Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Cohort");
+                });
+
+            modelBuilder.Entity("QuinntyneBrownStewardship.Domain.Learning.ModuleSection", b =>
+                {
+                    b.HasOne("QuinntyneBrownStewardship.Domain.Learning.CurriculumModule", null)
+                        .WithMany("Sections")
+                        .HasForeignKey("ModuleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("QuinntyneBrownStewardship.Domain.Learning.PreparationPrompt", b =>
+                {
+                    b.HasOne("QuinntyneBrownStewardship.Domain.Learning.CurriculumModule", null)
+                        .WithMany("PreparationPrompts")
+                        .HasForeignKey("ModuleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("QuinntyneBrownStewardship.Domain.Learning.SectionCompletion", b =>
+                {
+                    b.HasOne("QuinntyneBrownStewardship.Domain.Enrollment.Enrollment", null)
+                        .WithMany()
+                        .HasForeignKey("EnrollmentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("QuinntyneBrownStewardship.Domain.Learning.ModuleSection", null)
+                        .WithMany()
+                        .HasForeignKey("SectionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("QuinntyneBrownStewardship.Domain.Notes.Note", b =>
+                {
+                    b.HasOne("QuinntyneBrownStewardship.Domain.Enrollment.Enrollment", null)
+                        .WithMany()
+                        .HasForeignKey("EnrollmentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("QuinntyneBrownStewardship.Domain.Learning.CurriculumModule", null)
+                        .WithMany()
+                        .HasForeignKey("ModuleId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("QuinntyneBrownStewardship.Domain.Learning.PreparationPrompt", null)
+                        .WithMany()
+                        .HasForeignKey("PromptId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("QuinntyneBrownStewardship.Domain.Scheduling.Booking", null)
+                        .WithMany()
+                        .HasForeignKey("SessionId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("QuinntyneBrownStewardship.Domain.Scheduling.AvailabilitySlot", b =>
+                {
+                    b.HasOne("QuinntyneBrownStewardship.Domain.Access.Participant", null)
+                        .WithMany()
+                        .HasForeignKey("MentorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("QuinntyneBrownStewardship.Domain.Scheduling.Booking", b =>
+                {
+                    b.HasOne("QuinntyneBrownStewardship.Domain.Enrollment.Enrollment", null)
+                        .WithMany()
+                        .HasForeignKey("EnrollmentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("QuinntyneBrownStewardship.Domain.Scheduling.AvailabilitySlot", "Slot")
+                        .WithMany()
+                        .HasForeignKey("SlotId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Slot");
+                });
+
+            modelBuilder.Entity("QuinntyneBrownStewardship.Domain.Scheduling.BookingAudit", b =>
+                {
+                    b.HasOne("QuinntyneBrownStewardship.Domain.Scheduling.Booking", null)
+                        .WithMany()
+                        .HasForeignKey("BookingId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("QuinntyneBrownStewardship.Domain.Learning.CurriculumModule", b =>
+                {
+                    b.Navigation("PreparationPrompts");
+
+                    b.Navigation("Sections");
                 });
 #pragma warning restore 612, 618
         }

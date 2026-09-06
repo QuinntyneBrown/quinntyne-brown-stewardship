@@ -1,0 +1,3 @@
+progress { width: var(--qbs-full); height: var(--qbs-progress-height); accent-color: var(--qbs-accent); }
+progress::-webkit-progress-bar { background: var(--qbs-line); }
+progress::-webkit-progress-value { background: var(--qbs-accent); }

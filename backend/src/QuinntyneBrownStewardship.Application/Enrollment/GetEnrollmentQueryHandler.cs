@@ -9,7 +9,7 @@ public sealed class GetEnrollmentQueryHandler(IAccessStore store, ICurrentPartic
         var enrollment = await store.FindEnrollment(participant.Id, cancellationToken);
         if (enrollment == null) return new(false);
         var cohort = enrollment.Cohort;
-        var today = DateOnly.FromDateTime(clock.UtcNow.UtcDateTime);
+        var today = DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(clock.UtcNow, TimeZoneInfo.FindSystemTimeZoneById(cohort.TimeZone)).DateTime);
         return new(true, cohort.Id, cohort.MentorName, cohort.StartDate, cohort.EndDate, cohort.CurrentWeek(today), cohort.SessionAllowance, cohort.HasEnded(today));
     }
 }

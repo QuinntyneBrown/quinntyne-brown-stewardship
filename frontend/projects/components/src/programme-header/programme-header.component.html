@@ -1,11 +1,13 @@
 <header>
   <span class="brand">Stewardship</span>
-  <nav aria-label="Programme">
+  <button type="button" class="secondary menu-toggle" aria-controls="programme-navigation" [attr.aria-expanded]="expanded()" (click)="expanded.set(!expanded())">Menu</button>
+  <nav id="programme-navigation" aria-label="Programme" [class.open]="expanded()">
     @for (link of links(); track link.path) {
       <a
         [routerLink]="link.path"
         routerLinkActive="active"
         ariaCurrentWhenActive="page"
+        (click)="expanded.set(false)"
         >{{ link.label }}</a
       >
     }

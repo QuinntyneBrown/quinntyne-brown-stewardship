@@ -10,6 +10,8 @@ public static class DependencyInjection
     {
         services.AddMediatR(config => { config.RegisterServicesFromAssemblyContaining<SignInCommand>(); config.AddOpenBehavior(typeof(ValidationBehavior<,>)); });
         services.AddValidatorsFromAssemblyContaining<SignInCommandValidator>();
+        services.AddScoped<Programme.ProgrammeReader>();
+        services.AddScoped<Scheduling.BookingOperations>();
         return services;
     }
 }

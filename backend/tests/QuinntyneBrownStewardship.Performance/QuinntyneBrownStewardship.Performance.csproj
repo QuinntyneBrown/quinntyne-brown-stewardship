@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType></PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/QuinntyneBrownStewardship.Api/QuinntyneBrownStewardship.Api.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.11" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <Compile Include="../QuinntyneBrownStewardship.Api.Tests/ApiFixture.cs" Link="ApiFixture.cs" />
+    <Compile Include="../QuinntyneBrownStewardship.Api.Tests/TestClock.cs" Link="TestClock.cs" />
+    <Content Include="../../src/QuinntyneBrownStewardship.Cli/Content/starter-curriculum.json" Link="starter-curriculum.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

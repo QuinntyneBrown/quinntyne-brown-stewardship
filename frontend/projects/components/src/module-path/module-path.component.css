@@ -1,0 +1,8 @@
+ol { list-style: none; padding: var(--qbs-space-none); margin: var(--qbs-space-none); }
+li { display: grid; grid-template-columns: var(--qbs-path-columns); align-items: center; gap: var(--qbs-space-sm); padding: var(--qbs-space-md) var(--qbs-space-sm); border-bottom: var(--qbs-border-width) solid var(--qbs-line); }
+.ordinal { color: var(--qbs-muted); }
+.title { color: var(--qbs-text); min-height: var(--qbs-control-min); display: flex; align-items: center; }
+.state { grid-column: var(--qbs-state-column); color: var(--qbs-muted); font-size: var(--qbs-type-small); }
+.current { border-left: var(--qbs-focus-width) solid var(--qbs-accent); background: var(--qbs-surface); }
+.current .state { color: var(--qbs-accent); }
+

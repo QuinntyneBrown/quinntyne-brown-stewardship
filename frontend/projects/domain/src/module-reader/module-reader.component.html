@@ -1,0 +1,41 @@
+<a class="action-link" routerLink="/curriculum">← Back to curriculum</a>
+@if (error()) { <qbs-retry-notice [message]="error()" (retry)="load()" /> }
+@if (data(); as module) {
+  <div class="programme-grid reader-grid">
+    <aside class="stack"><p class="eyebrow">Module {{ module.ordinal.toString().padStart(2, '0') }}</p><h1 class="module-title">{{ module.title }}</h1>
+      <qbs-progress-summary [completed]="module.completedSections" [total]="module.sections.length" [label]="module.completedSections + ' of ' + module.sections.length + ' sections complete'" />
+      <nav aria-label="Module sections" class="section-navigation">
+        @for (item of module.sections; track item.id) {
+          <button type="button" class="secondary section-link" [attr.aria-current]="item.id === selected() ? 'step' : null" (click)="choose(item.id)" [disabled]="!item.isComplete && item.id !== module.resumeSectionId">
+            {{ item.ordinal }}. {{ item.title }} <span>{{ item.isComplete ? '✓ Complete' : item.id === module.resumeSectionId ? '→ Current' : '· Not started' }}</span>
+          </button>
+        }
+      </nav>
+    </aside>
+    <article class="stack reading-column">
+      @if (section(); as section) {
+        <p class="eyebrow">Section {{ section.ordinal }} of {{ module.sections.length }}</p>
+        <h2 #sectionHeading tabindex="-1" class="section-title">{{ section.title }}</h2>
+        @for (paragraph of section.reading.split('
+
+'); track $index) { <p class="reading">{{ paragraph }}</p> }
+        @if (!section.isComplete && section.id === module.resumeSectionId) { <button type="button" (click)="complete()" [disabled]="saving()">{{ saving() ? 'Saving progress…' : 'Mark section complete' }}</button> }
+        @else { <p class="notice">✓ Section complete</p> }
+      }
+      <section class="panel stack"><p class="eyebrow">Put it into practice · {{ module.effortEstimate }}</p><h2>Your assignment</h2>
+        <ol class="practice">@for (step of module.practiceSteps; track $index) { <li>{{ step }}</li> }</ol>
+      </section>
+      @if (module.preparationPrompts.length) {
+        <section class="stack"><h2>Bring to your next conversation</h2>
+        @for (prompt of module.preparationPrompts; track prompt.id) {
+          <div class="panel stack compact"><p>{{ prompt.text }}</p>
+          @if (prompt.answer; as answer) { <p class="note-body">{{ answer.body }}</p><a class="action-link" [routerLink]="['/notes', answer.id]">Edit answer</a> }
+          @else { <a class="action-link" routerLink="/notes/new" [queryParams]="{ moduleId: module.id, promptId: prompt.id }">Write an answer</a> }</div>
+        }</section>
+      }
+      <section class="stack"><h2>Module notes</h2><a class="action-link" routerLink="/notes/new" [queryParams]="{ moduleId: module.id }">Add a module note</a>
+      @for (note of moduleNotes(); track note.id) { <article class="panel stack compact"><p class="note-body">{{ note.body }}</p><a class="action-link" [routerLink]="['/notes', note.id]">Edit note</a></article> }
+      @empty { <p class="muted">No notes for this module yet.</p> }</section>
+    </article>
+  </div>
+} @else if (!error()) { <qbs-status-message message="Loading your module…" /> }

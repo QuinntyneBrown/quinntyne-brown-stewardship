@@ -1,0 +1,10 @@
+<ol aria-label="Module path">
+@for (module of items(); track module.id) {
+  <li [class.current]="module.state === 'Current'">
+    <span class="ordinal" aria-hidden="true">{{ module.ordinal.toString().padStart(2, '0') }}</span>
+    @if (module.state === 'Locked') { <span class="title">{{ module.title }}</span> }
+    @else { <a class="title" [routerLink]="['/modules', module.ordinal]">{{ module.title }}</a> }
+    <span class="state">{{ module.state === 'Complete' ? '✓ Complete' : module.state === 'Current' ? '→ Current' : '· Locked' }}</span>
+  </li>
+}
+</ol>
