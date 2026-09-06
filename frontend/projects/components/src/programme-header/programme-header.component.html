@@ -1,0 +1,21 @@
+<header>
+  <span class="brand">Stewardship</span>
+  <nav aria-label="Programme">
+    @for (link of links(); track link.path) {
+      <a
+        [routerLink]="link.path"
+        routerLinkActive="active"
+        ariaCurrentWhenActive="page"
+        >{{ link.label }}</a
+      >
+    }
+  </nav>
+  <button
+    type="button"
+    class="sign-out"
+    (click)="signOut.emit()"
+    [disabled]="pending()"
+  >
+    {{ pending() ? "Signing out…" : "Sign out" }}
+  </button>
+</header>

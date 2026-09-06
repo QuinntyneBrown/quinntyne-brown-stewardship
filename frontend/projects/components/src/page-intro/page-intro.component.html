@@ -1,0 +1,5 @@
+<section [attr.aria-labelledby]="headingId()">
+  <span class="eyebrow">{{ eyebrow() }}</span>
+  <h1 [attr.id]="headingId()" tabindex="-1">{{ heading() }}</h1>
+  <p class="lead"><ng-content /></p>
+</section>

@@ -1,23 +1,3 @@
-header {
-  max-width: var(--qbs-content-max);
-  margin: auto;
-  min-height: var(--qbs-header-min);
-  padding: var(--qbs-space-md) var(--qbs-page-gutter);
-  border-bottom: var(--qbs-border-width) solid var(--qbs-line);
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: var(--qbs-space-md);
-}
-.brand {
-  font: var(--qbs-type-brand) var(--qbs-font-heading);
-}
-.signature {
-  font-size: var(--qbs-type-label);
-  color: var(--qbs-subtle);
-  text-transform: uppercase;
-  letter-spacing: var(--qbs-tracking-label);
-}
 main {
   max-width: var(--qbs-content-max);
   margin: auto;
@@ -27,30 +7,11 @@ main {
   gap: var(--qbs-layout-gap);
   align-items: start;
 }
-.intro {
+qbs-page-intro,
+qbs-sign-in-form {
   flex: var(--qbs-flex-one) var(--qbs-flex-one) var(--qbs-column-min);
   min-width: var(--qbs-space-none);
-  max-width: var(--qbs-reading-max);
 }
-form {
-  flex: var(--qbs-flex-one) var(--qbs-flex-one) var(--qbs-column-min);
-  min-width: var(--qbs-space-none);
+qbs-sign-in-form {
   max-width: var(--qbs-form-max);
-  padding: var(--qbs-space-lg);
-  border: var(--qbs-border-width) solid var(--qbs-line);
-  border-radius: var(--qbs-radius);
-  background: var(--qbs-surface);
-  display: grid;
-  gap: var(--qbs-space-lg);
-}
-.field {
-  display: grid;
-  gap: var(--qbs-space-xs);
-}
-label {
-  color: var(--qbs-muted);
-  font-size: var(--qbs-type-small);
-}
-button {
-  width: var(--qbs-full);
 }

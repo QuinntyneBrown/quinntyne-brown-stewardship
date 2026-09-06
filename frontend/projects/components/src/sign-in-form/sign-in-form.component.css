@@ -1,0 +1,14 @@
+:host {
+  display: block;
+}
+form {
+  padding: var(--qbs-space-lg);
+  border: var(--qbs-border-width) solid var(--qbs-line);
+  border-radius: var(--qbs-radius);
+  background: var(--qbs-surface);
+  display: grid;
+  gap: var(--qbs-space-lg);
+}
+button {
+  width: var(--qbs-full);
+}

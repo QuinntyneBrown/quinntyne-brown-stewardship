@@ -1,8 +1,19 @@
-import { Provider } from "@angular/core";
-import { SIGN_IN_SERVICE, COHORT_SERVICE } from "@qbs/api";
-import { MockSignInService } from "../../../api/src/testing/mock-sign-in.service";
-import { MockCohortService } from "../../../api/src/testing/mock-cohort.service";
-export const serviceProviders: Provider[] = [
-  { provide: SIGN_IN_SERVICE, useClass: MockSignInService },
-  { provide: COHORT_SERVICE, useClass: MockCohortService },
+import {
+  EnvironmentProviders,
+  inject,
+  provideAppInitializer,
+  Provider,
+} from "@angular/core";
+import { COHORT_SERVICE, SIGN_IN_SERVICE } from "@qbs/api";
+import {
+  CohortServiceMock,
+  MockStateStore,
+  SignInServiceMock,
+} from "@qbs/api/testing";
+import { installPlaywrightBridge } from "./testing/playwright-bridge";
+
+export const serviceProviders: (Provider | EnvironmentProviders)[] = [
+  { provide: SIGN_IN_SERVICE, useClass: SignInServiceMock },
+  { provide: COHORT_SERVICE, useClass: CohortServiceMock },
+  provideAppInitializer(() => installPlaywrightBridge(inject(MockStateStore))),
 ];

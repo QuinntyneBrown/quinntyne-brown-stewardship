@@ -1,0 +1,23 @@
+:host {
+  display: block;
+}
+header {
+  max-width: var(--qbs-content-max);
+  margin: auto;
+  min-height: var(--qbs-header-min);
+  padding: var(--qbs-space-md) var(--qbs-page-gutter);
+  border-bottom: var(--qbs-border-width) solid var(--qbs-line);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--qbs-space-md);
+}
+.brand {
+  font: var(--qbs-type-brand) var(--qbs-font-heading);
+}
+.signature {
+  font-size: var(--qbs-type-label);
+  color: var(--qbs-subtle);
+  text-transform: uppercase;
+  letter-spacing: var(--qbs-tracking-label);
+}

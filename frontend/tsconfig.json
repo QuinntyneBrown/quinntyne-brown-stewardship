@@ -11,6 +11,7 @@
     "baseUrl": ".",
     "paths": {
       "@qbs/api": ["projects/api/src/public-api.ts"],
+      "@qbs/api/testing": ["projects/api/testing/src/public-api.ts"],
       "@qbs/components": ["projects/components/src/public-api.ts"],
       "@qbs/domain": ["projects/domain/src/public-api.ts"]
     }

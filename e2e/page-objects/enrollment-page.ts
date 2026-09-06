@@ -58,12 +58,6 @@ export class EnrollmentPage {
   async retry() {
     await this.page.getByRole("button", { name: "Try again" }).click();
   }
-  async expireSession() {
-    await this.page.evaluate(() =>
-      localStorage.removeItem("stewardship.mock.session"),
-    );
-    await this.page.reload();
-  }
   async expectAccessible() {
     expect(
       (
@@ -93,11 +87,6 @@ export class EnrollmentPage {
   async expectSignOutFailure() {
     await expect(this.page.getByRole("alert")).toContainText(
       "We could not sign you out",
-    );
-  }
-  async allowSignOut() {
-    await this.page.evaluate(() =>
-      localStorage.removeItem("stewardship.mock.signOutFailure"),
     );
   }
 }

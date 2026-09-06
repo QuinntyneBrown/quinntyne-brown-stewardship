@@ -7,10 +7,20 @@ import {
   OnInit,
 } from "@angular/core";
 import { COHORT_SERVICE, EnrollmentResult, ServiceError } from "@qbs/api";
-import { NotEnrolledNoticeComponent } from "@qbs/components";
+import {
+  CohortSummaryComponent,
+  NotEnrolledNoticeComponent,
+  RetryNoticeComponent,
+  StatusMessageComponent,
+} from "@qbs/components";
 @Component({
   selector: "qbs-enrollment-status",
-  imports: [NotEnrolledNoticeComponent],
+  imports: [
+    CohortSummaryComponent,
+    NotEnrolledNoticeComponent,
+    RetryNoticeComponent,
+    StatusMessageComponent,
+  ],
   templateUrl: "./enrollment-status.component.html",
   styleUrl: "./enrollment-status.component.css",
 })

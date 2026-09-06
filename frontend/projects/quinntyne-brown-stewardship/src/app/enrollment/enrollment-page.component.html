@@ -1,36 +1,12 @@
-<a class="skip" href="#main">Skip to content</a>
-<header>
-  <span class="brand">Stewardship</span>
-  <nav aria-label="Programme">
-    <a
-      routerLink="/curriculum"
-      routerLinkActive="active"
-      ariaCurrentWhenActive="page"
-      >Curriculum</a
-    ><a
-      routerLink="/sessions"
-      routerLinkActive="active"
-      ariaCurrentWhenActive="page"
-      >Sessions</a
-    ><a
-      routerLink="/notes"
-      routerLinkActive="active"
-      ariaCurrentWhenActive="page"
-      >Notes</a
-    >
-  </nav>
-  <button
-    type="button"
-    class="sign-out"
-    (click)="signOut()"
-    [disabled]="pending()"
-  >
-    {{ pending() ? "Signing out…" : "Sign out" }}
-  </button>
-</header>
+<qbs-skip-link target="#main" />
+<qbs-programme-header
+  [links]="links"
+  [pending]="pending()"
+  (signOut)="signOut()"
+/>
 <main id="main" tabindex="-1">
   @if (error()) {
-    <p role="alert" class="error">{{ error() }}</p>
+    <qbs-error-message [message]="error()" />
   }
   <qbs-enrollment-status [description]="description()" (expired)="expired()" />
 </main>

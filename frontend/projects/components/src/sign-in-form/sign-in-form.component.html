@@ -1,0 +1,28 @@
+<form novalidate (submit)="submit($event)" [attr.aria-busy]="pending()">
+  <qbs-text-field
+    #emailField
+    label="Email address"
+    name="email"
+    type="email"
+    autocomplete="username"
+    [maxLength]="254"
+    [(value)]="emailAddress"
+    [error]="emailError()"
+  />
+  <qbs-text-field
+    #passwordField
+    label="Password"
+    name="password"
+    type="password"
+    autocomplete="current-password"
+    [maxLength]="1024"
+    [(value)]="password"
+    [error]="passwordError()"
+  />
+  @if (message()) {
+    <qbs-error-message [message]="message()" />
+  }
+  <button type="submit" [disabled]="pending()">
+    {{ pending() ? "Signing in…" : "Sign in" }}
+  </button>
+</form>

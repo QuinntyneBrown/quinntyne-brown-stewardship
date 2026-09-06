@@ -1,0 +1,17 @@
+<label [attr.for]="name()">{{ label() }}</label
+><input
+  #control
+  [attr.id]="name()"
+  [attr.name]="name()"
+  [attr.type]="type()"
+  [attr.autocomplete]="autocomplete()"
+  required
+  [attr.maxlength]="maxLength()"
+  [value]="value()"
+  (input)="value.set(control.value)"
+  [attr.aria-invalid]="!!error()"
+  [attr.aria-describedby]="error() ? errorId() : null"
+/>
+@if (error()) {
+  <p [attr.id]="errorId()" class="error">{{ error() }}</p>
+}

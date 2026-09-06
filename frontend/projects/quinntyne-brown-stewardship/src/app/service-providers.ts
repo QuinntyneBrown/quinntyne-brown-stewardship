@@ -1,11 +1,12 @@
-import { Provider } from "@angular/core";
+import { EnvironmentProviders, Provider } from "@angular/core";
 import {
-  SIGN_IN_SERVICE,
   COHORT_SERVICE,
-  SignInService,
   CohortService,
+  SIGN_IN_SERVICE,
+  SignInService,
 } from "@qbs/api";
-export const serviceProviders: Provider[] = [
+
+export const serviceProviders: (Provider | EnvironmentProviders)[] = [
   { provide: SIGN_IN_SERVICE, useClass: SignInService },
   { provide: COHORT_SERVICE, useClass: CohortService },
 ];

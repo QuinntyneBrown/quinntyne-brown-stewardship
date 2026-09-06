@@ -13,6 +13,7 @@ Server. Windows development can use SQL Server LocalDB. Run from the repository 
 npm ci
 npm --prefix frontend ci
 npm --prefix design-system ci
+npm --prefix e2e ci
 dotnet tool restore
 dotnet dev-certs https --trust
 . ./scripts/use-local-sql.ps1
@@ -38,7 +39,7 @@ restarting LocalDB because that pipe name changes.
 ```powershell
 . ./scripts/use-local-sql.ps1
 dotnet test backend/QuinntyneBrownStewardship.sln
-npx playwright install chromium
+npm --prefix e2e run install:browsers
 npm run test:e2e
 npm run test:adapters
 npm --prefix design-system run build
@@ -50,12 +51,15 @@ used by `STEWARDSHIP_TEST_SQL` must be allowed to create test databases. No exis
 application database is cleared. Tests use real persistence, passwords, cookies, and
 HTTP endpoints; a controlled clock exercises expiry and throttling without waiting.
 
-Playwright binds service tokens to mocks in its dedicated Angular build and refuses
-authentication/enrollment HTTP calls. It uses port 4317. The separate adapter check
-uses the production adapters with Angular's HTTP testing backend to verify their
-requests, CSRF headers, response handling, and errors. Design-system tests use port
-4318. HTML reports and screen captures are retained under `playwright-report/` and
-`test-results/`; traces are retained on failure.
+`e2e/` is a self-contained Playwright package: its own `package.json`, lock file,
+`playwright.config.ts`, and `tsconfig.json` sit beside `page-objects/` and `specs/`,
+and `npm run test:e2e` delegates to it. It binds service tokens to mocks in its
+dedicated Angular build and refuses authentication/enrollment HTTP calls. It uses
+port 4317. The separate adapter check uses the production adapters with Angular's
+HTTP testing backend to verify their requests, CSRF headers, response handling, and
+errors. Design-system tests are a separate Playwright package under `design-system/`
+and use port 4318. HTML reports and screen captures are retained under
+`e2e/playwright-report/` and `e2e/test-results/`; traces are retained on failure.
 
 ## Design system and publishing
 

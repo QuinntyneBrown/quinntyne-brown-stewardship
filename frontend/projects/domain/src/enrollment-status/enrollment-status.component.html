@@ -1,19 +1,15 @@
 @if (status() === "loading") {
-  <p role="status">Checking your enrollment…</p>
+  <qbs-status-message message="Checking your enrollment…" />
 } @else if (status() === "error") {
-  <div class="failure">
-    <p role="alert">We could not check your enrollment. Please try again.</p>
-    <button type="button" (click)="load()">Try again</button>
-  </div>
+  <qbs-retry-notice
+    message="We could not check your enrollment. Please try again."
+    (retry)="load()"
+  />
 } @else if (!enrollment()?.isEnrolled) {
   <qbs-not-enrolled-notice [description]="description()" />
 } @else {
-  <section>
-    <span class="eyebrow">Enrollment</span>
-    <h1>Your cohort has been assigned.</h1>
-    <p class="lead">
-      Your mentor is {{ enrollment()?.mentorName }}. Your cohort starts on
-      {{ enrollment()?.startDate }}.
-    </p>
-  </section>
+  <qbs-cohort-summary
+    [mentorName]="enrollment()?.mentorName ?? null"
+    [startDate]="enrollment()?.startDate ?? null"
+  />
 }

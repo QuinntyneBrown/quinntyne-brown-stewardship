@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { SignInPage } from "../page-objects/sign-in-page";
 import { EnrollmentPage } from "../page-objects/enrollment-page";
+import { MockBridge } from "../page-objects/mock-bridge";
 
 test.beforeEach(async ({ page }) => {
   await page.route("**/authentication/**", (route) => {
@@ -51,9 +52,7 @@ test("empty fields and invalid credentials give clear feedback", async ({
 
 // Traces to: L2-038 AC1–2 (presentation).
 test("a throttled sign-in displays the cooling-off time", async ({ page }) => {
-  await page.addInitScript(() =>
-    localStorage.setItem("stewardship.mock.throttled", "true"),
-  );
+  await new MockBridge(page).throttledSignIn();
   const signIn = new SignInPage(page);
   await signIn.open();
   await signIn.signIn();
@@ -62,10 +61,9 @@ test("a throttled sign-in displays the cooling-off time", async ({ page }) => {
 
 // Traces to: L2-007 supporting failure paths.
 test("enrollment failure can be retried", async ({ page }) => {
-  await page.addInitScript(() => {
-    localStorage.setItem("stewardship.mock.session", "true");
-    localStorage.setItem("stewardship.mock.failOnce", "true");
-  });
+  const mocks = new MockBridge(page);
+  await mocks.signedIn();
+  await mocks.enrollmentFailsOnce();
   const enrollment = new EnrollmentPage(page);
   await enrollment.open();
   await enrollment.expectFailure();
@@ -75,10 +73,9 @@ test("enrollment failure can be retried", async ({ page }) => {
 
 // Traces to: L2-007 supporting loading state.
 test("enrollment loading is announced", async ({ page }) => {
-  await page.addInitScript(() => {
-    localStorage.setItem("stewardship.mock.session", "true");
-    localStorage.setItem("stewardship.mock.delay", "1000");
-  });
+  const mocks = new MockBridge(page);
+  await mocks.signedIn();
+  await mocks.slowEnrollment(1000);
   const enrollment = new EnrollmentPage(page);
   await enrollment.open();
   await enrollment.expectLoading();
@@ -107,10 +104,12 @@ test("sessions survive reload and sign-out protects browser history", async ({
 test("an expired session requires sign-in again", async ({ page }) => {
   const signIn = new SignInPage(page);
   const enrollment = new EnrollmentPage(page);
+  const mocks = new MockBridge(page);
   await signIn.open();
   await signIn.signIn();
   await enrollment.expectNotice();
-  await enrollment.expireSession();
+  await mocks.expireSession();
+  await enrollment.reload();
   await signIn.expectVisible();
 });
 
@@ -162,9 +161,8 @@ test("controls remain reachable across all five breakpoints", async ({
 test("a failed sign-out leaves a retryable authenticated screen", async ({
   page,
 }) => {
-  await page.addInitScript(() =>
-    localStorage.setItem("stewardship.mock.signOutFailure", "true"),
-  );
+  const mocks = new MockBridge(page);
+  await mocks.failingSignOut();
   const signIn = new SignInPage(page);
   const enrollment = new EnrollmentPage(page);
   await signIn.open();
@@ -173,7 +171,7 @@ test("a failed sign-out leaves a retryable authenticated screen", async ({
   await enrollment.signOut();
   await enrollment.expectSignOutFailure();
   await enrollment.expectNotice();
-  await enrollment.allowSignOut();
+  await mocks.allowSignOut();
   await enrollment.signOut();
   await signIn.expectVisible();
 });
@@ -182,10 +180,9 @@ test("a failed sign-out leaves a retryable authenticated screen", async ({
 test("expiry during the enrollment request returns to sign-in", async ({
   page,
 }) => {
-  await page.addInitScript(() => {
-    localStorage.setItem("stewardship.mock.session", "true");
-    localStorage.setItem("stewardship.mock.enrollmentExpired", "true");
-  });
+  const mocks = new MockBridge(page);
+  await mocks.signedIn();
+  await mocks.expiredEnrollment();
   await new EnrollmentPage(page).open("/sessions");
   await new SignInPage(page).expectVisible();
 });
@@ -194,9 +191,7 @@ test("expiry during the enrollment request returns to sign-in", async ({
 test("a session-service failure offers sign-in without showing enrollment", async ({
   page,
 }) => {
-  await page.addInitScript(() =>
-    localStorage.setItem("stewardship.mock.sessionFailure", "true"),
-  );
+  await new MockBridge(page).failingSessionCheck();
   await new EnrollmentPage(page).open();
   const signIn = new SignInPage(page);
   await signIn.expectVisible();

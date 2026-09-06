@@ -1,0 +1,12 @@
+:host {
+  display: contents;
+}
+a {
+  position: absolute;
+  transform: translateY(calc(-1 * var(--qbs-full)));
+  padding: var(--qbs-space-md);
+  background: var(--qbs-page);
+}
+a:focus {
+  transform: none;
+}

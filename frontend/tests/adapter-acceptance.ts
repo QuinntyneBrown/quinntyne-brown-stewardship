@@ -13,9 +13,7 @@ import {
   HttpTestingController,
   provideHttpClientTesting,
 } from "@angular/common/http/testing";
-import { SignInService } from "../projects/api/src/sign-in.service";
-import { CohortService } from "../projects/api/src/cohort.service";
-import { ServiceError } from "../projects/api/src/service-error";
+import { CohortService, ServiceError, SignInService } from "@qbs/api";
 
 // Traces to: AE-01/04/05/08/09. Exercise the production adapters and Angular HTTP
 // pipeline separately from Playwright's mocked service composition.

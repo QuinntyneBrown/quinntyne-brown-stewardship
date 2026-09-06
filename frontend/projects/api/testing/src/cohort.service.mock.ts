@@ -1,0 +1,29 @@
+import { inject, Injectable } from "@angular/core";
+import { EnrollmentResult, ICohortService, ServiceError } from "@qbs/api";
+import { MockStateStore } from "./mock-state.store";
+
+@Injectable()
+export class CohortServiceMock implements ICohortService {
+  private readonly state = inject(MockStateStore);
+
+  async getEnrollment(): Promise<EnrollmentResult> {
+    const delay = this.state.current().enrollmentDelayMs;
+    if (delay) await new Promise((resolve) => setTimeout(resolve, delay));
+    const state = this.state.current();
+    if (!state.signedIn || state.enrollmentExpired) throw new ServiceError(401);
+    if (state.enrollmentFailsOnce) {
+      this.state.update({ enrollmentFailsOnce: false });
+      throw new ServiceError(503);
+    }
+    return {
+      isEnrolled: false,
+      cohortId: null,
+      mentorName: null,
+      startDate: null,
+      endDate: null,
+      currentWeek: null,
+      sessionAllowance: null,
+      hasEnded: null,
+    };
+  }
+}

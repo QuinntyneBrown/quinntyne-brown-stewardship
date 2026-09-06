@@ -1,0 +1,7 @@
+:host {
+  display: block;
+  max-width: var(--qbs-reading-max);
+}
+h1 {
+  outline: none;
+}

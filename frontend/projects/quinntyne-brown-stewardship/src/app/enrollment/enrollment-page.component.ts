@@ -1,16 +1,32 @@
 import { Component, inject, signal } from "@angular/core";
-import { Router, RouterLink, RouterLinkActive } from "@angular/router";
+import { Router } from "@angular/router";
 import { EnrollmentStatusComponent } from "@qbs/domain";
 import { SIGN_IN_SERVICE } from "@qbs/api";
+import {
+  ErrorMessageComponent,
+  NavigationLink,
+  ProgrammeHeaderComponent,
+  SkipLinkComponent,
+} from "@qbs/components";
 @Component({
   selector: "qbs-enrollment-page",
-  imports: [RouterLink, RouterLinkActive, EnrollmentStatusComponent],
+  imports: [
+    EnrollmentStatusComponent,
+    ErrorMessageComponent,
+    ProgrammeHeaderComponent,
+    SkipLinkComponent,
+  ],
   templateUrl: "./enrollment-page.component.html",
   styleUrl: "./enrollment-page.component.css",
 })
 export class EnrollmentPageComponent {
   private readonly router = inject(Router);
   private readonly service = inject(SIGN_IN_SERVICE);
+  readonly links: readonly NavigationLink[] = [
+    { path: "/curriculum", label: "Curriculum" },
+    { path: "/sessions", label: "Sessions" },
+    { path: "/notes", label: "Notes" },
+  ];
   readonly pending = signal(false);
   readonly error = signal("");
   description() {

@@ -1,7 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
-  testDir: "./e2e/specs",
+  testDir: "./specs",
   fullyParallel: true,
   reporter: [["list"], ["html", { open: "never" }]],
   use: { baseURL: "http://localhost:4317", trace: "retain-on-failure" },
@@ -14,7 +14,7 @@ export default defineConfig({
   ],
   webServer: {
     command:
-      "npm --prefix frontend start -- --configuration acceptance --host localhost --port 4317",
+      "npm --prefix ../frontend start -- --configuration acceptance --host localhost --port 4317",
     url: "http://localhost:4317",
     reuseExistingServer: false,
     timeout: 120000,

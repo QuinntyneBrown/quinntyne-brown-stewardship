@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "target": "ES2022",
+    "module": "preserve",
+    "moduleResolution": "bundler",
+    "lib": ["ES2022", "dom"],
+    "baseUrl": ".",
+    "paths": {
+      "@qbs/api/testing": ["../frontend/projects/api/testing/src/public-api.ts"]
+    }
+  },
+  "include": ["playwright.config.ts", "page-objects/**/*.ts", "specs/**/*.ts"]
+}
