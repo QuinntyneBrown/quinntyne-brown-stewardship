@@ -39,9 +39,20 @@ named token rather than a property of a screen nobody re-checked. The tokens dra
 the current screen mockups include several whose measured ratio falls below the minimum;
 their replacement values are `<TO SUPPLY>` and are settled in the mockup correction pass.
 
+The authoring screens carry the same obligations, and two of them bite harder there than
+anywhere in the participant experience (L2-060). Ordering is the first: a control that
+moves a module or a section shall be operable by keyboard alone, and the resulting
+arrangement shall be announced, because an administrator who cannot see the list move has
+no other evidence the move happened. Validation is the second: a refused field shall
+announce its message and take focus, so the failure is not left as a colour beside a
+control the keyboard has already passed. Publication state follows the same rule as every
+other state and is conveyed as text rather than by colour alone.
+
 Layout across breakpoints belongs to `platform/responsive-shell`. The states themselves
 are defined in `curriculum/view-path`, `modules/read-module`, and
-`sessions/view-availability`; this feature governs how they are conveyed.
+`sessions/view-availability`; this feature governs how they are conveyed. The authoring
+controls it governs are designed in `administration/order-curriculum` and the sibling
+authoring features.
 
 ## Description
 
@@ -96,6 +107,7 @@ refines a level-1 (L1) requirement, cited by identifier. Requirement text is quo
 | `L2-032` | `L1-008` | Every interactive target is large enough to hit reliably on a touch screen. |
 | `L2-033` | `L1-008` | Every action is reachable and operable without a pointing device. |
 | `L2-034` | `L1-008` | Module state, section state, and slot state are each available in text or shape. |
+| `L2-060` | `L1-008` | Authoring is reachable by keyboard and legible to assistive technology. |
 
 ## Diagrams
 

@@ -38,6 +38,11 @@ recorded depends on it (L2-045 criterion 3); a module containing a completed sec
 not. That rule, and the refusals it produces, are designed in
 `administration/author-section`.
 
+The editor guards unsaved work. An administrator who has changed the title, the summary,
+the effort estimate, a practice step, or a prompt and has not saved it is warned before a
+navigation or a tab close discards the change (L2-063). The warning is driven by a single
+`dirty` signal over the whole form, so a change to any part of the module raises it.
+
 What a section holds belongs to `administration/author-section`. Reordering the modules of
 a programme belongs to `administration/order-curriculum`. When the authored module becomes
 visible belongs to `administration/publish-curriculum`. How a prompt reaches a session
@@ -65,6 +70,9 @@ belongs to `notes/prepare-for-session`, which this feature supplies but does not
   the decision.
 - **`ModuleDraftResult`**, **`SectionDraftResult`**, and **`PromptDraftResult`** — `api`
   result types carrying the authored module and its parts.
+- **`ModuleEditorPageComponent.canLeave`** — `CanDeactivateFn` guard on the module route,
+  with a `beforeunload` handler for the tab-close case. It reads the editor's `dirty`
+  signal and warns before unsaved authored content is discarded (L2-063).
 
 **API.**
 
@@ -111,6 +119,7 @@ a level-1 (L1) requirement, cited by identifier. Requirement text is quoted from
 | `L2-045` | `L1-012` | Modules are created within a programme, carry a title and a summary, and are removable while nothing recorded depends on them. |
 | `L2-046` | `L1-012` | Each module carries an effort estimate and an ordered list of practice steps, both authored. |
 | `L2-047` | `L1-012` | Preparation prompts are authored per module and carried to the session that follows it. |
+| `L2-063` | `L1-012` | Authored content is long, and a section of reading is the longest of it. An administrator who leaves an authoring screen holding unsaved changes must be warned before those changes are lost. |
 
 ## Diagrams
 

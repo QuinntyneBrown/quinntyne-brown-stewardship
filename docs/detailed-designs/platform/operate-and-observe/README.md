@@ -32,9 +32,16 @@ to the client — a participant reporting a problem can quote something that fin
 line. Booking actions are recorded: creating, changing, and cancelling a session each
 write who acted, what they did, and when.
 
+The authoring endpoints hold to the same budgets as the participant endpoints, and one
+authoring action is measured on its own: publishing a programme touches every module it
+holds, so it carries a stated ceiling rather than inheriting the ordinary write budget
+(L2-062). Authoring writes also join the audit record, so a change to stored curriculum
+names the administrator who made it, the action, and the time.
+
 Sanitising the error that carries the correlation identifier belongs to
 `platform/secure-boundary`. The one-query-per-screen shape those budgets rely on is
-designed in the feature owning each screen.
+designed in the feature owning each screen. What each authoring action does belongs to
+the `administration` subsystem.
 
 ## Description
 
@@ -85,6 +92,7 @@ acceptance criteria, so its section title is quoted as the requirement.
 |-------|--------------|-------------|
 | `L2-039` | `L1-010` | Respond within stated budgets. |
 | `L2-040` | `L1-010` | The system reports its own health and records what happened. |
+| `L2-062` | `L1-010` | Administration screens meet the budgets the participant screens meet. |
 
 ## Diagrams
 

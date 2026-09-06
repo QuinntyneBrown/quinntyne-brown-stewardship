@@ -232,7 +232,7 @@ quinntyne-brown-stewardship/
 | [Deployment](docs/deployment.md)         | Artifacts, configuration, TLS, health checks, operations.        |
 | [Design system](design-system/README.md) | Tokens, fonts, catalogue, publishing.                            |
 | [Live walkthrough](docs/live-demo.md)    | Five-minute feature demonstration, recording, and verification.  |
-| [Requirements](docs/specs/L1.md)         | Fourteen high-level and sixty-two detailed requirements.         |
+| [Requirements](docs/specs/L1.md)         | Fourteen high-level and sixty-three detailed requirements.       |
 
 ## Testing
 

@@ -41,6 +41,19 @@ recorded against the section identifier rather than against its text. Adding a *
 to a completed module does reopen that module, which is designed in
 `modules/complete-section` and consumed rather than changed here.
 
+A section of reading is the longest thing anyone types into Stewardship, so the editor
+guards it. An administrator who has changed a field and not saved it is warned before a
+navigation or a tab close discards the change, and choosing to remain leaves every unsaved
+change in place (L2-063). The participant note editor already carries this guarantee; the
+authoring screens carry the same one, through the same route-guard and `beforeunload`
+pattern.
+
+The refusal of L2-050 is also shown before it is provoked. Each section row reports how
+many participants have completed it, so an administrator sees that a section is in use
+without attempting a removal and reading the error. The count comes from the same
+completion records the removal is checked against, so the display and the rule cannot
+disagree.
+
 The module a section belongs to is authored in `administration/author-module`. Reordering
 sections belongs to `administration/order-curriculum`. When authored content becomes
 visible belongs to `administration/publish-curriculum`. How a participant records a
@@ -61,6 +74,13 @@ completion belongs to `modules/complete-section`.
   a native `dialog`, shown before a removal.
 - **`ErrorMessageComponent`** — existing presentational component in the `components`
   library. It renders the refusal returned when a removal is declined.
+- **`SectionEditorPageComponent.canLeave`** — `CanDeactivateFn` guard on the authoring
+  routes, mirroring the guard the note editor already carries. It returns `false` while the
+  editor reports unsaved changes, and the page registers a `beforeunload` handler for the
+  tab-close case (L2-063).
+- **`dirty`** — `computed()` signal on `SectionEditorComponent` comparing the edited values
+  with the values last loaded or saved. It is the single source the guard and the save
+  button both read, so neither can disagree about whether work is outstanding.
 - **`SectionDraftResult`** — `api` result type carrying one authored section.
 
 **API.**
@@ -103,6 +123,7 @@ a level-1 (L1) requirement, cited by identifier. Requirement text is quoted from
 |-------|--------------|-------------|
 | `L2-048` | `L1-012` | Sections carry the reading content of a module and are authored within it. |
 | `L2-050` | `L1-012` | Recorded participant history outranks authoring convenience. Content a participant has completed or answered cannot be deleted out from under that record. |
+| `L2-063` | `L1-012` | Authored content is long, and a section of reading is the longest of it. An administrator who leaves an authoring screen holding unsaved changes must be warned before those changes are lost. |
 
 ## Diagrams
 

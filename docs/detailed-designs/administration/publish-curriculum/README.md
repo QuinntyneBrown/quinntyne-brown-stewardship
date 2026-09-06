@@ -45,6 +45,18 @@ completion (L2-058). This is what removes the `DurationWeeks => 12` and
 check from cohort creation, and the literal twelves from the client templates, the
 Playwright mock store, and the browser page objects.
 
+Readiness is shown before it is tested. `CurriculumReadiness` decides whether a programme
+may be published, and the same value is carried on the draft response the editor already
+reads, so the programme screen states what stands in the way of publication continuously
+rather than only in answer to a refused attempt. An administrator sees that two modules
+carry no section while authoring them, not after pressing an action that fails. The rule is
+evaluated in one place, so what the screen reports and what the command enforces cannot
+drift apart.
+
+The publication panel also reports how many active cohorts follow the programme. Publishing
+changes what those cohorts read on their next request, and L1-013 requires the act to be
+deliberate; an administrator cannot act deliberately without knowing who is affected.
+
 What is published is authored in `administration/author-programme`,
 `administration/author-module`, and `administration/author-section`. How a participant reads
 a published path belongs to `curriculum/view-path`, how unlocking follows the order belongs
@@ -68,6 +80,9 @@ to `curriculum/unlock-and-resume`, and how the allowance governs booking belongs
   replaced by a fabricated programme whose size the test states.
 - **`PublicationResult`** — `api` result type carrying the outcome and, when publication is
   refused, the reason.
+- **`ReadinessResult`** — `api` result type carried on the draft response, holding whether
+  the programme may be published, the reason it may not, and the number of active cohorts
+  that follow it. It is what lets the panel report readiness before an attempt.
 
 **API.**
 
@@ -78,7 +93,8 @@ to `curriculum/unlock-and-resume`, and how the allowance governs booking belongs
   publication time.
 - **`CurriculumReadiness`** — domain value object over a programme. It answers whether the
   programme may be published and, when it may not, which module is empty. Holding the rule
-  in the domain keeps L2-054 out of the handler and out of the controller.
+  in the domain keeps L2-054 out of the handler and out of the controller, and lets
+  `GetCurriculumDraftQueryHandler` report the same answer the command enforces.
 - **`Curriculum`** — domain entity owning `State` and `PublishedAt`.
 - **`CurriculumModule`** — domain entity owning its own `State`, which is what lets a new
   module stay invisible inside a published programme.
