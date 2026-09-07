@@ -179,10 +179,12 @@ The API serves its built Angular assets from its own origin, so **re-run
 ### Run a full programme
 
 A participant with no cohort correctly sees the "awaiting enrollment" screen. To
-run an enrolled programme, import a curriculum, provision a mentor, create a
-cohort, enroll the participant, and publish availability:
+run an enrolled programme, provision an administrator, import a curriculum,
+publish it from the authoring screens, provision a mentor, create a cohort, enroll
+the participant, and publish availability:
 
 ```powershell
+dotnet run --project backend/src/QuinntyneBrownStewardship.Cli -- provision-administrator admin@example.com
 dotnet run --project backend/src/QuinntyneBrownStewardship.Cli -- import-curriculum backend/src/QuinntyneBrownStewardship.Cli/Content/starter-curriculum.json
 dotnet run --project backend/src/QuinntyneBrownStewardship.Cli -- provision-mentor mentor@example.com "Quinntyne Brown"
 dotnet run --project backend/src/QuinntyneBrownStewardship.Cli -- create-cohort .local/cohort.json

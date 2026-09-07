@@ -88,6 +88,7 @@ import the bundled curriculum, provision a mentor, create a cohort, enroll the
 participant, and publish availability:
 
 ```powershell
+dotnet run --project backend/src/QuinntyneBrownStewardship.Cli -- provision-administrator admin@example.com
 dotnet run --project backend/src/QuinntyneBrownStewardship.Cli -- import-curriculum backend/src/QuinntyneBrownStewardship.Cli/Content/starter-curriculum.json
 dotnet run --project backend/src/QuinntyneBrownStewardship.Cli -- provision-mentor mentor@example.com "Quinntyne Brown"
 dotnet run --project backend/src/QuinntyneBrownStewardship.Cli -- create-cohort .local/cohort.json
@@ -95,12 +96,18 @@ dotnet run --project backend/src/QuinntyneBrownStewardship.Cli -- enroll partici
 dotnet run --project backend/src/QuinntyneBrownStewardship.Cli -- publish-availability .local/availability.json
 ```
 
-The mentor password is prompted securely, exactly like the participant password.
+The mentor and administrator passwords are prompted securely, exactly like the
+participant password. The import creates the curriculum in draft; sign in as the
+administrator and publish it before creating a cohort, because a cohort follows a
+published curriculum.
 
 ### `.local/cohort.json`
 
-Choose a start date for your programme. The duration and the session allowance are
-derived automatically.
+Choose a start date, a duration in weeks, and a session cadence in weeks. The
+duration and the cadence are properties of the cohort rather than constants, so two
+cohorts may differ in both. The session allowance is still derived, as the duration
+divided by the cadence. `curriculumKey` names the published curriculum the cohort
+follows.
 
 ```json
 {
@@ -108,6 +115,8 @@ derived automatically.
   "startDate": "2026-09-07",
   "mentorEmail": "mentor@example.com",
   "curriculumKey": "starter",
+  "durationWeeks": 12,
+  "sessionCadenceWeeks": 2,
   "timeZone": "America/Toronto"
 }
 ```
