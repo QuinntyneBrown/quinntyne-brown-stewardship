@@ -39,6 +39,18 @@ named token rather than a property of a screen nobody re-checked. The tokens dra
 the current screen mockups include several whose measured ratio falls below the minimum;
 their replacement values are `<TO SUPPLY>` and are settled in the mockup correction pass.
 
+One class of control is smaller than the general minimum, and the exemption is narrow.
+A reorder control is drawn stacked against its opposite: move-up directly above move-down,
+each occupying the full width and half the height of one 44px square. Requiring 44px of
+height for each would double the height of every row in a list an author scrolls through
+constantly, so a stacked pair is exempt from the 44px minimum on three conditions, all of
+which the mockups meet: each control is at least 24px in both directions, which is the
+target-size minimum of WCAG 2.2 at level AA; the pair together fills a full 44px square, so
+the region a thumb aims at is unchanged; and each carries an accessible name naming the
+direction and the position, so the two are told apart without seeing which is uppermost
+(L2-032 criteria 4 and 5). The exemption reaches no other control. Every action that is not
+half of such a pair holds the full 44px square.
+
 One measured value falls below the minimum by design rather than by oversight. The glyph of
 a move control that cannot act, on the first or last item of a set, sits at roughly 1.5:1
 against the page. WCAG 2.1 places no contrast requirement on an inactive component, and the
