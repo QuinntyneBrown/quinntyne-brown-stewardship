@@ -143,9 +143,16 @@ to `curriculum/unlock-and-resume`, and how the allowance governs booking belongs
   L2-056 hold for every participant screen at once.
 - **`GetCurriculumQueryHandler`** and **`GetModuleQueryHandler`** — existing participant
   handlers. They gain no new rule; they inherit the filtering `ProgrammeReader` applies.
-- **`CreateCohortCommandValidator`** — existing validator. Its twelve-module check is
-  replaced by a requirement that the named programme is published, and duration and cadence
-  become required inputs.
+- **`CreateCohortCommandHandler`** — existing handler. The twelve-module check is here
+  rather than in the validator beside it: the handler counts the modules of the named
+  curriculum and refuses anything but twelve. It refuses an unpublished curriculum instead.
+- **`CreateCohortCommandValidator`** — existing validator. Duration and cadence become
+  required inputs on the command it checks, because neither is a constant any longer.
+- **`BookingOperations`** — existing scheduling helper. Its guard already compares the
+  bookings held against `cohort.SessionAllowance`, so the condition is derived and correct;
+  the message it raises reads "All six sessions in this cohort have been used." A cohort of
+  eight weeks at a fortnightly cadence allows four, and a participant who used all four would
+  be told six. The message states the allowance it just compared against (L2-058).
 
 Filtering in `ProgrammeReader` rather than in each handler is deliberate. The reader is the
 one place the participant path, the module screen, the progress figures, and the session
