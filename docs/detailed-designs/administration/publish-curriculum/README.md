@@ -90,7 +90,8 @@ to `curriculum/unlock-and-resume`, and how the allowance governs booking belongs
   `inject(AUTHORING_SERVICE)`, offers the publication action, and renders the refusal when
   publication is declined. It belongs in `domain` because it injects an `api` contract.
 - **`StatePillComponent`** — presentational component in the `components` library rendering
-  a publication state as text, so the state survives greyscale and a screen reader.
+  a publication state as text, so the state survives greyscale and a screen reader. The
+  design-system tokens it requires are settled in `administration/author-programme`.
 - **`CurriculumOverviewComponent`** — existing `domain` component rendering the participant
   path. Its template loses the literal week count, the "Twelve weeks of practice" heading,
   and the module-12 title used as a fallback, each replaced by a value from the response.

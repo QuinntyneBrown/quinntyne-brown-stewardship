@@ -80,8 +80,8 @@ to `administration/authorise-administrator`.
   takes the key and the title as inputs, emits the submitted values as an output, and
   injects nothing. It reports the field-level validation message the API returns.
 - **`StatePillComponent`** — presentational component in the `components` library
-  rendering a publication state as text within a pill. It injects nothing, and its label
-  is the state name so the state survives greyscale and a screen reader.
+  rendering a publication state as text within a chip. It injects nothing, and its label is
+  the state name so the state survives greyscale and a screen reader.
 - **`IAuthoringService`** / **`AUTHORING_SERVICE`** / **`AuthoringService`** — the
   contract, its `InjectionToken`, and the HTTP implementation, each in its own file in the
   `api` library. `AuthoringServiceMock` binds to the same token under Playwright.
@@ -131,6 +131,21 @@ The unique key is enforced by a unique index on `Curriculum.Key`. The handler do
 read before it writes; it inserts and lets the constraint decide, translating the
 violation into a `ProgrammeException` carrying `409`. That is what makes L2-044
 criterion 2 hold under concurrency.
+
+`StatePillComponent` needs two treatments the design system does not yet carry, and
+`AGENTS.md` requires the token before the stylesheet that reads it. The chip has a fully
+rounded end, which the single existing `--qbs-radius` of `0.25rem` cannot express, so
+`design-system/tokens.css` gains a pill radius. The chip carries a small filled dot whose
+colour separates draft from published, so it gains one colour token for each state. Their
+measured values are `<TO SUPPLY>` until the design system settles them, and each shall meet
+the 3:1 contrast minimum of L2-031 against the chip background. The state name remains the
+accessible label in both cases, so the colour decorates a distinction the text already
+carries rather than being the only thing that carries it (L2-060, L2-034).
+
+No component stylesheet in this subsystem shall hold a hex value, a dimension, or a font
+stack. Where the administration mockups introduce a value the token set has no name for,
+the token is added to `design-system/tokens.css` first and mirrored into the front end by
+`npm run tokens`, in the order `AGENTS.md` states.
 
 ## Requirements
 
