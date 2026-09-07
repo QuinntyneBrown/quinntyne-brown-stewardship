@@ -222,6 +222,15 @@ revision reaches a participant on their next read of a published module.
 
 ![Sequence diagram for revising a module](diagrams/sequence-revise-module.png)
 
+### Behaviour — two administrators save the same module
+
+The later save carries a revision the database has already moved past, so no row matches
+and nothing of it is written. The refusal names the change and the editor offers the current
+content, so the administrator sees what they would have overwritten before applying their
+own change again (L2-065 criteria 1 to 3).
+
+![Sequence diagram for two administrators saving the same module](diagrams/sequence-contested-save.png)
+
 ### Behaviour — revise a preparation prompt
 
 The handler changes the prompt text and leaves its identifier untouched, so the note a
