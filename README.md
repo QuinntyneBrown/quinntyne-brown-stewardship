@@ -279,8 +279,9 @@ described in [`docs/specs/L1.md`](docs/specs/L1.md) is complete and covered by t
 acceptance suite.
 
 Curriculum authoring is specified by `L1-011` through `L1-014` and designed under
-[`docs/detailed-designs/administration`](docs/detailed-designs/administration/), and
-its implementation is in progress. The remaining administrator tasks — managing
+[`docs/detailed-designs/administration`](docs/detailed-designs/administration/). Nothing
+of it is built yet: the requirements and the designs are complete and no source file has
+changed, so the curriculum is still imported through the CLI. The remaining administrator tasks — managing
 cohorts, enrolling participants, setting mentor availability, provisioning mentors —
 stay out of scope for the current requirement set and are served by the CLI.
 
