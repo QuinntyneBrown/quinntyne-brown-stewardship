@@ -141,9 +141,12 @@ than trusted.
 internal exception detail. The identifier is written to the log so an operator
 can join the two.
 
-**Auditing and integrity.** All programme writes are transactional. Booking
-audit records carry the actor, the action, the time, and the correlation
-identifier. Notes use revisions to detect concurrent edits.
+**Auditing and integrity.** All programme writes are transactional. Booking and
+curriculum audit records carry the actor, the action, the time, and the
+correlation identifier; every authoring write leaves one. Notes, modules, and
+sections use revisions to detect concurrent edits, and authoring endpoints are
+reachable only by an account whose administrator authority is issued from its own
+record on every request.
 
 **Transport.** The API redirects plain HTTP to HTTPS. Deployments that terminate
 TLS at a proxy must configure a trusted proxy and forwarded headers; see

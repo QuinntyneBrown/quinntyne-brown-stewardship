@@ -67,7 +67,8 @@ the API's `wwwroot`. The API serves its Angular assets from its own origin, so
 **re-run `npm run build` after any frontend change**.
 
 Open `/curriculum`, `/modules/3`, `/sessions`, or `/notes` to exercise a protected
-deep link.
+deep link, or `/admin/programmes` as an administrator to exercise the authoring
+guard.
 
 ### Frontend-only iteration
 
@@ -165,12 +166,20 @@ Running the CLI with no arguments prints this usage line and exits with status 2
 
 ## Revising a curriculum
 
-Repeating an import preserves identities and completion records. When revising:
+Curriculum is authored on the screens under `/admin/programmes` by an account
+holding administrator authority. An import bootstraps a programme once, in draft;
+repeating it for a key already in use is refused with 409, so further changes are
+made on the authoring screens. When revising:
 
-- Retain existing module, section, and prompt identifiers and their order.
-- **Append** sections rather than deleting recorded work.
-- Expect new sections to reopen derived module completion — a module is complete
+- Revise the text of a published module or section freely; it reaches
+  participants on their next read without a publication.
+- Add modules in draft, and publish the programme again when they should reach
+  participants. Publication is refused while any module carries no section.
+- Expect a new section to reopen derived module completion — a module is complete
   only when every one of its sections is.
+- Recorded history outranks removal: a completed section, a module with notes or
+  answered prompts, and an answered prompt cannot be removed while those records
+  stand.
 - Booked availability cannot be moved through an import.
 
 The bundled starter curriculum is documented in

@@ -37,9 +37,11 @@ tests are written against.
 | [specs/L2.md](specs/L2.md)                                       | Sixty-six detailed requirements with acceptance criteria.                           |
 | [slices/programme-completion.md](slices/programme-completion.md) | Acceptance slices for the participant programme.                                    |
 | [slices/awaiting-enrollment.md](slices/awaiting-enrollment.md)   | Acceptance slices for a participant with no cohort.                                 |
+| [slices/curriculum-authoring.md](slices/curriculum-authoring.md) | Acceptance slices for curriculum authoring.                                         |
 | [slices/requirements-audit.md](slices/requirements-audit.md)     | Coverage of requirements by slice.                                                  |
 
-Curriculum authoring is in scope and is specified by `L1-011` through `L1-014`. The
+Curriculum authoring is specified by `L1-011` through `L1-014` and delivered; see
+[slices/curriculum-authoring.md](slices/curriculum-authoring.md). The
 remaining administrator tasks — managing cohorts, enrolling participants, setting mentor
 availability, provisioning mentors — stay out of scope for this requirement set and are
 served by the CLI.

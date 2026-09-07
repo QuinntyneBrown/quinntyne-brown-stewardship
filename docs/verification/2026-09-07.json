@@ -1,0 +1,658 @@
+{
+  "recordedAt": "2026-09-07T16:18:05.974Z",
+  "scope": "Verification of curriculum authoring: L1-011 through L1-014 by way of L2-041 through L2-066, and the amended L2-006, L2-008, L2-009, L2-010, L2-021 and L2-023 whose programme shape is now read from records. See docs/slices/curriculum-authoring.md for the acceptance criteria and what is not claimed.",
+  "build": {
+    "command": "npm run build",
+    "result": "passed",
+    "warnings": 0,
+    "errors": 0,
+    "includes": [
+      "Angular api, components and domain libraries",
+      "production Angular application",
+      "independent design-system static site",
+      "Release .NET solution"
+    ]
+  },
+  "acceptance": {
+    "api": {
+      "command": ". ./scripts/use-local-sql.ps1; dotnet test backend/QuinntyneBrownStewardship.sln",
+      "passed": 74,
+      "failed": 0,
+      "skipped": 0,
+      "added": "MigrationAcceptanceTests, PublicationAcceptanceTests, AuthoringAccessAcceptanceTests and AuthoringAcceptanceTests, with AdministrationAcceptanceTests rewritten around the programme record."
+    },
+    "browser": {
+      "command": "npm --prefix e2e test -- --workers 1",
+      "passed": 126,
+      "failed": 0,
+      "projects": [
+        "desktop",
+        "mobile"
+      ],
+      "viewportWidths": [
+        320,
+        576,
+        768,
+        992,
+        1440
+      ],
+      "added": "specs/authoring.spec.ts, 30 journeys per project covering authority, authoring, ordering, publication, preview, unsaved changes and the responsive and accessible sweep of each authoring screen."
+    },
+    "adapters": {
+      "command": "npm run test:adapters",
+      "result": "passed"
+    },
+    "designSystem": {
+      "command": "npm --prefix design-system test",
+      "passed": 2,
+      "failed": 0
+    },
+    "migration": "MigrationAcceptanceTests migrates a scratch database to 20260906133421_CompleteProgramme, inserts a module, a section and two cohorts by SQL, migrates to 20260907155252_AuthorCurriculum, and asserts one published programme per key with modules and cohorts following it, populated revisions, twelve weeks at a cadence of two, a draft programme for the cohort key with no modules, and both key columns and the old index gone.",
+    "packagedDeepLinks": "Against the Release build serving its own wwwroot on https://localhost:7341, /admin/programmes, /admin/programmes/{id}, /admin/modules/{id}, /admin/modules/{id}/preview and /admin/sections/{id} each returned 200 text/html carrying the Angular shell, while an anonymous GET /administration/curricula returned 401 rather than that document.",
+    "developerDatabaseMigrate": "The developer Stewardship database applied 20260906133421_CompleteProgramme and 20260907155252_AuthorCurriculum with no pending migration left. It stood two migrations back, so this exercised the clean path; the backfill of existing keys is covered by the migration acceptance test above.",
+    "staleReadRegression": "The cohort guard read a programme this context had itself tracked as a draft during an import in the same process, so a cohort created after an HTTP publication was refused. ProgrammeStore.CurriculumByKey now reads without tracking, which is what a check-then-act guard under the programme lock needs; three administration acceptance tests and the performance harness setup proved it."
+  },
+  "api": {
+    "measuredAt": "2026-09-07T16:10:46.2942682+00:00",
+    "runtime": ".NET 10.0.1",
+    "os": "Microsoft Windows 10.0.26200",
+    "architecture": "Arm64",
+    "processors": 12,
+    "configuration": "Release; real SQL Server; in-process ASP.NET HTTP host; five independently authenticated participants; 15 warm-up requests per operation; four additional compressed reads from five devices of the participant with full-length Unicode notes",
+    "results": [
+      {
+        "operation": "GET /authentication/session",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 9.32,
+        "budgetMilliseconds": 300,
+        "passed": true
+      },
+      {
+        "operation": "GET /authentication/csrf",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 2.5,
+        "budgetMilliseconds": 300,
+        "passed": true
+      },
+      {
+        "operation": "GET /enrollment",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 3.56,
+        "budgetMilliseconds": 300,
+        "passed": true
+      },
+      {
+        "operation": "GET /health",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 4.27,
+        "budgetMilliseconds": 300,
+        "passed": true
+      },
+      {
+        "operation": "GET /curriculum",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 6.26,
+        "budgetMilliseconds": 300,
+        "passed": true
+      },
+      {
+        "operation": "GET /modules/current",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 11.69,
+        "budgetMilliseconds": 300,
+        "passed": true
+      },
+      {
+        "operation": "GET /modules/1",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 11.77,
+        "budgetMilliseconds": 300,
+        "passed": true
+      },
+      {
+        "operation": "GET /sessions/availability",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 9.28,
+        "budgetMilliseconds": 300,
+        "passed": true
+      },
+      {
+        "operation": "GET /sessions/history",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 8.31,
+        "budgetMilliseconds": 300,
+        "passed": true
+      },
+      {
+        "operation": "GET /notes",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 5.18,
+        "budgetMilliseconds": 300,
+        "passed": true
+      },
+      {
+        "operation": "POST /notes",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 40.6,
+        "budgetMilliseconds": 500,
+        "passed": true
+      },
+      {
+        "operation": "GET /notes/{id}",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 12.28,
+        "budgetMilliseconds": 300,
+        "passed": true
+      },
+      {
+        "operation": "POST /notes (revision)",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 36.98,
+        "budgetMilliseconds": 500,
+        "passed": true
+      },
+      {
+        "operation": "POST /sections/{id}/completion",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 13.21,
+        "budgetMilliseconds": 500,
+        "passed": true
+      },
+      {
+        "operation": "POST /sessions",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 17.06,
+        "budgetMilliseconds": 500,
+        "passed": true
+      },
+      {
+        "operation": "GET /sessions/{id}",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 5.17,
+        "budgetMilliseconds": 300,
+        "passed": true
+      },
+      {
+        "operation": "GET /sessions/{id}/preparation",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 13.94,
+        "budgetMilliseconds": 300,
+        "passed": true
+      },
+      {
+        "operation": "PUT /sessions/{id}/slot",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 27.83,
+        "budgetMilliseconds": 500,
+        "passed": true
+      },
+      {
+        "operation": "DELETE /sessions/{id}",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 19.54,
+        "budgetMilliseconds": 500,
+        "passed": true
+      },
+      {
+        "operation": "POST /authentication/sign-in",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 145.62,
+        "budgetMilliseconds": 500,
+        "passed": true
+      },
+      {
+        "operation": "POST /authentication/sign-out",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 2.94,
+        "budgetMilliseconds": 500,
+        "passed": true
+      },
+      {
+        "operation": "GET /administration/curricula",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 2.16,
+        "budgetMilliseconds": 300,
+        "passed": true
+      },
+      {
+        "operation": "GET /administration/curricula/{id}",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 7.12,
+        "budgetMilliseconds": 300,
+        "passed": true
+      },
+      {
+        "operation": "GET /administration/modules/{id}",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 9.16,
+        "budgetMilliseconds": 300,
+        "passed": true
+      },
+      {
+        "operation": "GET /administration/sections/{id} (12,000-character reading)",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 7.46,
+        "budgetMilliseconds": 300,
+        "passed": true
+      },
+      {
+        "operation": "PUT /administration/sections/{id}",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 13.6,
+        "budgetMilliseconds": 500,
+        "passed": true
+      },
+      {
+        "operation": "PUT /administration/modules/{id}",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 20.41,
+        "budgetMilliseconds": 500,
+        "passed": true
+      },
+      {
+        "operation": "PUT /administration/curricula/{id}/modules/order",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 46.05,
+        "budgetMilliseconds": 500,
+        "passed": true
+      },
+      {
+        "operation": "POST /administration/curricula/{id}/publication",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 25.04,
+        "budgetMilliseconds": 2000,
+        "passed": true
+      },
+      {
+        "operation": "GET /modules/current (long Unicode notes)",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 18.42,
+        "budgetMilliseconds": 300,
+        "passed": true
+      },
+      {
+        "operation": "GET /notes (long Unicode notes)",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 7.74,
+        "budgetMilliseconds": 300,
+        "passed": true
+      },
+      {
+        "operation": "GET /notes/ff979515-6c7d-4d52-b091-bdf2833b344a (long Unicode notes)",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 6.45,
+        "budgetMilliseconds": 300,
+        "passed": true
+      },
+      {
+        "operation": "GET /sessions/8c4d60b6-d1f3-4043-bebf-3ae4808a9635/preparation (long Unicode notes)",
+        "requests": 100,
+        "concurrency": 5,
+        "p95Milliseconds": 20.95,
+        "budgetMilliseconds": 300,
+        "passed": true
+      }
+    ],
+    "payloadFixture": "production-responses.json"
+  },
+  "payload": {
+    "capturedAt": "2026-09-07T16:10:44.7999737+00:00",
+    "scenario": "20 distinct 10,000-character Unicode module notes; 20 Unicode session notes; all three preparation answers at 10,000 Unicode characters; five past sessions and one future session; the administrator's session and the four administration reads of the twelve-module programme; responses compressed by the production middleware",
+    "compression": "Production ASP.NET Brotli CompressionLevel.Optimal; actual application headers plus 1000 bytes of transport-header reserve per response.",
+    "responses": [
+      {
+        "path": "/authentication/session (administrator)",
+        "uncompressedBytes": 67,
+        "compressedBytes": 56,
+        "headerBytes": 1329,
+        "serverMilliseconds": 9.41
+      },
+      {
+        "path": "/administration/curricula",
+        "uncompressedBytes": 392,
+        "compressedBytes": 245,
+        "headerBytes": 1329,
+        "serverMilliseconds": 2.55
+      },
+      {
+        "path": "/administration/curricula/c7cb3efb-2089-4f8a-9a02-6224db75ed5a",
+        "uncompressedBytes": 4314,
+        "compressedBytes": 1713,
+        "headerBytes": 1329,
+        "serverMilliseconds": 2.84
+      },
+      {
+        "path": "/administration/modules/255f8135-1a56-5cdd-a4cd-a5a41dcfab0c",
+        "uncompressedBytes": 2573,
+        "compressedBytes": 1219,
+        "headerBytes": 1329,
+        "serverMilliseconds": 3.94
+      },
+      {
+        "path": "/administration/sections/d9ede8ac-b826-5b6b-8cb5-e8d3e2de1295",
+        "uncompressedBytes": 2064,
+        "compressedBytes": 1093,
+        "headerBytes": 1329,
+        "serverMilliseconds": 2.99
+      },
+      {
+        "path": "/authentication/session",
+        "uncompressedBytes": 66,
+        "compressedBytes": 60,
+        "headerBytes": 1329,
+        "serverMilliseconds": 1.28
+      },
+      {
+        "path": "/enrollment",
+        "uncompressedBytes": 276,
+        "compressedBytes": 209,
+        "headerBytes": 1329,
+        "serverMilliseconds": 1.39
+      },
+      {
+        "path": "/curriculum",
+        "uncompressedBytes": 3708,
+        "compressedBytes": 1690,
+        "headerBytes": 1329,
+        "serverMilliseconds": 1.92
+      },
+      {
+        "path": "/modules/current",
+        "uncompressedBytes": 128291,
+        "compressedBytes": 90918,
+        "headerBytes": 1329,
+        "serverMilliseconds": 18.36
+      },
+      {
+        "path": "/sessions/availability",
+        "uncompressedBytes": 2788,
+        "compressedBytes": 792,
+        "headerBytes": 1329,
+        "serverMilliseconds": 4.16
+      },
+      {
+        "path": "/sessions/history",
+        "uncompressedBytes": 1959,
+        "compressedBytes": 531,
+        "headerBytes": 1329,
+        "serverMilliseconds": 3.02
+      },
+      {
+        "path": "/notes",
+        "uncompressedBytes": 31260,
+        "compressedBytes": 22486,
+        "headerBytes": 1329,
+        "serverMilliseconds": 4.47
+      },
+      {
+        "path": "/notes/ff979515-6c7d-4d52-b091-bdf2833b344a",
+        "uncompressedBytes": 30303,
+        "compressedBytes": 22115,
+        "headerBytes": 1329,
+        "serverMilliseconds": 4.09
+      },
+      {
+        "path": "/sessions/8c4d60b6-d1f3-4043-bebf-3ae4808a9635",
+        "uncompressedBytes": 336,
+        "compressedBytes": 252,
+        "headerBytes": 1329,
+        "serverMilliseconds": 2.31
+      },
+      {
+        "path": "/sessions/8c4d60b6-d1f3-4043-bebf-3ae4808a9635/preparation",
+        "uncompressedBytes": 122278,
+        "compressedBytes": 88364,
+        "headerBytes": 1329,
+        "serverMilliseconds": 5.02
+      }
+    ]
+  },
+  "browser": {
+    "command": "npm run test:performance:web",
+    "measuredAt": "2026-09-07T16:10:59.989Z",
+    "passed": 13,
+    "failed": 0,
+    "flaky": 0,
+    "profile": {
+      "cpuSlowdown": 4,
+      "latencyMilliseconds": 150,
+      "downloadMbps": 4,
+      "uploadMbps": 1,
+      "cache": "disabled"
+    },
+    "methodology": "Optimized Angular bundle retaining production adapter code, with service-token doubles returning captured production DTOs. Doubles simulate captured server time and network transfer; browser journeys never instantiate the HTTP adapters. Complete transfer includes asset resource timing and every used compressed API response plus its header allowance. The four authoring screens read as the administrator whose session the capture holds.",
+    "curriculumBudgetMilliseconds": 2500,
+    "screens": [
+      {
+        "screen": "sign-in",
+        "interactiveMilliseconds": 1645.7,
+        "assetTransferBytes": 183314,
+        "apiTransferBytes": 0,
+        "completeTransferBytes": 183314,
+        "budgetBytes": 300000,
+        "passed": true,
+        "requests": []
+      },
+      {
+        "screen": "not-enrolled",
+        "interactiveMilliseconds": 1729.1,
+        "assetTransferBytes": 178940,
+        "apiTransferBytes": 4316,
+        "completeTransferBytes": 183256,
+        "budgetBytes": 300000,
+        "passed": true,
+        "requests": [
+          "/authentication/session",
+          "/authentication/session",
+          "/enrollment"
+        ]
+      },
+      {
+        "screen": "curriculum",
+        "interactiveMilliseconds": 1944.2,
+        "assetTransferBytes": 178940,
+        "apiTransferBytes": 7335,
+        "completeTransferBytes": 186275,
+        "budgetBytes": 300000,
+        "passed": true,
+        "requests": [
+          "/authentication/session",
+          "/authentication/session",
+          "/enrollment",
+          "/curriculum"
+        ]
+      },
+      {
+        "screen": "module",
+        "interactiveMilliseconds": 3105.7,
+        "assetTransferBytes": 185248,
+        "apiTransferBytes": 96563,
+        "completeTransferBytes": 281811,
+        "budgetBytes": 300000,
+        "passed": true,
+        "requests": [
+          "/authentication/session",
+          "/authentication/session",
+          "/enrollment",
+          "/modules/current"
+        ]
+      },
+      {
+        "screen": "sessions",
+        "interactiveMilliseconds": 2115,
+        "assetTransferBytes": 183178,
+        "apiTransferBytes": 6437,
+        "completeTransferBytes": 189615,
+        "budgetBytes": 300000,
+        "passed": true,
+        "requests": [
+          "/authentication/session",
+          "/authentication/session",
+          "/enrollment",
+          "/sessions/availability"
+        ]
+      },
+      {
+        "screen": "notes",
+        "interactiveMilliseconds": 4750.9,
+        "assetTransferBytes": 182771,
+        "apiTransferBytes": 28131,
+        "completeTransferBytes": 210902,
+        "budgetBytes": 300000,
+        "passed": true,
+        "requests": [
+          "/authentication/session",
+          "/authentication/session",
+          "/enrollment",
+          "/notes"
+        ]
+      },
+      {
+        "screen": "note-editor",
+        "interactiveMilliseconds": 2099.2,
+        "assetTransferBytes": 182311,
+        "apiTransferBytes": 28131,
+        "completeTransferBytes": 210442,
+        "budgetBytes": 300000,
+        "passed": true,
+        "requests": [
+          "/authentication/session",
+          "/authentication/session",
+          "/enrollment",
+          "/notes"
+        ]
+      },
+      {
+        "screen": "note-edit",
+        "interactiveMilliseconds": 4140.2,
+        "assetTransferBytes": 182311,
+        "apiTransferBytes": 27760,
+        "completeTransferBytes": 210071,
+        "budgetBytes": 300000,
+        "passed": true,
+        "requests": [
+          "/authentication/session",
+          "/authentication/session",
+          "/enrollment",
+          "/notes/ff979515-6c7d-4d52-b091-bdf2833b344a"
+        ]
+      },
+      {
+        "screen": "session-detail",
+        "interactiveMilliseconds": 6951.1,
+        "assetTransferBytes": 183231,
+        "apiTransferBytes": 94009,
+        "completeTransferBytes": 277240,
+        "budgetBytes": 300000,
+        "passed": true,
+        "requests": [
+          "/authentication/session",
+          "/authentication/session",
+          "/enrollment",
+          "/sessions/8c4d60b6-d1f3-4043-bebf-3ae4808a9635/preparation"
+        ]
+      },
+      {
+        "screen": "admin-programmes",
+        "interactiveMilliseconds": 2270.3,
+        "assetTransferBytes": 187059,
+        "apiTransferBytes": 8652,
+        "completeTransferBytes": 195711,
+        "budgetBytes": 300000,
+        "passed": true,
+        "requests": [
+          "/authentication/session",
+          "/authentication/session",
+          "/authentication/session",
+          "/authentication/session",
+          "/enrollment",
+          "/administration/curricula"
+        ]
+      },
+      {
+        "screen": "admin-programme",
+        "interactiveMilliseconds": 3088.6,
+        "assetTransferBytes": 193371,
+        "apiTransferBytes": 10120,
+        "completeTransferBytes": 203491,
+        "budgetBytes": 300000,
+        "passed": true,
+        "requests": [
+          "/authentication/session",
+          "/authentication/session",
+          "/authentication/session",
+          "/authentication/session",
+          "/enrollment",
+          "/administration/curricula/c7cb3efb-2089-4f8a-9a02-6224db75ed5a"
+        ]
+      },
+      {
+        "screen": "admin-module",
+        "interactiveMilliseconds": 3398.1,
+        "assetTransferBytes": 196934,
+        "apiTransferBytes": 9626,
+        "completeTransferBytes": 206560,
+        "budgetBytes": 300000,
+        "passed": true,
+        "requests": [
+          "/authentication/session",
+          "/authentication/session",
+          "/authentication/session",
+          "/authentication/session",
+          "/enrollment",
+          "/administration/modules/255f8135-1a56-5cdd-a4cd-a5a41dcfab0c"
+        ]
+      },
+      {
+        "screen": "admin-section",
+        "interactiveMilliseconds": 3165.1,
+        "assetTransferBytes": 189112,
+        "apiTransferBytes": 9500,
+        "completeTransferBytes": 198612,
+        "budgetBytes": 300000,
+        "passed": true,
+        "requests": [
+          "/authentication/session",
+          "/authentication/session",
+          "/authentication/session",
+          "/authentication/session",
+          "/enrollment",
+          "/administration/sections/d9ede8ac-b826-5b6b-8cb5-e8d3e2de1295"
+        ]
+      }
+    ]
+  },
+  "limits": "These are repeatable lab measurements on the recorded host under five-client normal load and Chromium device/network emulation. They do not certify every production host, physical device or arbitrary authored curriculum volume. The 64 KB request body limit is enforced by Kestrel and bounded by the Curriculum options validation; it is not asserted through the in-process test host, which does not apply it."
+}

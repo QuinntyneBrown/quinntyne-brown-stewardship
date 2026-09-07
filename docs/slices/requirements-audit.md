@@ -2,7 +2,8 @@
 
 This audit uses `docs/specs/L1.md`, the forty L2 requirements then present and
 `AGENTS.md` as the scope. The curriculum authoring requirements added later,
-`L1-011` through `L1-014` and `L2-041` onward, are outside it. Administration screens remain outside the participant requirements.
+`L1-011` through `L1-014` and `L2-041` onward, are audited in
+[curriculum-authoring.md](curriculum-authoring.md).
 The source and behavioral evidence below were inspected on 2026-09-06. All forty
 participant requirements are implemented and their verification gates pass. The
 performance evidence covers the documented normal-load and device simulation.
@@ -40,9 +41,9 @@ performance evidence covers the documented normal-load and device simulation.
 | L2-003      | Session revocation affects one device; browser sign-out/back navigation is guarded; Access two-device acceptance and sign-out browser journeys.                                                        |
 | L2-004      | Authorized controllers and child route guard; direct protected URLs and safe return destinations are exercised in API/browser acceptance.                                                              |
 | L2-005      | Active enrollment and curriculum key scope every programme query; unique active enrollment and explicit foreign-cohort HTTP tests.                                                                     |
-| L2-006      | Cohort derives weeks, end date and six-session allowance; local-zone week, ended-cohort booking and cohort setup acceptance.                                                                           |
+| L2-006      | Cohort derives weeks, end date and the session allowance from its own duration and cadence; local-zone week, ended-cohort booking and cohort setup acceptance.                                                                           |
 | L2-007      | Enrollment gate renders the same explicit absence notice on programme destinations; empty programme content is absent in browser assertions.                                                           |
-| L2-008      | Ordered module path with complete/current/locked labels; API completes all twelve modules and checks final states; browser checks twelve markers.                                                      |
+| L2-008      | Ordered module path with complete/current/locked labels; API completes every module of the seeded programme and checks final states; browser checks one marker per published module, for twelve and for eight.                                                      |
 | L2-009      | Completion counts and rounded percentages derive from section records; API checks every module transition and browser checks displayed counts.                                                         |
 | L2-010      | Current module is the first incomplete module; API refuses skipped modules/sections and continues to permit completed module reads.                                                                    |
 | L2-011      | Reader returns the first incomplete section, or the last after full completion; API and reload/resume browser acceptance. There is no independent module-complete flag.                                |
@@ -50,7 +51,7 @@ performance evidence covers the documented normal-load and device simulation.
 | L2-013      | Transactional idempotent completion and persisted reload; API duplicate completion and browser complete/resume journeys.                                                                               |
 | L2-014      | Native progress value/max derive from section records. Browser acceptance checks the exact “Section N of 5” label, every fill from 0% to 80%, and 100% after reopening the completed module. |
 | L2-015      | One assignment source at every viewport; browser compares reading, effort and all three practice steps at XS and XL.                                                                                   |
-| L2-016      | Completion is derived, including reopening on appended sections; Administration import acceptance and all-module HTTP progression.                                                                     |
+| L2-016      | Completion is derived, including reopening on appended sections; the section endpoint's acceptance and all-module HTTP progression.                                                                     |
 | L2-017      | Cohort-local day/week availability returns open/taken states without other participants' identity; booking HTTP checks and slot-picker browser journeys.                                               |
 | L2-018      | Booking response and curriculum agree on time, mentor and duration; HTTP comparison and browser booking/next-session journey.                                                                          |
 | L2-019      | Transaction checks one future booking; two-device race and second-booking rejection are exercised against SQL Server.                                                                                  |

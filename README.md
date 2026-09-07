@@ -11,9 +11,9 @@ mentorship.**
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 [![Code of Conduct](https://img.shields.io/badge/Code%20of%20Conduct-Contributor%20Covenant%202.1-5e5e5e.svg)](CODE_OF_CONDUCT.md)
 
-Stewardship delivers a twelve-module participant curriculum, records progress
-section by section, schedules six mentor conversations across twelve weeks, and
-keeps private notes that carry a participant's thinking from a module into the
+Stewardship delivers an authored participant curriculum, records progress
+section by section, schedules mentor conversations at the cadence each cohort
+sets, and keeps private notes that carry a participant's thinking from a module into the
 session it is meant to inform.
 
 It is built as a reference-quality full-stack application: Clean Architecture on
@@ -65,10 +65,16 @@ own.
 
 ## Features
 
-**Curriculum and progression.** An ordered path of twelve modules with locking, a
+**Curriculum and progression.** An ordered path of authored modules with locking, a
 derived current module, and a resume point. Each module delivers ordered sections
 of reading material and a practice assignment. Section completion is idempotent,
 and finishing every section unlocks the next module.
+
+**Curriculum authoring.** Administrators create programmes, author their modules,
+sections, and preparation prompts, order them, preview a module as a participant
+reads it, and publish deliberately. Only published content reaches a participant,
+recorded participant history outranks removal, and every authoring write is
+audited.
 
 **One-on-one sessions.** Participants browse their mentor's published availability
 and book a slot. When two participants confirm the same slot at once, exactly one
@@ -95,15 +101,15 @@ colour, size, or position is also available in text or structure.
 
 **Operable.** `/health` reports application and database readiness. Errors return
 a correlation identifier and no internal detail, and that identifier is logged.
-Booking audit records carry the actor, the action, the time, and the correlation
-identifier. All programme writes are transactional.
+Booking and curriculum audit records carry the actor, the action, the time, and
+the correlation identifier. All programme writes are transactional.
 
 ## Architecture
 
 ```text
                     ┌──────────────────────────────┐
    Participant ───► │  Angular 21 application      │
-   (browser)        │  signals · token-injected    │
+   or administrator │  signals · token-injected    │
                     └──────────────┬───────────────┘
                                    │  same-origin HTTPS, cookie session
                     ┌──────────────▼───────────────┐
@@ -116,7 +122,7 @@ identifier. All programme writes are transactional.
                     └──────────────▲───────────────┘
                                    │  migrations · provisioning · import
                     ┌──────────────┴───────────────┐
-   Administrator ─► │  Stewardship CLI             │
+   Operator ──────► │  Stewardship CLI             │
    (terminal)       └──────────────────────────────┘
 ```
 
@@ -259,9 +265,9 @@ real HTTP endpoints, with a controlled clock to exercise expiry and throttling.
 Browser tests use Playwright with the Page Object Model — page objects know the
 DOM, tests state intent, and **a selector never appears in a test**.
 
-Performance is measured separately, against explicit budgets: 25 API scenarios
+Performance is measured separately, against explicit budgets: 33 API scenarios
 under load, and a 300 KB transfer gate plus a 2.5-second interactivity gate across
-nine screens on a throttled, cold-cache browser profile.
+thirteen screens on a throttled, cold-cache browser profile.
 
 ```powershell
 npm run test:performance:api
@@ -278,12 +284,14 @@ Stewardship is pre-1.0 and under active development. The participant experience
 described in [`docs/specs/L1.md`](docs/specs/L1.md) is complete and covered by the
 acceptance suite.
 
-Curriculum authoring is specified by `L1-011` through `L1-014` and designed under
-[`docs/detailed-designs/administration`](docs/detailed-designs/administration/). Nothing
-of it is built yet: the requirements and the designs are complete and no source file has
-changed, so the curriculum is still imported through the CLI. The remaining administrator tasks — managing
-cohorts, enrolling participants, setting mentor availability, provisioning mentors —
-stay out of scope for the current requirement set and are served by the CLI.
+Curriculum authoring is specified by `L1-011` through `L1-014`, designed under
+[`docs/detailed-designs/administration`](docs/detailed-designs/administration/), and
+built: an administrator authors, orders, previews, and publishes programmes at
+`/admin/programmes`, and the acceptance suite covers it (see
+[`docs/slices/curriculum-authoring.md`](docs/slices/curriculum-authoring.md)). The
+remaining administrator tasks — managing cohorts, enrolling participants, setting
+mentor availability, provisioning mentors — stay out of scope for the current
+requirement set and are served by the CLI.
 
 Breaking changes may occur in minor versions before 1.0. They are announced in
 [CHANGELOG.md](CHANGELOG.md).

@@ -61,8 +61,9 @@ node e2e/demo/render.mjs
 ```
 
 Preparation creates a fresh `StewardshipDemo_yyyyMMdd_HHmmss` database, provisions
-accounts and programme data through the CLI, adds historical fixtures, and starts
-a hidden API process. It does not clear the normal application database. The
+accounts and programme data through the CLI, publishes the imported programme,
+records the module count and session allowance the demo asserts, adds historical
+fixtures, and starts a hidden API process. It does not clear the normal application database. The
 database name, API process ID, generated password, and URL are stored in ignored
 `.local/live-demo/run.json`.
 

@@ -31,7 +31,9 @@ not an architecture test.
 
 ## Defaults
 
-The starter curriculum contains twelve finished modules with five sections each,
+The starter curriculum contains twelve finished modules with five sections each
+(a programme holds whatever has been authored into it; see
+[curriculum-authoring.md](curriculum-authoring.md)),
 practice steps, effort estimates and preparation prompts. Its framing is practical
 and accessible. The cohort time zone defaults to `America/Toronto`; instants are
 stored in UTC. Slots default to 45 minutes. Note bodies are plain text with a
