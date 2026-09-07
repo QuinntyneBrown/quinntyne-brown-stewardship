@@ -95,6 +95,11 @@ to `curriculum/unlock-and-resume`, and how the allowance governs booking belongs
 - **`CurriculumOverviewComponent`** — existing `domain` component rendering the participant
   path. Its template loses the literal week count, the "Twelve weeks of practice" heading,
   and the module-12 title used as a fallback, each replaced by a value from the response.
+- **`SignInPageComponent`** — existing routed page component. Its lead reads "Twelve
+  modules, six sessions, one cohort", which is the only literal shape stated to a visitor who
+  has not signed in and therefore has no cohort whose shape could be read. It cannot be
+  replaced by a derived figure, because there is nothing yet to derive one from, so the
+  sentence describes the programme without counting it.
 - **`ProgrammeMockStore`** — mock data source in the `api` library testing entry point. Its
   hard-coded twelve module titles, fixed five sections, and `12 - completed` arithmetic are
   replaced by a fabricated programme whose size the test states.
