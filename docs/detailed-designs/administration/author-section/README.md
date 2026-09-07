@@ -110,8 +110,10 @@ completion belongs to `modules/complete-section`.
   editor reports unsaved changes, and the page registers a `beforeunload` handler for the
   tab-close case (L2-063).
 - **`dirty`** — `computed()` signal on `SectionEditorComponent` comparing the edited values
-  with the values last loaded or saved. It is the single source the guard and the save
-  button both read, so neither can disagree about whether work is outstanding.
+  with the values last loaded or saved. It is the single source the guard, the save button
+  and the discard action all read, so none of them can disagree about whether work is
+  outstanding. Discarding writes the last saved values back over the edited ones, which
+  clears `dirty` by the same comparison rather than by a second flag (L2-063 criterion 5).
 - **`SectionDraftResult`** — `api` result type carrying one authored section.
 
 **API.**

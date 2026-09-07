@@ -59,6 +59,12 @@ in the form, including when the session has expired, because redirecting to sign
 long-form authored content in a textarea would discard exactly what L2-063 exists to protect
 (L2-065 criterion 5).
 
+The editor states where the module sits: its position in the programme, and the week it
+would be read in at the intended pace of one module per week. The second figure is a
+planning aid for the author and not a schedule. Nothing unlocks a module because a week
+passed, and no participant is told which week they are on from the module they reached, so
+the figure appears here and on no participant screen.
+
 The module editor is reached at `/admin/modules/:id`, a route that names the module and not
 the programme holding it, so the screen renders the way back rather than relying on one.
 `platform/responsive-shell` settles why: a narrow screen shows one place at a time, so the
