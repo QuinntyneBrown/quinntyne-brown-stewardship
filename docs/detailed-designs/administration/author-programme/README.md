@@ -41,9 +41,17 @@ The programme record replaces the `CurriculumKey` string on both `CurriculumModu
 removes the `"starter"` literal from the domain, and it is the reason this feature is a
 prerequisite for the other five.
 
-A programme is removable while no cohort follows it (L2-044 criterion 5). A key is typed by
-hand and a mistyped one would otherwise be permanent, so the screen offers removal for the
-programme nothing depends on. The guard is the cohort rather than the completion record,
+A key is typed by hand, so a mistyped one is corrected rather than lived with. The key may
+be changed while no cohort follows the programme, and the change is refused once one does
+(L2-044 criteria 7 and 8). The guard is the cohort rather than the publication state,
+because the key is how a cohort names the programme it follows; changing it under a cohort
+would rename the thing that cohort points at. A change to a key another programme holds is
+refused by the same unique index that refuses a duplicate at creation (L2-044 criterion 9).
+The title carries no such guard and is revised freely, which is why the screen saves the two
+separately.
+
+A programme is removable on the same condition (L2-044 criterion 5). The screen offers
+removal for the programme nothing depends on. The guard is the cohort rather than the completion record,
 and it is the stronger of the two: a cohort is what binds participants to a programme, so a
 programme no cohort follows can hold no progress to discard. A programme a cohort does
 follow is refused, and the refusal counts the cohorts (L2-044 criterion 6).
@@ -107,7 +115,12 @@ to `administration/authorise-administrator`.
   key and a title and bounds their length; the handler inserts the programme in draft and
   returns its identifier.
 - **`RenameCurriculumCommand`**, **`RenameCurriculumCommandHandler`**, and
-  **`RenameCurriculumCommandValidator`** — the revision slice for the title.
+  **`RenameCurriculumCommandValidator`** — the revision slice for the title. The title is
+  revised without regard to cohorts, so this slice carries no guard of its own.
+- **`ChangeCurriculumKeyCommand`**, **`ChangeCurriculumKeyCommandHandler`**, and
+  **`ChangeCurriculumKeyCommandValidator`** — the revision slice for the key. The handler
+  counts the cohorts following the programme, refuses with `409` when any do, and otherwise
+  writes the key and lets the unique index refuse a collision.
 - **`RemoveCurriculumCommand`** and **`RemoveCurriculumCommandHandler`** — the removal
   slice. The handler counts the cohorts that follow the programme, refuses with `409` when
   any do, and otherwise removes the programme with its modules, sections and prompts in one
@@ -155,7 +168,7 @@ a level-1 (L1) requirement, cited by identifier. Requirement text is quoted from
 
 | L2 ID | Refines (L1) | Requirement |
 |-------|--------------|-------------|
-| `L2-044` | `L1-012` | A programme is the unit a cohort follows. An administrator creates it, titles it, and gives it a key unique across programmes. A programme no cohort follows may be removed. |
+| `L2-044` | `L1-012` | A programme is the unit a cohort follows. An administrator creates it, titles it, and gives it a key unique across programmes. The key may be corrected, and the programme removed, while no cohort follows it. |
 | `L2-051` | `L1-012` | Authored content is checked before it reaches domain logic, and a rejected edit changes nothing. Every authored field carries a stated maximum length, including the reading content of a section, which is the longest field the system accepts. |
 
 ## Diagrams
