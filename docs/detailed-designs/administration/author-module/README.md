@@ -46,6 +46,13 @@ the effort estimate, a practice step, or a prompt and has not saved it is warned
 navigation or a tab close discards the change (L2-063). The warning is driven by a single
 `dirty` signal over the whole form, so a change to any part of the module raises it.
 
+The module editor is reached at `/admin/modules/:id`, a route that names the module and not
+the programme holding it, so the screen renders the way back rather than relying on one.
+`platform/responsive-shell` settles why: a narrow screen shows one place at a time, so the
+return has to be visible on the screen itself. The module carries the identifier of its
+programme, so the editor names that programme and links to it without a further read
+(L2-059).
+
 What a section holds belongs to `administration/author-section`. Reordering the modules of
 a programme belongs to `administration/order-curriculum`. When the authored module becomes
 visible belongs to `administration/publish-curriculum`. How a prompt reaches a session
@@ -56,7 +63,8 @@ belongs to `notes/prepare-for-session`, which this feature supplies but does not
 **Web client.**
 
 - **`ModuleEditorPageComponent`** — routed page component in the application project
-  owning `/admin/modules/:id`. It composes the editor and owns the removal dialog.
+  owning `/admin/modules/:id`. It composes the editor, owns the removal dialog, and renders
+  the link back to the programme that holds the module.
 - **`ModuleEditorComponent`** — component in the `domain` library. It calls
   `inject(AUTHORING_SERVICE)`, holds the authored module in a signal, and saves revisions.
   It belongs in `domain` because it injects an `api` contract.
