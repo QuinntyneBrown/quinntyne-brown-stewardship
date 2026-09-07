@@ -100,7 +100,11 @@ completion belongs to `modules/complete-section`.
 - **`TextAreaFieldComponent`** — presentational component in the `components` library used
   for the reading content. It injects nothing.
 - **`ConfirmDialogComponent`** — presentational component in the `components` library over
-  a native `dialog`, shown before a removal.
+  a native `dialog`, shown before a removal. It takes the consequence as an input rather than
+  a bare question, because what a removal costs is what the administrator is deciding about:
+  which content goes, that the positions after it close the gap, and whether any participant
+  record depends on it. A dialog asking only whether to proceed would put the decision before
+  the facts that settle it.
 - **`ErrorMessageComponent`** — existing presentational component in the `components`
   library. It renders the refusal returned when a removal is declined.
 - **`StatePillComponent`** — presentational component in the `components` library, described
@@ -165,6 +169,13 @@ completion belongs to `modules/complete-section`.
 A count that stops at the maximum would hide the condition it exists to report, so it keeps
 counting past it and the field reports itself invalid. That is what makes the refusal of
 L2-051 criterion 2 legible before the request is sent rather than only after it returns.
+
+A refusal reports every rule broken, not the first. `FluentValidation` collects the failures
+of a command and the existing `ValidationBehavior` raises them together, so the response
+already carries all of them and the screen lists each beside the field it belongs to
+(L2-051 criterion 8). A length failure also states the maximum and the overage, because an
+author who is told a summary is too long still has to count to know by how much
+(L2-051 criterion 9).
 - **`ICurriculumStore`** — application abstraction. It supplies `Remove<T>(entity)` and
   the dependency counts the rule reads: `CompletionCount(sectionId, token)`,
   `ModuleNoteCount(moduleId, token)`, and `PromptAnswerCount(moduleId, token)`. Counting
