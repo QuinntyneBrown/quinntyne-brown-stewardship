@@ -39,18 +39,18 @@ dialog -> client : Build the typed request
 client -> controller : DELETE /administration/sections/{id}
 controller -> handler : Send RemoveSectionCommand
 
-alt A participant has completed the section
-  handler -> db : Count completion records against the section (L2-050)
-  db --> handler : One or more records
-  handler -> exception : Raise 409 naming the recorded completion
-  exception -> problem : Carry the status and the message
+alt A participant record depends on the content
+  handler -> db : Count completions, attached notes, and answered prompts (L2-050)
+  db --> handler : One or more dependent records
+  handler -> exception : Raise 409 naming what depends on the content
+  exception -> problem : Carry the status and the reason, never a constraint failure (L2-050 criterion 7)
   problem --> client : 409 ProblemDetails
   note over db : The section remains and recorded progress is unchanged (L2-050 criterion 4)
   client --> list : Service error carrying the refusal
   list --> actor : Present the refusal against the section
-else No completion record exists
-  handler -> db : Count completion records against the section
-  db --> handler : No records
+else No dependent record exists
+  handler -> db : Count completions, attached notes, and answered prompts
+  db --> handler : No dependent records
   handler -> db : Remove the section and close the gap in the module order
   db --> handler : Commit result
   handler --> controller : Removal applied

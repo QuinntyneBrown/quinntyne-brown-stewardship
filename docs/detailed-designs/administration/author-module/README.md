@@ -34,8 +34,11 @@ criterion 2). Revising the wording of a question does not discard the answer som
 it.
 
 Removal is bounded by what participants have recorded. A module is removable while nothing
-recorded depends on it (L2-045 criterion 3); a module containing a completed section is
-not. That rule, and the refusals it produces, are designed in
+recorded depends on it (L2-045 criterion 3). Three kinds of record can depend on it: a
+completed section, a note attached to the module, and an answered preparation prompt. All
+three are counted before anything is removed, because the module removal cascades to the
+sections and prompts it owns and would otherwise fail against their foreign keys rather
+than against the rule. That rule, and the refusals it produces, are designed in
 `administration/author-section`.
 
 The editor guards unsaved work. An administrator who has changed the title, the summary,

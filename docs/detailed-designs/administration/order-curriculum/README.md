@@ -41,6 +41,15 @@ A reorder changes positions and nothing else. It does not touch titles, reading 
 publication state, or any completion record, because completion is recorded against a
 section identifier rather than a position. Moving a completed section does not reopen it.
 
+One reading does resolve through position rather than identity. The session history names
+the module a participant was on when each past session was held, and that module is resolved
+as the first incomplete one at that date (L2-022). Reordering moves the positions that
+resolution walks, so a past session may afterwards name a different module than it did
+before. Nothing recorded changes, and no participant loses a session or a note; the label on
+a historical row is derived rather than stored, and a derived label follows the order it is
+derived from. An administrator reordering a programme that cohorts are partway through
+should expect that.
+
 What the ordered objects contain belongs to `administration/author-module` and
 `administration/author-section`. How order governs what a participant may open belongs to
 `curriculum/unlock-and-resume`, which consumes these positions and is unchanged by this

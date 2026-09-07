@@ -15,6 +15,9 @@ the section editor, and it is where the rule protecting that history is enforced
 **completion record** — row recording that one participant completed one section at one
 time
 
+**dependent record** — any row a participant owns that refers to authored content: a
+completion record, a note attached to a module, or a note answering a preparation prompt
+
 Sections are created within a module, take a title and reading content, and are placed
 last in the module's order (L2-048 criterion 1). A revision reaches a participant on their
 next read of a published module. Removing a section closes the gap it leaves, so the
@@ -28,12 +31,21 @@ same rule reaches upward: a module containing such a section is not removable ei
 preparation prompt a participant has answered in a note is not removable. Content a
 participant has acted on shall not be deleted out from under the record of that action.
 
+Completion is not the only record a participant leaves. A note carries an optional
+`ModuleId` and an optional `PromptId`, and both are foreign keys, so a participant who
+opened a module and wrote a note against it without completing a single section has still
+made that module undeletable. The rule therefore counts every dependent record and not only
+completions: a module with an attached note is refused (L2-050 criterion 5), and so is a
+module holding a prompt someone has answered (L2-050 criterion 6). Counting completions
+alone would leave those two removals to fail at the database instead of at the rule.
+
 Enforcement is explicit rather than incidental. Every curriculum foreign key is configured
 `DeleteBehavior.Restrict`, so the database refuses a cascading delete on its own. The
 handler does not rely on that refusal to produce a usable message; it counts the dependent
 records first and raises a `ProgrammeException` carrying `409` and a sentence naming what
-depends on the content. The database constraint remains as the backstop that makes the rule
-true even if a handler is added later that forgets it.
+depends on the content. A removal blocked by history therefore returns a stated reason and
+never a constraint failure (L2-050 criterion 7). The database constraint remains as the
+backstop that makes the rule true even if a handler is added later that forgets it.
 
 Section content survives republication untouched. Revising the text of a section a
 participant has already completed does not reopen their completion, because completion is
@@ -49,10 +61,10 @@ authoring screens carry the same one, through the same route-guard and `beforeun
 pattern.
 
 The refusal of L2-050 is also shown before it is provoked. Each section row reports how
-many participants have completed it, so an administrator sees that a section is in use
-without attempting a removal and reading the error. The count comes from the same
-completion records the removal is checked against, so the display and the rule cannot
-disagree.
+many participants have completed it, and each module row reports how many notes are
+attached to it and to its prompts, so an administrator sees that content is in use without
+attempting a removal and reading the error. The counts come from the same dependent records
+the removal is checked against, so the display and the rule cannot disagree.
 
 The module a section belongs to is authored in `administration/author-module`. Reordering
 sections belongs to `administration/order-curriculum`. When authored content becomes
@@ -100,10 +112,15 @@ completion belongs to `modules/complete-section`.
 - **`ModuleSection`** — domain entity for one section, owning its ordinal, title, reading
   content, and creation time.
 - **`SectionCompletion`** — domain entity recording that one participant completed one
-  section. These records are what a removal is checked against.
-- **`ICurriculumStore`** — application abstraction. It supplies
-  `CompletionCount(sectionId, token)` and `Remove<T>(entity)`, the two operations this
-  slice needs beyond the participant store.
+  section. These records are what a section removal is checked against.
+- **`Note`** — existing domain entity carrying an optional `ModuleId` and an optional
+  `PromptId`, both foreign keys with `DeleteBehavior.Restrict`. A note is a dependent record
+  exactly as a completion is, so a module removal is checked against notes as well.
+- **`ICurriculumStore`** — application abstraction. It supplies `Remove<T>(entity)` and
+  the dependency counts the rule reads: `CompletionCount(sectionId, token)`,
+  `ModuleNoteCount(moduleId, token)`, and `PromptAnswerCount(moduleId, token)`. Counting
+  through the store rather than catching a database exception is what lets the refusal name
+  what depends on the content.
 - **`ProgrammeException`** — existing application exception carrying an HTTP status code
   and a message. A refused removal raises it with `409`.
 - **`OrdinalSequence`** — domain service assigning contiguous positions. This slice calls
@@ -123,7 +140,7 @@ a level-1 (L1) requirement, cited by identifier. Requirement text is quoted from
 | L2 ID | Refines (L1) | Requirement |
 |-------|--------------|-------------|
 | `L2-048` | `L1-012` | Sections carry the reading content of a module and are authored within it. |
-| `L2-050` | `L1-012` | Recorded participant history outranks authoring convenience. Content a participant has completed or answered cannot be deleted out from under that record. |
+| `L2-050` | `L1-012` | Recorded participant history outranks authoring convenience. Content a participant has completed, answered, or written a note against cannot be deleted out from under that record. |
 | `L2-063` | `L1-012` | Authored content is long, and a section of reading is the longest of it. An administrator who leaves an authoring screen holding unsaved changes must be warned before those changes are lost. |
 
 ## Diagrams

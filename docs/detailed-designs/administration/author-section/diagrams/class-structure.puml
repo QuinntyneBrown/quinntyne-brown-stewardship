@@ -27,6 +27,14 @@ class ModuleSection {
   +DateTimeOffset CreatedAt
 }
 
+class Note {
+  +Guid Id
+  +Guid EnrollmentId
+  +Guid? ModuleId
+  +Guid? PromptId
+  +string Body
+}
+
 class SectionCompletion {
   +Guid Id
   +Guid EnrollmentId
@@ -69,6 +77,8 @@ class ProgrammeException {
 interface ICurriculumStore {
   +Section(id: Guid, token: CancellationToken): Task<ModuleSection?>
   +CompletionCount(sectionId: Guid, token: CancellationToken): Task<int>
+  +ModuleNoteCount(moduleId: Guid, token: CancellationToken): Task<int>
+  +PromptAnswerCount(moduleId: Guid, token: CancellationToken): Task<int>
   +Remove<T>(entity: T): void
   +Transaction<T>(operation, token: CancellationToken): Task<T>
 }
@@ -83,6 +93,8 @@ AddSectionCommandHandler ..> AddSectionCommand : handles
 AddSectionCommandHandler --> ModuleSection : appends
 RemoveSectionCommandHandler ..> RemoveSectionCommand : handles
 RemoveSectionCommandHandler --> SectionCompletion : counts
+RemoveSectionCommandHandler --> Note : counts
+CurriculumModule "1" o-- "*" Note : attached to
 RemoveSectionCommandHandler ..> ProgrammeException : raises when dependent
 RemoveSectionCommandHandler ..> OrdinalSequence : compacts the order with
 RemoveSectionCommandHandler --> ICurriculumStore : reads and writes through
