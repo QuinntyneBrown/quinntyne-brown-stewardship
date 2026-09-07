@@ -141,6 +141,15 @@ to `curriculum/unlock-and-resume`, and how the allowance governs booking belongs
 - **`ProgrammeReader`** — existing shared read helper. It filters modules to the published
   state and reads the module count from the programme, which is what makes L2-053 and
   L2-056 hold for every participant screen at once.
+- **`EnrollmentResponse`** — existing response record carrying `IsEnrolled` and the cohort
+  summary. It gains a flag stating whether the cohort programme has been published. Without
+  one there are two states where the application needs three: a participant enrolled on a
+  draft programme is enrolled, so the gate admits them, and the filtered path is empty, so
+  the curriculum reads nothing complete of nothing. L2-053 criterion 1 requires them to be
+  told the programme is not yet available instead.
+- **`EnrollmentGateComponent`** — existing `domain` component branching on enrollment. It
+  gains the third branch. `NotEnrolledNoticeComponent` already takes the sentence it renders
+  as an input, so the same component states either absence and only the wording differs.
 - **`GetCurriculumQueryHandler`** and **`GetModuleQueryHandler`** — existing participant
   handlers. They gain no new rule; they inherit the filtering `ProgrammeReader` applies.
 - **`CreateCohortCommandHandler`** — existing handler. The twelve-module check is here
