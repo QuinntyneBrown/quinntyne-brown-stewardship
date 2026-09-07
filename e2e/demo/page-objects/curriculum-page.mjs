@@ -1,4 +1,33 @@
 export class CurriculumPage extends ShellPage {
+  async faithtech() {
+    await this.go("/curriculum");
+    await this.page.getByRole("list", { name: "Module path" }).waitFor();
+    const titles = [
+      "Prepare to build together",
+      "Discover through lament",
+      "Discern the wisdom of God",
+      "Develop with the Holy Spirit",
+      "Demonstrate impact that lasts",
+    ];
+    for (const title of titles) await this.text(title);
+    const response = await this.page.request.get(
+      this.config.baseUrl + "/curriculum",
+    );
+    if (response.status() !== 200)
+      throw new Error("DEMO-01: Curriculum API failed.");
+    const data = await response.json();
+    if (
+      JSON.stringify(data.modules.map((m) => m.title)) !==
+      JSON.stringify(titles)
+    )
+      throw new Error("DEMO-01: FaithTech module order differs.");
+    await this.page
+      .getByRole("list", { name: "Module path" })
+      .scrollIntoViewIfNeeded();
+    this.page.__demo.checks.push(
+      "DEMO-01: The live curriculum contains Prepare followed by the four Ds in order.",
+    );
+  }
   async ready(completed = 0) {
     await this.text(`${completed} of ${this.config.moduleCount} complete`);
     if (

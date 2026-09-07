@@ -6,6 +6,11 @@ export class ShellPage {
   async text(value) {
     await this.page.getByText(value, { exact: true }).first().waitFor();
   }
+  async mobile() {
+    await this.signOut();
+    await this.page.setViewportSize({ width: 390, height: 620 });
+    this.page.__demo.mobileStart = Date.now();
+  }
   async go(path) {
     await this.page.goto(this.config.baseUrl + path);
   }

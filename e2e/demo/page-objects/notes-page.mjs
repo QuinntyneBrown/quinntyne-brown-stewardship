@@ -1,4 +1,12 @@
 export class NotesPage extends ShellPage {
+  async persisted(body) {
+    await this.page.reload();
+    await this.text(body);
+    await this.page.getByText(body, { exact: true }).scrollIntoViewIfNeeded();
+    this.page.__demo.checks.push(
+      "DEMO-03: The complete reflection persists after reload.",
+    );
+  }
   async visibleNote(body) {
     await this.page.getByText(body, { exact: true }).waitFor();
   }
