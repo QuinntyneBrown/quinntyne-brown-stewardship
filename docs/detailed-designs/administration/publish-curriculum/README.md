@@ -140,6 +140,16 @@ one place the participant path, the module screen, the progress figures, and the
 allowance all pass through, so a single filter covers every screen and no future handler can
 forget it.
 
+That single filter reaches further than the application. Four places build a curriculum and
+then read it as a participant would, and each gains a publication step or reads nothing:
+`ApiFixture` and the acceptance tests that seed modules directly, the performance harness
+that imports the starter curriculum before measuring participant endpoints, and
+`scripts/prepare-live-demo.ps1`, which drives the same sequence for the recorded
+walkthrough. A fixture that creates a curriculum and omits the publication returns an empty
+path rather than an error, so the failure reads as missing content rather than as a missing
+step (L2-053). Each also supplies a cohort duration and cadence, which stopped being
+constants (L2-057).
+
 ## Requirements
 
 The feature realises the following level-2 (L2) requirements. Each L2 requirement refines a
