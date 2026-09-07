@@ -112,6 +112,27 @@ freshly issued CSRF token.
 their assigned mentor. An unrelated identity receives `404`, not `403`, so the
 API does not confirm that a resource exists.
 
+**Administrator authority.** Curriculum authoring is a separate authority carried
+on the account record and issued as a role claim when the session cookie is read.
+It is never taken from a request body, query string, or header. Every endpoint
+under `/administration` requires it and refuses without it before any handler
+runs, so a refused call reads and changes nothing.
+
+Those endpoints answer `403` to a signed-in account lacking the authority, rather
+than the `404` used for resource ownership above. The two cases differ: `404`
+conceals whether one participant's note or booking exists, while an authoring
+endpoint is a capability boundary whose existence is public in this document and
+in the architecture reference. Concealing it would protect nothing and would make
+a legitimate administrator's misconfiguration indistinguishable from a missing
+route.
+
+The authority cannot be granted through the application. No screen and no endpoint
+confers it; an operator with access to the deployment sets it with the
+command-line tool. That is deliberate: it removes privilege escalation from the
+application's reachable surface, so a defect in an authoring endpoint cannot widen
+who holds the authority. Withdrawal takes effect on the account's next request,
+because the claim is issued per request rather than stored in the cookie.
+
 **Input validation.** Requests are validated in the application layer with
 FluentValidation before a handler runs. Route identifiers are validated rather
 than trusted.
