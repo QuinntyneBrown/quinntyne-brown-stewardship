@@ -194,8 +194,9 @@ The [development guide](docs/development.md) gives the JSON shapes for
 `cohort.json` and `availability.json`, the full CLI reference, and guidance on
 revising a curriculum without discarding recorded work.
 
-Cohort and content administration use this CLI. **The participant application
-contains no administrator screens.**
+Curriculum authoring has screens in the application, reachable only by an account
+holding administrator authority; this CLI provisions that account. Cohorts,
+enrollment, mentors, and availability remain CLI tasks.
 
 ## Repository layout
 

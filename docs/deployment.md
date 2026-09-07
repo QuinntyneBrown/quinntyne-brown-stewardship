@@ -82,16 +82,21 @@ an operator joins a user's report to the failure.
 **Auditing bookings.** Booking audit records carry the actor, the action, the
 time, and the correlation identifier.
 
-**Administration.** The participant application contains no administrator screens.
-Cohorts, curriculum, mentors, and availability are managed with the CLI, which
-should be run from a trusted host with its own connection string. See the
+**Administration.** Curriculum authoring has screens in the application, reachable only by
+an account holding administrator authority. That authority is conferred from outside the
+application, so a new deployment provisions its first administrator with the CLI before any
+curriculum can be authored. Cohorts, enrollment, mentors, and availability remain CLI
+tasks. Run the CLI from a trusted host with its own connection string. See the
 [CLI reference](development.md#cli-reference).
 
-**Revising a curriculum in production.** Repeating an import preserves identities
-and completion records. Retain existing module, section, and prompt identifiers
-and order, and append sections rather than deleting recorded work. New sections
-reopen derived module completion. Booked availability cannot be moved through an
-import.
+**Revising a curriculum in production.** Revise on the authoring screens rather than by
+repeating an import; an import creates one draft curriculum and does not merge into an
+existing one. Nothing authored reaches a participant until the curriculum is published, so
+a revision can be prepared while a cohort is running. Content a participant has completed,
+answered, or written a note against cannot be removed, and the attempt is refused with a
+reason. New sections reopen derived module completion, and a module published into a
+position a participant has passed becomes their current module. Booked availability is not
+touched by authoring.
 
 ## Deploying the design system
 

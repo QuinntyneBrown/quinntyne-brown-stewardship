@@ -134,15 +134,20 @@ offsets and stable identifiers:
 
 ## CLI reference
 
-The participant application contains no administrator screens. Cohort and content
-administration use this CLI.
+Curriculum authoring has screens in the application, described by `L1-012` and designed
+under [`administration`](detailed-designs/administration/). This CLI provisions the
+administrator who reaches them, and remains the way to manage cohorts, enrollment, mentors,
+and availability.
 
 | Command                                | Arguments                 | Effect                                                              |
 | -------------------------------------- | ------------------------- | ------------------------------------------------------------------- |
 | `migrate`                              | —                         | Applies pending Entity Framework Core migrations.                    |
 | `provision <email>`                    | Email                     | Creates a participant. Prompts twice for a password, without echo.   |
 | `provision-mentor <email> <name>`      | Email, display name       | Creates a mentor. Prompts twice for a password, without echo.        |
-| `import-curriculum <json-file>`        | Path to curriculum JSON   | Imports or revises a curriculum. Prints the module count.            |
+| `provision-administrator <email>`      | Email                     | Creates an administrator. Prompts twice for a password, without echo. |
+| `grant-administrator <email>`          | Email                     | Confers administrator authority on an existing account.              |
+| `revoke-administrator <email>`         | Email                     | Withdraws administrator authority. Takes effect on the next request. |
+| `import-curriculum <json-file>`        | Path to curriculum JSON   | Creates one draft curriculum from a document. Prints the module count. |
 | `create-cohort <json-file>`            | Path to cohort JSON       | Creates a cohort. Prints its identifier.                             |
 | `enroll <email> <cohort-id>`           | Email, cohort GUID        | Enrolls a participant into a cohort.                                 |
 | `publish-availability <json-file>`     | Path to availability JSON | Publishes mentor slots. Prints the slot count.                       |
