@@ -20,6 +20,7 @@ class CurriculumModule {
 
 class ModuleSection {
   +Guid Id
+  +Guid Revision
   +Guid ModuleId
   +int Ordinal
   +string Title

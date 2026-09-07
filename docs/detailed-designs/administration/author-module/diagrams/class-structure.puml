@@ -13,6 +13,7 @@ title Class structure — Author a module
 
 class CurriculumModule {
   +Guid Id
+  +Guid Revision
   +Guid CurriculumId
   +int Ordinal
   +string Title
