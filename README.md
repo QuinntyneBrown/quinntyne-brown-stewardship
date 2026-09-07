@@ -49,19 +49,15 @@ sessions, and the mentor they meet. Everything the interface says about their
 progress is derived from what they have actually completed — never authored
 separately, and never optimistic.
 
-The twelve modules of the bundled starter curriculum:
+Curricula are data, not code. A programme holds whatever modules have been
+authored into it, and every count the interface shows — the markers on the path,
+the week, the session allowance — follows from that programme and the cohort
+reading it. Nothing in the application fixes a curriculum's size or its subject.
 
-| #   | Module                    | #   | Module                       |
-| --- | ------------------------- | --- | ---------------------------- |
-| 01  | Begin with stewardship    | 07  | Make access ordinary         |
-| 02  | Listen before you build   | 08  | Choose enough                |
-| 03  | The cost of what we build | 09  | Build for dependable service |
-| 04  | Repair as a discipline    | 10  | Share power through practice |
-| 05  | Who is not in the room    | 11  | Measure what matters         |
-| 06  | Handle data with care     | 12  | Carry the work forward       |
-
-Curricula are data, not code. The bundled one is a starting point; import your
-own.
+The repository bundles one curriculum to start from: an adaptation of
+[FaithTech](https://faithtech.com/)'s framework for building redemptive
+technology, which runs the 4D Cycle of Discover, Discern, Develop and
+Demonstrate. Import it, revise it on the authoring screens, or import your own.
 
 ## Features
 
@@ -176,7 +172,7 @@ The `provision` command prompts twice for a password, minimum 12 characters,
 without echoing it.
 
 The application runs at **<https://localhost:7240>**. Plain HTTP on port 5240
-redirects to HTTPS. Open `/curriculum`, `/modules/3`, `/sessions`, or `/notes` to
+redirects to HTTPS. Open `/curriculum`, `/modules/1`, `/sessions`, or `/notes` to
 exercise a protected deep link.
 
 The API serves its built Angular assets from its own origin, so **re-run
@@ -332,3 +328,9 @@ Stewardship is licensed under the [MIT License](LICENSE).
 Bundled fonts — Karla and Newsreader — are licensed separately under the SIL Open
 Font License, whose text ships alongside them in
 [`design-system/fonts/`](design-system/fonts/).
+
+The bundled curriculum adapts [The FaithTech Playbook](https://faithtech.com/playbook)
+and the [FaithTech Workbook](https://github.com/FaithTechCreate/workbook), used under
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). FaithTech does not endorse
+this software. See [`docs/curriculum/`](docs/curriculum/) for what is theirs and what
+is ours.

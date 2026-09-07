@@ -111,7 +111,7 @@ The same command writes `.local/production-responses.json` from a separate,
 populated participant: twenty maximum-length Unicode module notes, twenty Unicode
 session notes, three maximum-length Unicode preparation answers, five past
 sessions, and one future session, together with the administrator's session and
-the four administration reads of the twelve-module programme. It records real
+the four administration reads of the bundled programme. It records real
 response DTOs, server time, and sizes as compressed by the production middleware,
 with application headers and an additional 1 KB transport-header reserve.
 

@@ -67,7 +67,7 @@ structure, and one sequence diagram per significant path.
 
 | Path                                           | Contents                                                                       |
 | ---------------------------------------------- | ------------------------------------------------------------------------------ |
-| [curriculum/starter.md](curriculum/starter.md) | The bundled twelve-module starter curriculum.                                  |
+| [curriculum/](curriculum/)                     | The manuscript behind the bundled curriculum, and where it comes from.        |
 | [mocks/](mocks/)                               | Static HTML mockups of every screen and state, rendered before implementation. |
 | [verification/](verification/)                 | Dated verification records from full suite runs.                               |
 | [prompt.md](prompt.md)                         | The original brief the project was built from.                                 |

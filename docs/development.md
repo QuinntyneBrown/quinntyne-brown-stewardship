@@ -182,8 +182,8 @@ made on the authoring screens. When revising:
   stand.
 - Booked availability cannot be moved through an import.
 
-The bundled starter curriculum is documented in
-[`docs/curriculum/starter.md`](curriculum/starter.md).
+The bundled curriculum, the manuscript it is compiled from, and where its content
+comes from are described in [`docs/curriculum/`](curriculum/).
 
 ## Repository scripts
 
