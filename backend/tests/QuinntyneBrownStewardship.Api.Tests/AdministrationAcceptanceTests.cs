@@ -22,26 +22,26 @@ public sealed class AdministrationAcceptanceTests(ApiFixture fixture) : IClassFi
     }
     private static async Task<CurriculumImport> Content() => JsonSerializer.Deserialize<CurriculumImport>(await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "starter-curriculum.json")), new JsonSerializerOptions(JsonSerializerDefaults.Web))!;
 
-    // Traces to: L2-056 AC1, L2-057 AC1, L2-058 AC3–AC4. Given an eight-module document,
-    // when it is imported, published and followed by an eight-week cohort, then the
-    // participant path has eight markers and every allowance figure reads four.
+    // Traces to: L2-056 AC1, L2-057 AC1, L2-058 AC3–AC4. Given a three-module document,
+    // when it is imported, published and followed by a six-week cohort, then the
+    // participant path has three markers and every allowance figure reads three.
     [Fact]
-    public async Task Given_an_eight_module_document_when_imported_then_the_participant_path_has_eight_markers()
+    public async Task Given_a_three_module_document_when_imported_then_the_participant_path_has_three_markers()
     {
         var starter = await Content();
-        var document = new CurriculumImport("short", "Short programme", starter.Modules.Where(x => x.Ordinal <= 8).ToList());
-        Assert.Equal(8, await Cli(new ImportCurriculumCommand(document)));
+        var document = new CurriculumImport("short", "Short programme", starter.Modules.Where(x => x.Ordinal <= 3).ToList());
+        Assert.Equal(3, await Cli(new ImportCurriculumCommand(document)));
         await fixture.PublishCurriculum(await fixture.CurriculumId("short"));
         Assert.True(await Cli(new ProvisionMentorCommand("mentor@example.com", ApiFixture.Password, "Assigned mentor")));
         var cohortId = Guid.NewGuid();
-        await Cli(new CreateCohortCommand(cohortId, DateOnly.FromDateTime(fixture.Clock.UtcNow.UtcDateTime), "mentor@example.com", "short", 8, 2));
+        await Cli(new CreateCohortCommand(cohortId, DateOnly.FromDateTime(fixture.Clock.UtcNow.UtcDateTime), "mentor@example.com", "short", 6, 2));
         await Cli(new EnrollParticipantCommand(ApiFixture.Email, cohortId));
         using var client = fixture.Browser(); await ApiFixture.SignIn(client);
         var path = await client.GetFromJsonAsync<JsonElement>("/curriculum");
-        Assert.Equal(8, path.GetProperty("modules").GetArrayLength());
-        Assert.Equal(8, path.GetProperty("remaining").GetInt32());
-        Assert.Equal(4, (await client.GetFromJsonAsync<JsonElement>("/enrollment")).GetProperty("sessionAllowance").GetInt32());
-        Assert.Equal(4, (await client.GetFromJsonAsync<JsonElement>("/sessions/availability")).GetProperty("allowance").GetInt32());
+        Assert.Equal(3, path.GetProperty("modules").GetArrayLength());
+        Assert.Equal(3, path.GetProperty("remaining").GetInt32());
+        Assert.Equal(3, (await client.GetFromJsonAsync<JsonElement>("/enrollment")).GetProperty("sessionAllowance").GetInt32());
+        Assert.Equal(3, (await client.GetFromJsonAsync<JsonElement>("/sessions/availability")).GetProperty("allowance").GetInt32());
         Assert.Equal(starter.Modules[0].Sections[0].Reading, (await client.GetFromJsonAsync<JsonElement>("/modules/current")).GetProperty("sections")[0].GetProperty("reading").GetString());
     }
 
@@ -51,7 +51,7 @@ public sealed class AdministrationAcceptanceTests(ApiFixture fixture) : IClassFi
     public async Task Given_the_starter_curriculum_when_imported_twice_then_the_second_import_is_refused_and_content_is_intact()
     {
         using var scope = fixture.Services.CreateScope();
-        Assert.Equal(12, await scope.ServiceProvider.GetRequiredService<ISender>().Send(new ImportCurriculumCommand(await Content())));
+        Assert.Equal(5, await scope.ServiceProvider.GetRequiredService<ISender>().Send(new ImportCurriculumCommand(await Content())));
         // Each command has the same scoped lifetime as a separate CLI invocation.
         using (var repeat = fixture.Services.CreateScope())
         {
@@ -60,8 +60,8 @@ public sealed class AdministrationAcceptanceTests(ApiFixture fixture) : IClassFi
         }
         var db = scope.ServiceProvider.GetRequiredService<StewardshipDbContext>();
         var curriculum = await db.Curricula.SingleAsync();
-        Assert.Equal(PublicationState.Draft, curriculum.State); Assert.Null(curriculum.PublishedAt); Assert.Equal("Stewardship", curriculum.Title);
-        Assert.Equal(12, await db.Modules.CountAsync()); Assert.Equal(60, await db.Sections.CountAsync()); Assert.Equal(36, await db.Prompts.CountAsync());
+        Assert.Equal(PublicationState.Draft, curriculum.State); Assert.Null(curriculum.PublishedAt); Assert.Equal("Redemptive Technology Design", curriculum.Title);
+        Assert.Equal(5, await db.Modules.CountAsync()); Assert.Equal(25, await db.Sections.CountAsync()); Assert.Equal(15, await db.Prompts.CountAsync());
         Assert.All(await db.Modules.ToListAsync(), module => Assert.Equal(PublicationState.Draft, module.State));
     }
 

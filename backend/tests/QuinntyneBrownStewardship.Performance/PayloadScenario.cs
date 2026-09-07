@@ -66,7 +66,7 @@ public static class PayloadScenario
             responses.Add(path, await Captured(administrator, reader));
         foreach (var path in new[] { "/authentication/session", "/enrollment", "/curriculum", "/modules/current", "/sessions/availability", "/sessions/history", "/notes", $"/notes/{noteId}", $"/sessions/{booking!.Id}", $"/sessions/{booking.Id}/preparation" })
             responses.Add(path, await Captured(client, path));
-        var report = new { measuredAt = DateTimeOffset.UtcNow, scenario = "20 distinct 10,000-character Unicode module notes; 20 Unicode session notes; all three preparation answers at 10,000 Unicode characters; five past sessions and one future session; the administrator's session and the four administration reads of the twelve-module programme; responses compressed by the production middleware", noteId, sessionId = booking!.Id, programmeId = curriculumId, moduleId = firstModule.Id, sectionId = firstSection.Id, responses };
+        var report = new { measuredAt = DateTimeOffset.UtcNow, scenario = "20 distinct 10,000-character Unicode module notes; 20 Unicode session notes; all three preparation answers at 10,000 Unicode characters; five past sessions and one future session; the administrator's session and the four administration reads of the bundled programme; responses compressed by the production middleware", noteId, sessionId = booking!.Id, programmeId = curriculumId, moduleId = firstModule.Id, sectionId = firstSection.Id, responses };
         await File.WriteAllTextAsync(output, JsonSerializer.Serialize(report, new JsonSerializerOptions(JsonSerializerDefaults.Web) { WriteIndented = true }));
         var measurements = new List<Measurement>();
         if (!measureReads) return measurements;

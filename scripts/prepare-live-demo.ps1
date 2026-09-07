@@ -33,7 +33,8 @@ foreach ($account in @('participant', 'rehearsal', 'awaiting', 'cutoff', 'gradua
     Invoke-DemoCli @('provision', "$account@demo.invalid") -Password
 }
 $cohort = [Guid]::NewGuid(); $endedCohort = [Guid]::NewGuid()
-$durationWeeks = 12; $sessionCadenceWeeks = 2
+# Two weeks per stage of the cycle the bundled curriculum teaches, and a conversation after each.
+$durationWeeks = 10; $sessionCadenceWeeks = 2
 $sessionAllowance = [math]::Floor($durationWeeks / $sessionCadenceWeeks)
 foreach ($definition in @(
     @{id=$cohort; startDate=(Get-Date).AddDays(-28).ToString('yyyy-MM-dd'); mentorEmail='mentor@demo.invalid'; curriculumKey='starter'; durationWeeks=$durationWeeks; sessionCadenceWeeks=$sessionCadenceWeeks},
@@ -79,7 +80,7 @@ WHERE p.EmailAddress IN ('participant@demo.invalid','rehearsal@demo.invalid','gr
 OPEN accounts; FETCH NEXT FROM accounts INTO @enrollment,@email;
 WHILE @@FETCH_STATUS=0 BEGIN
  SET @i=0;
- WHILE @i < CASE WHEN @email='graduate@demo.invalid' THEN 6 ELSE 2 END BEGIN
+ WHILE @i < CASE WHEN @email='graduate@demo.invalid' THEN @allowance ELSE 2 END BEGIN
   SET @slot=NEWID(); SET @booking=NEWID();
   INSERT INTO Availability (Id,MentorId,StartsAt,DurationMinutes) VALUES (@slot,@mentor,DATEADD(hour,CASE WHEN @email='rehearsal@demo.invalid' THEN 3 ELSE 0 END,DATEADD(day,CASE WHEN @email='graduate@demo.invalid' THEN -90+@i*12 ELSE -21+@i*14 END,@now)),45);
   INSERT INTO Bookings (Id,EnrollmentId,SlotId,CreatedAt,CancelledAt) VALUES (@booking,@enrollment,@slot,DATEADD(day,-100,@now),NULL);
@@ -105,6 +106,8 @@ SELECT NEWID(),e.Id,CASE WHEN p.EmailAddress='cutoff@demo.invalid' THEN @cutoffS
 FROM Enrollments e JOIN Participants p ON p.Id=e.ParticipantId WHERE p.EmailAddress IN ('cutoff@demo.invalid','reserved@demo.invalid');
 COMMIT TRANSACTION;
 '@
+    # The graduate has spent the whole allowance, whatever the cohort's duration and cadence make it.
+    [void]$command.Parameters.AddWithValue('@allowance', [int]$sessionAllowance)
     [void]$command.Parameters.AddWithValue('@cutoffSlot', [Guid]$cutoffSlot.id)
     [void]$command.Parameters.AddWithValue('@reservedSlot', [Guid]$slots[0].id)
     [void]$command.ExecuteNonQuery()

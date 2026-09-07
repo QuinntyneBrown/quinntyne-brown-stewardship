@@ -4,6 +4,7 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "tokens": "node scripts/mirror-tokens.mjs",
+    "curriculum": "node scripts/build-curriculum.mjs",
     "test:api": "dotnet test backend/QuinntyneBrownStewardship.sln",
     "test:e2e": "npm --prefix e2e test",
     "test:adapters": "node scripts/test-adapters.mjs",

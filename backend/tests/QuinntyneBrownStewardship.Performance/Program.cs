@@ -126,7 +126,7 @@ public static class Program
                 clients[client].DefaultRequestHeaders.Remove("X-CSRF-TOKEN");
                 clients[client].DefaultRequestHeaders.Add("X-CSRF-TOKEN", csrf!.Token);
             }, ClearSignInHistory));
-            // Traces to: L2-062 AC1–AC3. Five administrators read and revise a twelve-module programme, reorder it, and
+            // Traces to: L2-062 AC1–AC3. Five administrators read and revise the bundled programme, reorder it, and
             // publish it again; reads stay within 300 ms, writes within 500 ms, and a publication within 2,000 ms.
             var administrators = new List<HttpClient>();
             // The measured sign-ins above spend the origin allowance, and these five are setup rather than samples.

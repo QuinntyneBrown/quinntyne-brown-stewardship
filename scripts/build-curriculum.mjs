@@ -12,7 +12,9 @@ function id(name) {
   const hex = bytes.toString('hex');
   return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 }
-const modules = source.split(/^# /m).filter(Boolean).map(block => {
+// A module heading opens with its two-digit ordinal, so anything else the manuscript carries
+// above or between modules — a preamble, an attribution — is not mistaken for one.
+const modules = source.split(/^# /m).filter(block => /^\d\d /.test(block)).map(block => {
   const [intro, ...parts] = block.trim().split(/^## /m);
   const [heading, ...summary] = intro.trim().split('\n');
   const ordinal = Number(heading.slice(0, 2));
@@ -34,5 +36,6 @@ const modules = source.split(/^# /m).filter(Boolean).map(block => {
 });
 const destination = `${root}/backend/src/QuinntyneBrownStewardship.Cli/Content`;
 await mkdir(destination, { recursive: true });
-await writeFile(`${destination}/starter-curriculum.json`, JSON.stringify({ key: 'starter', title: 'Stewardship', modules }, null, 2) + '\n');
+// The key names the slot an operator imports into; the title names what the manuscript teaches.
+await writeFile(`${destination}/starter-curriculum.json`, JSON.stringify({ key: 'starter', title: 'Redemptive Technology Design', modules }, null, 2) + '\n');
 console.log(`Built ${modules.length} modules from the curriculum manuscript.`);

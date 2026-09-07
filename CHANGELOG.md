@@ -129,6 +129,18 @@ and will form the initial `0.1.0` release.
 
 ### Changed
 
+- The bundled curriculum now teaches FaithTech's framework for building redemptive
+  technology: five modules running the 4D Cycle of Discover, Discern, Develop and
+  Demonstrate, preceded by Prepare, with the Co-Creation Cycle of Request, Receive,
+  Review, Render and Rejoice inside Develop. It is adapted from The FaithTech Playbook
+  and the FaithTech Workbook under CC BY 4.0, and FaithTech does not endorse this
+  software. `npm run curriculum` compiles the manuscript into the import document.
+- The README no longer prints a table of module titles. A programme holds whatever has
+  been authored into it, and nothing in the application fixes a curriculum's size or
+  its subject.
+- The live demo runs a ten-week cohort at a fortnightly cadence — two weeks per stage
+  of the cycle, and a conversation after each — so its allowance follows the cohort
+  record rather than a literal.
 - `import-curriculum` creates one draft programme per document and refuses a key
   already in use, instead of merging into the existing curriculum.
 - `create-cohort` requires `curriculumKey`, `durationWeeks`, and
