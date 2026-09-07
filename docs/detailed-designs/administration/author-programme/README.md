@@ -156,7 +156,7 @@ a level-1 (L1) requirement, cited by identifier. Requirement text is quoted from
 | L2 ID | Refines (L1) | Requirement |
 |-------|--------------|-------------|
 | `L2-044` | `L1-012` | A programme is the unit a cohort follows. An administrator creates it, titles it, and gives it a key unique across programmes. A programme no cohort follows may be removed. |
-| `L2-051` | `L1-012` | Authored content is checked before it reaches domain logic, and a rejected edit changes nothing. |
+| `L2-051` | `L1-012` | Authored content is checked before it reaches domain logic, and a rejected edit changes nothing. Every authored field carries a stated maximum length, including the reading content of a section, which is the longest field the system accepts. |
 
 ## Diagrams
 

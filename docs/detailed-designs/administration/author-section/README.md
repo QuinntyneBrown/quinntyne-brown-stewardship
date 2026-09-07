@@ -53,6 +53,16 @@ recorded against the section identifier rather than against its text. Adding a *
 to a completed module does reopen that module, which is designed in
 `modules/complete-section` and consumed rather than changed here.
 
+Reading content is the longest thing the API accepts, and it carries the weakest guard
+unless one is stated. A participant's note is capped at a configured length and refused with
+a message naming the field; a section of reading had no such cap, leaving the request body
+limit of the host as the only ceiling. That limit refuses an oversized body at the
+transport, before any handler or validator runs, so an author would have met an opaque
+refusal naming nothing rather than the field message L2-051 promises. Reading content and
+practice steps therefore carry stated maxima of their own, held in options beside
+`NoteOptions` and set below the request body limit, so the field-level message is what an
+author actually reads (L2-051 criteria 6 and 7).
+
 Saving reports itself. A revision returns the content the administrator already has on
 screen, so nothing visibly changes when it succeeds, and an administrator reading by screen
 reader would have no evidence either way. The editor writes the outcome into a polite live
@@ -129,6 +139,10 @@ completion belongs to `modules/complete-section`.
 - **`ModuleSection.Revision`** — `Guid` configured as a concurrency token. A save carrying a
   stale revision fails rather than overwriting the revision stored since, and the handler
   translates the failure into a `409` the editor can explain.
+- **`CurriculumOptions`** — options type bound through `Microsoft.Extensions.Options`,
+  mirroring `NoteOptions`. It holds the maximum length of a title, of reading content, and
+  of a practice step. `AddSectionCommandValidator` and `ReviseSectionCommandValidator` read
+  it, and `TextAreaFieldComponent` reports the same maximum to the author while they type.
 - **`ICurriculumStore`** — application abstraction. It supplies `Remove<T>(entity)` and
   the dependency counts the rule reads: `CompletionCount(sectionId, token)`,
   `ModuleNoteCount(moduleId, token)`, and `PromptAnswerCount(moduleId, token)`. Counting
