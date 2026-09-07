@@ -112,6 +112,13 @@ No authoring screen and no authoring endpoint offers a way to grant this authori
 the grant out of the application is what stops an administrator escalating another account,
 and it is why the operator path is the only one.
 
+The sign-in screen names the destination it is holding, so a visitor sent there from a deep
+link can see their request was not discarded. It names the route and stops there. Resolving
+an identifier in that route to a programme title would mean reading authored content for a
+visitor who has not signed in, which would disclose that a programme of that name exists to
+anyone who guesses or replays a URL (L2-042 criterion 6). The held path is already known to
+whoever typed it; the title behind it is not.
+
 ## Requirements
 
 The feature realises the following level-2 (L2) requirements. Each L2 requirement refines
