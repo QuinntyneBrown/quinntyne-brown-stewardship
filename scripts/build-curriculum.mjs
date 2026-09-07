@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
-const source = await readFile(`${root}/docs/curriculum/starter.md`, 'utf8');
+const source = (await readFile(`${root}/docs/curriculum/starter.md`, 'utf8')).replaceAll('\r\n', '\n');
 const namespace = Buffer.from('a02af4acb1e744fe935069aac3179812', 'hex');
 function id(name) {
   const bytes = createHash('sha1').update(namespace).update(name).digest().subarray(0, 16);
