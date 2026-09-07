@@ -1,0 +1,17 @@
+<ol class="prompts" aria-label="Preparation prompts">
+  @for (prompt of prompts(); track $index; let index = $index) {
+    <li>
+      <qbs-order-control label="prompt" [generic]="true" [position]="index + 1" [total]="prompts().length" (moveUp)="move(index, -1)" (moveDown)="move(index, 1)" />
+      <span class="ordinal muted" aria-hidden="true">{{ index + 1 }}</span>
+      <div class="field stack compact">
+        <qbs-text-area-field [label]="'Prompt ' + (index + 1)" [name]="'prompt-' + (index + 1)" [maxLength]="limit()" [value]="prompt.text" (valueChange)="set(index, $event)" [error]="error(index)" />
+        <p class="muted answers">{{ prompt.id ? answers(prompt) : 'Not yet saved.' }}</p>
+      </div>
+      @if (prompt.canRemove) {
+        <button type="button" class="secondary remove" [attr.aria-label]="'Remove prompt ' + (index + 1) + ' of ' + prompts().length" (click)="remove(index)">Remove</button>
+      } @else { <qbs-state-pill state="Blocked" meaning="removal" /> }
+    </li>
+  }
+</ol>
+<button type="button" class="secondary" (click)="add()">Add prompt</button>
+<p class="muted">A prompt a participant has answered cannot be removed.</p>

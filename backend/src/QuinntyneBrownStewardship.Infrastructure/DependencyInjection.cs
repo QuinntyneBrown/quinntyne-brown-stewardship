@@ -19,8 +19,12 @@ public static class DependencyInjection
         services.AddSingleton<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IAccessStore, AccessStore>();
         services.AddScoped<IProgrammeStore, ProgrammeStore>();
+        services.AddScoped<ICurriculumStore, CurriculumStore>();
         services.AddScoped<ICorrelationContext, CorrelationContext>();
         services.AddOptions<QuinntyneBrownStewardship.Application.Notes.NoteOptions>().Bind(configuration.GetSection("Notes")).Validate(x => x.MaxLength > 0 && x.MaxLength <= 10000).ValidateOnStart();
+        services.AddOptions<QuinntyneBrownStewardship.Application.Administration.CurriculumOptions>().Bind(configuration.GetSection("Curriculum"))
+            // The longest authored field in four-byte characters plus the rest of the body stays under the request body limit, so the field message is what an author reads.
+            .Validate(x => x.KeyMaxLength is > 0 and <= 100 && x.TitleMaxLength > 0 && x.SummaryMaxLength > 0 && x.EffortEstimateMaxLength > 0 && x.StepMaxLength > 0 && x.PromptMaxLength > 0 && x.ReadingMaxLength > 0 && x.ReadingMaxLength * 4 + 8192 <= 65536).ValidateOnStart();
         services.AddScoped<ISignInGate, SignInGate>();
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentParticipant, CurrentParticipant>();

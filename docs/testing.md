@@ -54,6 +54,11 @@ reach a real implementation by accident.
 Tests follow the Page Object Model. One page object per screen owns the selectors
 and the interactions; tests state intent. **A selector never appears in a test.**
 
+`specs/authoring.spec.ts` covers the administrator screens with the same
+discipline. Its target-size check exempts the stacked order-control pair: each
+half is at least 24 px tall, the pair together is at least 44 × 44, and each half
+carries its own accessible name.
+
 HTML reports and screen captures are retained under `e2e/playwright-report/` and
 `e2e/test-results/`. Traces are retained on failure.
 
@@ -88,7 +93,10 @@ against a temporary SQL Server database, using the Release ASP.NET HTTP test hos
 It measures real section completion, note creation and revision, booking,
 rescheduling, cancellation, sign-in, and sign-out, alongside every read endpoint,
 enrollment, and health: **21 operations**, plus four compressed reads with
-full-length Unicode notes, for **25 measured scenarios**.
+full-length Unicode notes, plus eight authoring operations from five
+administrators — the programme index, a programme, a module, and a section with
+a 12,000-character reading, a section and a module revision, a reorder, and a
+publication — for **33 measured scenarios**.
 
 Successful authentication measurements clear the isolated fixture's attempt
 history between warm-up and measured requests. Rate limits remain enabled
@@ -97,14 +105,15 @@ throughout, and concurrent refusals are verified separately.
 Results are written to `.local/api-performance.json`.
 
 For a focused diagnostic, append `--sign-in-only` directly to the performance
-project's `dotnet run` arguments. The complete gate still uses all 25 scenarios.
+project's `dotnet run` arguments. The complete gate still uses all 33 scenarios.
 
 The same command writes `.local/production-responses.json` from a separate,
 populated participant: twenty maximum-length Unicode module notes, twenty Unicode
 session notes, three maximum-length Unicode preparation answers, five past
-sessions, and one future session. It records real response DTOs, server time, and
-sizes as compressed by the production middleware, with application headers and an
-additional 1 KB transport-header reserve.
+sessions, and one future session, together with the administrator's session and
+the four administration reads of the bundled programme. It records real
+response DTOs, server time, and sizes as compressed by the production middleware,
+with application headers and an additional 1 KB transport-header reserve.
 
 ### Browser
 
@@ -119,7 +128,7 @@ A cold-cache Chromium profile runs with 4× CPU slowdown, 150 ms network latency
 and 4 Mbps down / 1 Mbps up. Each service double waits for the captured server
 time plus the simulated latency and response transfer.
 
-For each of **nine screens**, the 300 KB gate adds every captured API response
+For each of **thirteen screens**, the 300 KB gate adds every captured API response
 actually used to the browser asset transfers, including fonts and headers. The
 check also requires usable curriculum controls within **2.5 seconds**.
 

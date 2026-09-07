@@ -13,7 +13,7 @@ public sealed class SaveNoteCommandHandler(IProgrammeStore store, ProgrammeReade
         return await store.Transaction(async token =>
         {
             var enrollment = await reader.Enrollment(token);
-            var modules = await store.Modules(enrollment.Cohort.CurriculumKey, token);
+            var modules = await store.PublishedModules(enrollment.Cohort.CurriculumId, token);
             var bookings = await store.Bookings(enrollment.Id, token);
             Note note;
             if (request.Id is { } id)

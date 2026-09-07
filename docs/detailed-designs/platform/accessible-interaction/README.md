@@ -55,7 +55,7 @@ One measured value falls below the minimum by design rather than by oversight. T
 a move control that cannot act, on the first or last item of a set, sits at roughly 1.5:1
 against the page. WCAG 2.1 places no contrast requirement on an inactive component, and the
 control states its condition in its accessible name, so a reader who cannot see the glyph is
-told that the item is first of twelve and cannot move up. The low ratio is the signal that
+told that the item is first of its list and cannot move up. The low ratio is the signal that
 the control is inert, and `--qbs-disabled-opacity` stays at `1` because the colour carries
 that distinction instead of a dimming.
 

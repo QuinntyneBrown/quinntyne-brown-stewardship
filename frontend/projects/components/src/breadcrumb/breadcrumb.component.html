@@ -1,0 +1,9 @@
+<nav aria-label="Authoring trail">
+  <ol class="full">
+    @for (item of trail(); track $index; let last = $last) {
+      <li>@if (item.path && !last) { <a [routerLink]="item.path">{{ item.label }}</a> } @else { <span [attr.aria-current]="last ? 'page' : null">{{ item.label }}</span> }</li>
+    }
+  </ol>
+  @if (parent(); as parent) { <a class="condensed" [routerLink]="parent.path">Authoring · {{ parent.short ?? parent.label }}</a> }
+  <div class="state"><ng-content /></div>
+</nav>

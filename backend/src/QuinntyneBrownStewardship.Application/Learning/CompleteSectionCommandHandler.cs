@@ -13,7 +13,7 @@ public sealed class CompleteSectionCommandHandler(IProgrammeStore store, ISystem
         return await store.Transaction(async token =>
         {
             var enrollment = await reader.Enrollment(token);
-            var modules = await store.ProgressModules(enrollment.Cohort.CurriculumKey, token);
+            var modules = await store.PublishedProgressModules(enrollment.Cohort.CurriculumId, token);
             var module = modules.SingleOrDefault(m => m.Sections.Any(s => s.Id == request.SectionId)) ?? throw new ProgrammeException(404, "Section not found.");
             var completions = await store.Completions(enrollment.Id, token);
             if (!completions.Any(x => x.SectionId == request.SectionId))

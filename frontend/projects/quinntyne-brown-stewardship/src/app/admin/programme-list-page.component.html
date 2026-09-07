@@ -1,0 +1,7 @@
+<qbs-breadcrumb [trail]="trail" />
+<div class="stack">
+  <p class="eyebrow">Authoring</p><h1>Programmes</h1>
+  <p class="muted reading-column">A cohort follows exactly one programme. Nothing written here reaches a participant until it is published, and how many modules a programme holds is whatever has been authored into it.</p>
+  @if (notice) { <qbs-status-message [message]="notice" /> }
+  <qbs-programme-list (expired)="expired()" (created)="created($event)" />
+</div>

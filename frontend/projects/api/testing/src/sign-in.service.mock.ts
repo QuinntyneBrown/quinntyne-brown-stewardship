@@ -15,7 +15,7 @@ export class SignInServiceMock implements ISignInService {
     await this.state.waitForResponse();
     if (this.state.current().sessionFailure) throw new ServiceError(503);
     return this.state.current().signedIn
-      ? { emailAddress: "participant@example.com" }
+      ? { emailAddress: "participant@example.com", isAdministrator: !!this.state.current().administrator }
       : null;
   }
 

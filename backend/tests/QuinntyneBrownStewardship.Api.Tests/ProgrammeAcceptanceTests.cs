@@ -9,44 +9,28 @@ namespace QuinntyneBrownStewardship.Api.Tests;
 
 public sealed class ProgrammeAcceptanceTests(ApiFixture fixture) : IClassFixture<ApiFixture>, IAsyncLifetime
 {
+    private Guid curriculumId;
     public async Task InitializeAsync()
     {
         await fixture.Reset();
-        using var scope = fixture.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<StewardshipDbContext>();
-        db.Modules.AddRange(Enumerable.Range(1, 12).Select(i => new QuinntyneBrownStewardship.Domain.Learning.CurriculumModule
-        {
-            Ordinal = i, Title = $"Module {i}", Summary = "Practice stewardship", EffortEstimate = "30 minutes", PracticeSteps = ["Listen", "Reflect", "Revise"],
-            Sections = Enumerable.Range(1, 5).Select(s => new QuinntyneBrownStewardship.Domain.Learning.ModuleSection { Ordinal = s, Title = $"Section {s}", Reading = "Consider who benefits and who bears the cost.", CreatedAt = fixture.Clock.UtcNow.AddDays(-90) }).ToList(),
-            PreparationPrompts = [new() { Ordinal = 1, Text = "Whose experience changed your decision?" }]
-        }));
-        await db.SaveChangesAsync();
+        curriculumId = await fixture.SeedProgramme();
     }
     public Task DisposeAsync() => Task.CompletedTask;
 
     private async Task<(Guid Slot, Guid OtherSlot, Guid Enrollment)> BookingSetup()
     {
+        var enrollment = await fixture.Enroll(await fixture.SeedCohort(curriculumId));
         using var scope = fixture.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<StewardshipDbContext>();
-        var participant = await db.Participants.SingleAsync();
-        var mentor = new QuinntyneBrownStewardship.Domain.Access.Participant { EmailAddress = "mentor@example.com", NormalizedEmail = "MENTOR@EXAMPLE.COM", PasswordHash = participant.PasswordHash, IsMentor = true, DisplayName = "Assigned mentor" };
-        db.Participants.Add(mentor);
-        var enrollment = new QuinntyneBrownStewardship.Domain.Enrollment.Enrollment { ParticipantId = participant.Id, Cohort = new() { MentorId = mentor.Id, MentorName = mentor.DisplayName, StartDate = DateOnly.FromDateTime(fixture.Clock.UtcNow.UtcDateTime).AddDays(-7) } };
-        db.Enrollments.Add(enrollment);
+        var mentor = await db.Participants.SingleAsync(x => x.EmailAddress == "mentor@example.com");
         var slot = new QuinntyneBrownStewardship.Domain.Scheduling.AvailabilitySlot { MentorId = mentor.Id, StartsAt = fixture.Clock.UtcNow.AddDays(3) };
         var other = new QuinntyneBrownStewardship.Domain.Scheduling.AvailabilitySlot { MentorId = mentor.Id, StartsAt = fixture.Clock.UtcNow.AddDays(4) };
         db.Availability.AddRange(slot, other);
         await db.SaveChangesAsync();
-        return (slot.Id, other.Id, enrollment.Id);
+        return (slot.Id, other.Id, enrollment);
     }
 
-    private static async Task<HttpResponseMessage> Change(HttpClient client, HttpMethod method, string path, object body)
-    {
-        var token = await client.GetFromJsonAsync<QuinntyneBrownStewardship.Application.Access.CsrfResponse>("/authentication/csrf");
-        using var request = new HttpRequestMessage(method, path) { Content = JsonContent.Create(body) };
-        request.Headers.Add("X-CSRF-TOKEN", token!.Token);
-        return await client.SendAsync(request);
-    }
+    private static Task<HttpResponseMessage> Change(HttpClient client, HttpMethod method, string path, object body) => ApiFixture.Send(client, method, path, body);
 
     // Traces to: L2-018–024, L2-040. Given a booking, when changed then the
     // prior slot is released; exactly 24 hours is refused and cancellation is audited.
@@ -127,11 +111,7 @@ public sealed class ProgrammeAcceptanceTests(ApiFixture fixture) : IClassFixture
     [Fact]
     public async Task Given_enrollment_when_learning_then_progress_and_access_follow_section_records()
     {
-        using var scope = fixture.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<StewardshipDbContext>();
-        var participant = await db.Participants.SingleAsync();
-        db.Enrollments.Add(new() { ParticipantId = participant.Id, Cohort = new() { MentorName = "Assigned mentor", StartDate = DateOnly.FromDateTime(fixture.Clock.UtcNow.UtcDateTime) } });
-        await db.SaveChangesAsync();
+        await fixture.Enroll(await fixture.SeedCohort(curriculumId, start: DateOnly.FromDateTime(fixture.Clock.UtcNow.UtcDateTime), mentorEmail: null));
         using var client = fixture.Browser();
         await ApiFixture.SignIn(client);
         var response = await client.GetAsync("/curriculum");
@@ -225,7 +205,7 @@ public sealed class ProgrammeAcceptanceTests(ApiFixture fixture) : IClassFixture
         else for (var i = 0; i < 6; i++) db.Bookings.Add(new() { EnrollmentId = setup.Enrollment, CreatedAt = fixture.Clock.UtcNow.AddDays(-20), Slot = new() { MentorId = enrollment.Cohort.MentorId!.Value, StartsAt = fixture.Clock.UtcNow.AddDays(-i - 1) } });
         await db.SaveChangesAsync(); using var client = fixture.Browser(); await ApiFixture.SignIn(client);
         var availability = await client.GetFromJsonAsync<JsonElement>("/sessions/availability");
-        Assert.Contains(ended ? "ended" : "six", availability.GetProperty("bookingReason").GetString());
+        Assert.Contains(ended ? "ended" : "All 6 sessions", availability.GetProperty("bookingReason").GetString());
         Assert.Equal(HttpStatusCode.Conflict, (await ApiFixture.Post(client, "/sessions", new { SlotId = setup.Slot })).StatusCode);
     }
 
@@ -289,13 +269,14 @@ public sealed class ProgrammeAcceptanceTests(ApiFixture fixture) : IClassFixture
         var participant = await db.Participants.SingleAsync(x => x.EmailAddress == ApiFixture.Email);
         var foreign = new QuinntyneBrownStewardship.Domain.Access.Participant { EmailAddress = "separate@example.com", NormalizedEmail = "SEPARATE@EXAMPLE.COM", PasswordHash = participant.PasswordHash };
         db.Participants.Add(foreign);
+        var separate = new QuinntyneBrownStewardship.Domain.Learning.Curriculum { Key = "separate", Title = "Separate programme", State = QuinntyneBrownStewardship.Domain.Learning.PublicationState.Published, CreatedAt = fixture.Clock.UtcNow, PublishedAt = fixture.Clock.UtcNow };
         var foreignModule = new QuinntyneBrownStewardship.Domain.Learning.CurriculumModule
         {
-            CurriculumKey = "separate", Ordinal = 1, Title = "Another cohort's reading", Summary = "Private curriculum", EffortEstimate = "30 minutes", PracticeSteps = ["Listen"],
+            CurriculumId = separate.Id, State = QuinntyneBrownStewardship.Domain.Learning.PublicationState.Published, Ordinal = 1, Title = "Another cohort's reading", Summary = "Private curriculum", EffortEstimate = "30 minutes", PracticeSteps = ["Listen"],
             Sections = [new() { Ordinal = 1, Title = "Other section", Reading = "Other cohort content", CreatedAt = fixture.Clock.UtcNow }]
         };
-        db.Modules.Add(foreignModule);
-        db.Enrollments.Add(new() { ParticipantId = foreign.Id, Cohort = new() { CurriculumKey = "separate", MentorName = "Other mentor", StartDate = DateOnly.FromDateTime(fixture.Clock.UtcNow.UtcDateTime) } });
+        db.Curricula.Add(separate); db.Modules.Add(foreignModule);
+        db.Enrollments.Add(new() { ParticipantId = foreign.Id, Cohort = new() { CurriculumId = separate.Id, DurationWeeks = 12, SessionCadenceWeeks = 2, MentorName = "Other mentor", StartDate = DateOnly.FromDateTime(fixture.Clock.UtcNow.UtcDateTime) } });
         await db.SaveChangesAsync();
         Assert.Equal(HttpStatusCode.NotFound, (await ApiFixture.Post(owner, $"/sections/{foreignModule.Sections[0].Id}/completion", new { ParticipantId = foreign.Id })).StatusCode);
         Assert.Equal(HttpStatusCode.NotFound, (await ApiFixture.Post(owner, "/notes", new { ModuleId = foreignModule.Id, Body = "Foreign note" })).StatusCode);

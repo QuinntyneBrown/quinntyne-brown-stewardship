@@ -12,6 +12,8 @@ public static class DependencyInjection
         services.AddValidatorsFromAssemblyContaining<SignInCommandValidator>();
         services.AddScoped<Programme.ProgrammeReader>();
         services.AddScoped<Scheduling.BookingOperations>();
+        services.AddScoped<Administration.CurriculumAuditor>();
+        services.AddScoped<Administration.Curricula.ReadinessReporter>();
         return services;
     }
 }

@@ -1,0 +1,5 @@
+<section class="panel stack compact">
+  <h2>{{ heading() }}</h2>
+  <p class="muted">{{ description() }}</p>
+  @if (action(); as action) { <button type="button" (click)="act.emit()">{{ action }}</button> }
+</section>

@@ -1,0 +1,10 @@
+:host { display: flex; flex-direction: column; gap: var(--qbs-space-xl); }
+.heading-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--qbs-space-md); }
+.meta { font-size: var(--qbs-type-small); font-variant-numeric: tabular-nums; }
+.warning { color: var(--qbs-accent); }
+.shape { display: grid; gap: var(--qbs-space-sm); margin: var(--qbs-space-none); }
+.shape div { display: flex; justify-content: space-between; gap: var(--qbs-space-md); border-top: var(--qbs-border-width) solid var(--qbs-line); padding-top: var(--qbs-space-sm); }
+.shape dt { color: var(--qbs-muted); }
+.shape dd { margin: var(--qbs-space-none); font-variant-numeric: tabular-nums; }
+.cohorts { display: grid; gap: var(--qbs-space-sm); margin: var(--qbs-space-none); padding: var(--qbs-space-none); list-style: none; }
+.cohorts li { border-top: var(--qbs-border-width) solid var(--qbs-line); padding-top: var(--qbs-space-sm); font-variant-numeric: tabular-nums; }

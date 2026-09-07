@@ -212,6 +212,7 @@ Authoring routes sit behind an administrator guard in addition to the auth guard
 | `/admin/programmes/:id`      | Programme editor, module list, publish panel             |
 | `/admin/modules/:id`         | Module editor with unsaved-change guard                  |
 | `/admin/modules/:id/preview` | The module as a participant reads it, before publication |
+| `/admin/sections/:id`        | Section editor with unsaved-change guard                 |
 
 Everything under the programme shell is behind an auth guard that preserves the
 deep link through sign-in.
@@ -272,9 +273,25 @@ session releases both its slot and the participant's allowance. Concurrent
 confirmations of the same slot resolve to exactly one booking; the other
 participant sees refreshed availability.
 
+**Publication.** A programme and each of its modules carry a publication state.
+Only published modules reach a participant; a cohort following a draft programme
+is told it is not yet available. Publication makes every module of a programme
+readable at once and is refused while any module carries no section. The text of
+a published module or section reaches participants on their next read without a
+publication; a module added afterwards waits for the next one.
+
+**Authoring integrity.** Every authoring write runs under the programme lock,
+compares the revision the content was opened with, and leaves a curriculum audit
+record. Positions within a programme and a module stay contiguous through a
+staged reassignment inside one transaction. Recorded participant history refuses
+the removal it depends on, with the reason named. Authored field maxima are
+`Curriculum` options carried on every authoring read and counted in characters;
+the reading maximum is bounded so that four-byte characters stay within Kestrel's
+64 KB request body limit.
+
 **Integrity and operations.** All programme writes are transactional. Booking
-audit records carry the actor, the action, the time, and the correlation
-identifier. `/health` reports application and database readiness with 200 or 503.
+and curriculum audit records carry the actor, the action, the time, and the
+correlation identifier. `/health` reports application and database readiness with 200 or 503.
 
 ## Detailed designs
 

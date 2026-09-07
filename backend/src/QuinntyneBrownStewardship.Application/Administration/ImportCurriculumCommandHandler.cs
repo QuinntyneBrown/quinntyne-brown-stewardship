@@ -1,7 +1,6 @@
 using MediatR;
 using QuinntyneBrownStewardship.Application.Abstractions;
 using QuinntyneBrownStewardship.Application.Common;
-using QuinntyneBrownStewardship.Application.Programme;
 using QuinntyneBrownStewardship.Domain.Learning;
 
 namespace QuinntyneBrownStewardship.Application.Administration;
@@ -12,30 +11,19 @@ public sealed class ImportCurriculumCommandHandler(IProgrammeStore store, ISyste
     {
         return await store.Transaction(async token =>
         {
-            var existing = await store.Modules(request.Document.Key, token);
-            foreach (var old in existing)
-            {
-                var next = request.Document.Modules.SingleOrDefault(x => x.Id == old.Id);
-                if (next == null || next.Ordinal != old.Ordinal || old.Sections.Any(s => !next.Sections.Any(n => n.Id == s.Id && n.Ordinal == s.Ordinal)) || old.PreparationPrompts.Any(p => !next.PreparationPrompts.Any(n => n.Id == p.Id && n.Ordinal == p.Ordinal)))
-                    throw new ProgrammeException(409, "Imports preserve module, section and prompt identifiers and order. Append content instead of removing or replacing it.");
-            }
+            // An import bootstraps one draft programme; everything after that happens on the authoring screens.
+            if (await store.CurriculumByKey(request.Document.Key, token) != null)
+                throw new ProgrammeException(409, $"The key {request.Document.Key} is already used by another programme. Author further changes on the authoring screens.");
+            var curriculum = new Curriculum { Key = request.Document.Key, Title = request.Document.Title ?? request.Document.Key, CreatedAt = clock.UtcNow };
+            store.Add(curriculum);
             foreach (var source in request.Document.Modules)
             {
-                var module = existing.SingleOrDefault(x => x.Id == source.Id);
-                if (module == null) { module = new() { Id = source.Id, CurriculumKey = request.Document.Key, Ordinal = source.Ordinal }; store.Add(module); }
-                module.Title = source.Title; module.Summary = source.Summary; module.EffortEstimate = source.EffortEstimate; module.PracticeSteps = source.PracticeSteps;
-                foreach (var sourceSection in source.Sections)
-                {
-                    var section = module.Sections.SingleOrDefault(x => x.Id == sourceSection.Id);
-                    if (section == null) { section = new() { Id = sourceSection.Id, ModuleId = module.Id, Ordinal = sourceSection.Ordinal, CreatedAt = clock.UtcNow }; module.Sections.Add(section); store.Add(section); }
-                    section.Title = sourceSection.Title; section.Reading = sourceSection.Reading;
-                }
-                foreach (var sourcePrompt in source.PreparationPrompts)
-                {
-                    var prompt = module.PreparationPrompts.SingleOrDefault(x => x.Id == sourcePrompt.Id);
-                    if (prompt == null) { prompt = new() { Id = sourcePrompt.Id, ModuleId = module.Id, Ordinal = sourcePrompt.Ordinal }; module.PreparationPrompts.Add(prompt); store.Add(prompt); }
-                    prompt.Text = sourcePrompt.Text;
-                }
+                var module = new CurriculumModule { Id = source.Id, CurriculumId = curriculum.Id, Ordinal = source.Ordinal, Title = source.Title, Summary = source.Summary, EffortEstimate = source.EffortEstimate, PracticeSteps = source.PracticeSteps };
+                store.Add(module);
+                foreach (var section in source.Sections)
+                    store.Add(new ModuleSection { Id = section.Id, ModuleId = module.Id, Ordinal = section.Ordinal, Title = section.Title, Reading = section.Reading, CreatedAt = clock.UtcNow });
+                foreach (var prompt in source.PreparationPrompts)
+                    store.Add(new PreparationPrompt { Id = prompt.Id, ModuleId = module.Id, Ordinal = prompt.Ordinal, Text = prompt.Text });
             }
             return request.Document.Modules.Count;
         }, ct);

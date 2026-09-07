@@ -176,3 +176,37 @@ test('session preparation pages through its attached long notes', async ({ page 
   await detail.expectNoteCount(1);
   for (let count = 2; count <= 4; count++) { await detail.moreNotes(); await detail.expectNoteCount(count); }
 });
+
+// Traces to: L2-056 AC1, L2-057 AC1, L2-058 AC1, AC4, L2-009 AC3, L2-023 AC1. Given an
+// eight-module programme and an eight-week cohort, when the participant reads, then eight
+// markers, totals against eight, the week against eight, and an allowance of four derive from it.
+test('an eight-module programme and an eight-week cohort derive every displayed figure', async ({ page }) => {
+  await new MockBridge(page).enrolled({ moduleCount: 8, durationWeeks: 8 });
+  const curriculum = new CurriculumPage(page); const sessions = new SessionsPage(page);
+  await curriculum.open(); await curriculum.expectPath(8); await curriculum.expectProgress(0, 8); await curriculum.expectRemaining(8); await curriculum.expectWeek(1, 8);
+  await sessions.open(); await sessions.expectAllowance(0, 4);
+});
+
+// Traces to: L2-056 AC3. Given a programme of one module, when the curriculum renders,
+// then one marker is shown and no figure implies a larger programme.
+test('a one-module programme implies nothing larger', async ({ page }) => {
+  await new MockBridge(page).enrolled({ moduleCount: 1 });
+  const curriculum = new CurriculumPage(page);
+  await curriculum.open(); await curriculum.expectPath(1); await curriculum.expectProgress(0, 1); await curriculum.expectRemaining(1);
+});
+
+// Traces to: L2-053 AC1, L2-007 AC2. Given a cohort following a draft programme, when any
+// programme destination opens, then the participant is told it is not yet available and sees no path.
+test('a participant on a draft programme is told it is not yet available on every destination', async ({ page }) => {
+  await new MockBridge(page).enrolled({ published: false });
+  const curriculum = new CurriculumPage(page);
+  for (const path of ['/curriculum', '/modules/1', '/sessions', '/notes']) { await page.goto(path); await curriculum.expectNotYetAvailable(); }
+});
+
+// Traces to: L2-053 AC3. Given a module the programme does not publish, when it is requested
+// by URL, then the participant returns to the curriculum with an explanation.
+test('a module beyond the published programme returns to the curriculum with an explanation', async ({ page }) => {
+  await new MockBridge(page).enrolled({ moduleCount: 8 });
+  const curriculum = new CurriculumPage(page); const module = new ModulePage(page);
+  await module.open(9); await curriculum.expectPath(8); await curriculum.expectNotice('not available');
+});

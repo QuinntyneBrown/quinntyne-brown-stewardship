@@ -1,11 +1,14 @@
 using QuinntyneBrownStewardship.Application.Abstractions;
 using QuinntyneBrownStewardship.Application.Common;
 using QuinntyneBrownStewardship.Application.Programme;
+using QuinntyneBrownStewardship.Domain.Enrollment;
 using QuinntyneBrownStewardship.Domain.Scheduling;
 namespace QuinntyneBrownStewardship.Application.Scheduling;
 
 public sealed class BookingOperations(IProgrammeStore store, ICurrentParticipant participant, ISystemClock clock, ICorrelationContext correlation, ProgrammeReader reader)
 {
+    // The refusal states the allowance it was just compared against, which the cohort record derives.
+    public static string ExhaustedMessage(Cohort cohort) => $"All {cohort.SessionAllowance} sessions in this cohort have been used.";
     public async Task<BookingResponse> Execute(Guid? bookingId, Guid? slotId, CancellationToken ct)
     {
         var result = await store.Transaction(async token =>
@@ -31,7 +34,7 @@ public sealed class BookingOperations(IProgrammeStore store, ICurrentParticipant
                 if (booking == null && bookings.Any(x => x.CancelledAt == null && x.Slot.StartsAt > clock.UtcNow))
                     throw new ProgrammeException(409, "You already hold a future session. Reschedule or cancel it first.");
                 if (booking == null && bookings.Count(x => x.CancelledAt == null) >= cohort.SessionAllowance)
-                    throw new ProgrammeException(409, "All six sessions in this cohort have been used.");
+                    throw new ProgrammeException(409, ExhaustedMessage(cohort));
                 var slot = (await store.Slots(cohort.MentorId ?? Guid.Empty, token)).SingleOrDefault(x => x.Id == slotId)
                     ?? throw new ProgrammeException(404, "Slot not found.");
                 var day = DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(slot.StartsAt, TimeZoneInfo.FindSystemTimeZoneById(cohort.TimeZone)).DateTime);
@@ -55,6 +58,6 @@ public sealed class BookingOperations(IProgrammeStore store, ICurrentParticipant
         }, ct);
         // Reading the curriculum for display does not participate in slot or
         // allowance decisions. Release the write lock before loading that context.
-        return reader.Booking(result.booking, result.cohort, await store.ProgressModules(result.cohort.CurriculumKey, ct), await store.Completions(result.Id, ct));
+        return reader.Booking(result.booking, result.cohort, await store.PublishedProgressModules(result.cohort.CurriculumId, ct), await store.Completions(result.Id, ct));
     }
 }

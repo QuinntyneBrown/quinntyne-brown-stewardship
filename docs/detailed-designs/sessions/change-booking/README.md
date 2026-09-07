@@ -26,7 +26,7 @@ as it claims the new one, and a cancelled session frees its time outright. The r
 slot is open to anyone, which is the point of a notice period — time given back early
 enough to be used.
 
-Cancelling costs a participant nothing against the cohort's six sessions. The allowance
+Cancelling costs a participant nothing against the cohort's session allowance. It
 counts sessions held and held-in-future, not sessions ever created, so a cancellation
 returns the opportunity as well as the time.
 

@@ -1,0 +1,3 @@
+:host { display: block; }
+qbs-breadcrumb { margin-bottom: var(--qbs-space-xl); }
+.preview-link { margin: var(--qbs-space-none) var(--qbs-space-none) var(--qbs-space-lg); }

@@ -8,4 +8,5 @@ public interface ICurrentParticipant
     Guid Id { get; }
     Guid SessionId { get; }
     string EmailAddress { get; }
+    bool IsAdministrator { get; }
 }

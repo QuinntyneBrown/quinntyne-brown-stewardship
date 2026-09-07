@@ -84,7 +84,7 @@ export class SessionsPage extends ShellPage {
     await this.page
       .getByRole("heading", { name: "Your next session", exact: true })
       .waitFor();
-    await this.text("3 of 6 booked · Quinntyne Brown");
+    await this.text(`3 of ${this.config.sessionAllowance} booked · Quinntyne Brown`);
     await this.pause(2400);
   }
   async changeAndCancel() {
@@ -129,7 +129,7 @@ export class SessionsPage extends ShellPage {
       .getByRole("button", { name: "Yes, cancel session", exact: true })
       .click();
     await this.canBook();
-    await this.text("2 of 6 booked · Quinntyne Brown");
+    await this.text(`2 of ${this.config.sessionAllowance} booked · Quinntyne Brown`);
     this.page.__demo.checks.push(
       "Booking, curriculum next-session details, rescheduling and cancellation used the live API; cancellation restored the allowance.",
     );
@@ -153,7 +153,7 @@ export class SessionsPage extends ShellPage {
   }
   async ended() {
     await this.go("/sessions");
-    await this.text("6 of 6 booked · Quinntyne Brown");
+    await this.text(`${this.config.sessionAllowance} of ${this.config.sessionAllowance} booked · Quinntyne Brown`);
     await this.text("This cohort has ended. New bookings are unavailable.");
     if (
       await this.page

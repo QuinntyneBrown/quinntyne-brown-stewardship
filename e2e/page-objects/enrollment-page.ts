@@ -17,7 +17,7 @@ export class EnrollmentPage {
       }),
     ).toBeVisible();
     await expect(this.page.getByRole("main")).not.toContainText(
-      /\d+ of 12 complete|modules remain|Book a session/,
+      /\d+ of \d+ complete|modules? remains?|Book a session/,
     );
     await expect(
       this.page.getByRole("list", { name: "Module path" }),

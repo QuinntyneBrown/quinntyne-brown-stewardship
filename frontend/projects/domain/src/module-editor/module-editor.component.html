@@ -1,0 +1,99 @@
+@if (error() && !draft()) { <qbs-retry-notice [message]="error()" (retry)="load()" /> }
+@else if (draft(); as draft) {
+  <div class="stack">
+    @if (sessionExpired()) { <p class="notice" role="alert">Your session expired. Your changes are still here. <a href="/sign-in" target="_blank" rel="noopener">Sign in in another tab</a>, then save again.</p> }
+    @if (conflict(); as current) {
+      <aside class="panel stack compact conflict" aria-labelledby="conflict-heading">
+        <h2 id="conflict-heading">This module changed since it was opened.</h2>
+        <p class="muted">{{ error() }}</p>
+        <div class="actions">
+          <button type="button" class="secondary" [attr.aria-expanded]="showCurrent()" (click)="showCurrent.set(!showCurrent())">{{ showCurrent() ? 'Hide the current content' : 'Show the current content' }}</button>
+          <button type="button" (click)="adoptCurrent()">Reload and keep my changes</button>
+          <button type="button" class="secondary" (click)="discard()">Discard my changes</button>
+        </div>
+        @if (showCurrent()) {
+          <dl class="current" aria-label="Current content">
+            <div><dt>Title</dt><dd>{{ current.title }}</dd></div>
+            <div><dt>Summary</dt><dd>{{ current.summary }}</dd></div>
+            <div><dt>Effort estimate</dt><dd>{{ current.effortEstimate }}</dd></div>
+            <div><dt>Practice steps</dt><dd><ol>@for (step of current.practiceSteps; track $index) { <li>{{ step }}</li> }</ol></dd></div>
+          </dl>
+        }
+      </aside>
+    } @else if (error()) { <qbs-error-message [message]="error()" /> }
+    @if (status()) { <qbs-status-message [message]="status()" /> }
+    @if (refused().length) {
+      <aside class="panel stack compact" aria-labelledby="refused-heading">
+        <h2 id="refused-heading" class="eyebrow">What was refused</h2>
+        <ul class="refused">@for (item of refused(); track item) { <li>{{ item }}</li> }</ul>
+        <p class="muted">Every message names the field it belongs to. Nothing was stored.</p>
+      </aside>
+    }
+    <form class="stack" novalidate (submit)="$event.preventDefault(); save()" [attr.aria-busy]="busy()">
+      <section class="stack compact" aria-labelledby="module-heading">
+        <p class="eyebrow">Module {{ ordinal(draft.ordinal) }} of {{ draft.moduleCount }}@if (draft.state === 'Draft') { · draft}</p>
+        <h1 id="module-heading">{{ draft.title }}</h1>
+        <qbs-text-field #titleField label="Title" name="title" type="text" autocomplete="off" [maxLength]="draft.limits.title" [showCount]="true" [(value)]="title" [error]="fieldError('title')" />
+        <qbs-text-area-field #summaryField label="Summary" name="summary" [maxLength]="draft.limits.summary" [(value)]="summary" [error]="fieldError('summary')" />
+      </section>
+      <section class="stack compact" aria-labelledby="sections-heading">
+        <div class="heading-row"><h2 id="sections-heading">Sections</h2><span class="meta muted">{{ count(draft.sections.length, 'section') }} · read in this order</span></div>
+        @if (draft.sections.length === 0) { <qbs-empty-state heading="No sections yet" description="A module needs at least one section before its programme can be published. Add the first section to begin; it will take position 1." action="Add the first section" (act)="startSection()" /> }
+        @else {
+          <ol class="rows" aria-label="Sections">
+            @for (section of draft.sections; track section.id; let index = $index) {
+              <li>
+                <qbs-order-control [label]="section.title" [position]="section.ordinal" [total]="draft.sections.length" (moveUp)="moveSection(index, -1)" (moveDown)="moveSection(index, 1)" />
+                <span class="ordinal muted" aria-hidden="true">{{ section.ordinal }}</span>
+                <div class="detail"><span class="title">{{ section.title }}</span><span class="meta muted">{{ count(section.wordCount, 'word') }} · {{ completions(section.completionCount) }}</span></div>
+                @if (section.canRemove) { <button type="button" class="secondary" (click)="sectionRemovalRequested.emit(section)">Remove<span class="visually-hidden"> the section {{ section.title }}</span></button> } @else { <qbs-state-pill state="Blocked" meaning="removal" /> }
+                <a class="edit" [routerLink]="['/admin/sections', section.id]">Edit<span class="visually-hidden"> {{ section.title }}</span></a>
+              </li>
+            }
+          </ol>
+        }
+        @if (addingSection() || draft.sections.length === 0) {
+          <div class="panel stack compact add-section" role="group" aria-labelledby="add-section-heading">
+            <h3 id="add-section-heading" class="eyebrow">Add section</h3>
+            <qbs-text-field #sectionTitleField label="Section title" name="section-title" type="text" autocomplete="off" [maxLength]="draft.limits.title" [showCount]="true" [(value)]="sectionTitle" [error]="sectionErrors()['title'] || ''" />
+            <qbs-text-area-field label="Section reading" name="section-reading" [maxLength]="draft.limits.reading" [(value)]="sectionReading" [error]="sectionErrors()['reading'] || ''" />
+            <button type="button" class="secondary" [disabled]="busy()" (click)="addSection()">Add section</button>
+          </div>
+        } @else { <button type="button" class="secondary" (click)="startSection()">Add section</button> }
+        <p class="muted">A section a participant has completed cannot be removed.</p>
+      </section>
+      <section class="stack compact" aria-labelledby="practice-heading">
+        <div class="heading-row"><h2 id="practice-heading">Practice assignment</h2><span class="meta muted">{{ count(steps().length, 'step') }}</span></div>
+        <qbs-text-field #effortField label="Effort estimate" name="effort-estimate" type="text" autocomplete="off" [maxLength]="draft.limits.effortEstimate" [showCount]="true" [(value)]="effort" [error]="fieldError('effortEstimate')" />
+        <qbs-practice-steps-editor [(steps)]="steps" [limit]="draft.limits.practiceStep" [errors]="errors()" (moved)="status.set($event)" />
+      </section>
+      <section class="stack compact" aria-labelledby="prompts-heading">
+        <div class="heading-row"><h2 id="prompts-heading">Preparation prompts</h2><span class="meta muted">{{ count(prompts().length, 'prompt') }} · carried to the session after this module</span></div>
+        <qbs-prompts-editor [(prompts)]="prompts" [limit]="draft.limits.prompt" [errors]="errors()" (removeRequested)="promptRemovalRequested.emit($event)" (moved)="status.set($event)" />
+      </section>
+      <section class="panel stack compact" aria-labelledby="save-heading">
+        <div class="heading-row"><h2 id="save-heading" class="eyebrow">This module</h2><qbs-state-pill [state]="draft.state" /></div>
+        <div class="actions">
+          <button type="submit" [disabled]="busy()">{{ busy() ? 'Saving…' : 'Save module' }}</button>
+          @if (dirty()) { <button type="button" class="secondary" (click)="discard()">Discard changes</button> }
+        </div>
+        <p class="muted unsaved">{{ unsavedLine() }}</p>
+        <p class="muted">Revising the text of a published module reaches participants on their next read. Adding a module does not; that waits for the programme to be published again.</p>
+      </section>
+    </form>
+    <section class="stack compact" aria-labelledby="position-heading">
+      <h2 id="position-heading" class="eyebrow">Position</h2>
+      <dl class="position">
+        <div><dt>In the programme</dt><dd>{{ draft.ordinal }} of {{ draft.moduleCount }}</dd></div>
+        <div><dt>Read in week</dt><dd>{{ draft.ordinal }}</dd></div>
+      </dl>
+      <p class="muted">Order is authored on the <a [routerLink]="['/admin/programmes', draft.curriculumId]">programme screen</a>. Modules unlock in this order, so moving one moves what a participant reaches next.</p>
+    </section>
+    <section class="panel stack compact" aria-labelledby="remove-heading">
+      <h2 id="remove-heading" class="eyebrow">Remove module</h2>
+      <p class="muted">{{ draft.removalReason ?? 'Nothing recorded depends on this module. Removing it takes its sections and prompts with it, and the modules after it close the gap.' }}</p>
+      <button type="button" class="secondary" [disabled]="!draft.canRemove || busy()" (click)="removeRequested.emit()">Remove module</button>
+    </section>
+  </div>
+}
+@else { <qbs-status-message message="Loading module…" /> }

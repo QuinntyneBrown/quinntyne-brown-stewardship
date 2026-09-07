@@ -1,4 +1,4 @@
-<qbs-skip-link target="#main" /><qbs-programme-header [links]="links" [pending]="pending()" (signOut)="signOut()" />
+<qbs-skip-link target="#main" /><qbs-programme-header [links]="links()" [pending]="pending()" (signOut)="signOut()" />
 <main id="main" tabindex="-1">@if (error()) { <qbs-error-message [message]="error()" /> }
-  <qbs-enrollment-gate [description]="description()" (expired)="expired()"><ng-template><router-outlet /></ng-template></qbs-enrollment-gate>
+  <qbs-enrollment-gate [description]="description()" [bypass]="!gated()" (expired)="expired()"><ng-template><router-outlet /></ng-template></qbs-enrollment-gate>
 </main>

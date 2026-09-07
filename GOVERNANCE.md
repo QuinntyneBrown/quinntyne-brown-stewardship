@@ -64,16 +64,17 @@ discussion does not converge, the project lead decides, and says why.
 
 ## Scope
 
-The current requirement set covers the **participant** experience: account and
+The current requirement set covers the **participant** experience — account and
 access, cohort enrollment, curriculum progression, module delivery and completion,
 one-on-one session scheduling, notes and session preparation, responsive
-presentation, accessibility, security, and operations.
+presentation, accessibility, security, and operations — and **curriculum
+authoring** by an administrator, under `L1-011` through `L1-014`.
 
-The mentor and administrator experience — authoring curriculum, managing cohorts,
-setting availability, reviewing participant progress — is deliberately out of
-scope for this revision and is served by the CLI. It will be added as a later set
-of high-level requirements. Proposals for administrator screens will be held
-against that future set rather than merged into the participant application.
+The rest of the mentor and administrator experience — managing cohorts, enrolling
+participants, setting availability, reviewing participant progress — is
+deliberately out of scope for this revision and is served by the CLI. It will be
+added as a later set of high-level requirements, and proposals for those screens
+will be held against that future set rather than merged ahead of it.
 
 Contributions are evaluated against one standard above all others: the least code
 that satisfies the acceptance criteria, and nothing more. Simple in design, never

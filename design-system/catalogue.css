@@ -53,3 +53,84 @@ footer a {
   min-height: var(--qbs-control-min);
   align-items: center;
 }
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--qbs-space-md);
+}
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--qbs-space-xs);
+  min-height: var(--qbs-pill-height);
+  padding: var(--qbs-space-none) var(--qbs-space-sm);
+  border: var(--qbs-border-width) solid var(--qbs-disabled-glyph);
+  border-radius: var(--qbs-radius-pill);
+  color: var(--qbs-secondary-text);
+  font-size: var(--qbs-type-caption);
+}
+.pill.published {
+  border-color: var(--qbs-line);
+  background: var(--qbs-surface);
+  color: var(--qbs-text);
+}
+.dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--qbs-pill-dot);
+  height: var(--qbs-pill-dot);
+  border: var(--qbs-border-width) solid var(--qbs-subtle);
+  border-radius: var(--qbs-radius-pill);
+  font-size: var(--qbs-type-label);
+}
+.published .dot {
+  border-color: var(--qbs-muted);
+  background: var(--qbs-muted);
+  color: var(--qbs-page);
+}
+.order-control {
+  display: inline-flex;
+  flex-direction: column;
+  width: var(--qbs-control-min);
+}
+.half {
+  min-height: var(--qbs-stacked-control-min);
+  padding: var(--qbs-space-none);
+  background: var(--qbs-transparent);
+  border-color: var(--qbs-transparent);
+  color: var(--qbs-muted);
+}
+.trail ol {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--qbs-space-xs);
+  margin: var(--qbs-space-none);
+  padding: var(--qbs-space-none);
+  list-style: none;
+  color: var(--qbs-muted);
+  font-size: var(--qbs-type-small);
+}
+.trail li + li::before {
+  content: "/";
+  color: var(--qbs-subtle);
+  margin-right: var(--qbs-space-xs);
+}
+.trail a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--qbs-control-min);
+  color: var(--qbs-muted);
+  text-decoration: none;
+}
+.trail [aria-current] {
+  color: var(--qbs-text);
+}
+.confirm {
+  position: static;
+  margin: var(--qbs-space-none);
+}
+.confirm h3 {
+  margin-top: var(--qbs-space-none);
+}

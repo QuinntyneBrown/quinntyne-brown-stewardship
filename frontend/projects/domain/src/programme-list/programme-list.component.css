@@ -1,0 +1,9 @@
+:host { display: block; }
+.programmes { margin: var(--qbs-space-none); padding: var(--qbs-space-none); list-style: none; border-bottom: var(--qbs-border-width) solid var(--qbs-line); }
+li { display: flex; flex-wrap: wrap; align-items: center; gap: var(--qbs-space-md); padding: var(--qbs-space-md) var(--qbs-space-none); border-top: var(--qbs-border-width) solid var(--qbs-line); }
+.detail { display: flex; flex: var(--qbs-flex-one); flex-direction: column; gap: var(--qbs-space-xs); min-width: var(--qbs-column-min); }
+.title { font-family: var(--qbs-font-heading); font-size: var(--qbs-type-item-title); }
+.meta { font-size: var(--qbs-type-small); }
+.open { display: inline-flex; align-items: center; justify-content: center; min-width: var(--qbs-control-min); min-height: var(--qbs-control-min); color: var(--qbs-muted); text-decoration: none; font-size: var(--qbs-type-lead); }
+.legend { display: flex; flex-wrap: wrap; gap: var(--qbs-space-lg); margin-top: var(--qbs-space-md); font-size: var(--qbs-type-caption); }
+.new { margin-top: var(--qbs-space-xl); max-width: var(--qbs-reading-max); }

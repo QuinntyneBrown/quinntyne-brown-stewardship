@@ -17,7 +17,7 @@ export const scenes = [
     seconds: 15,
     title: "03  Your cohort and curriculum",
     caption:
-      "Twelve ordered modules, cohort dates, mentor and derived progress. Future modules stay locked.",
+      "Five ordered modules, cohort dates, mentor and derived progress. Future modules stay locked.",
     code: "await screens.shell.signOut(); await screens.signIn.enter(); await screens.curriculum.overview();",
   },
   {
@@ -108,7 +108,7 @@ export const scenes = [
     seconds: 15,
     title: "15  Completion and cohort end",
     caption:
-      "A completed cohort keeps its reading and history. All twelve modules and six held sessions remain visible.",
+      "A completed cohort keeps its reading and history. All five modules and five held sessions remain visible.",
     code: 'await screens.shell.signOut(); await screens.signIn.enter("graduate@demo.invalid"); await screens.curriculum.completedProgramme(); await screens.sessions.ended();',
   },
   {

@@ -1,0 +1,3 @@
+:host { display: block; }
+form { display: grid; gap: var(--qbs-space-lg); max-width: var(--qbs-reading-max); }
+button { justify-self: start; }

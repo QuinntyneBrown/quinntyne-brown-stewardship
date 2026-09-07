@@ -7,11 +7,19 @@ main {
   gap: var(--qbs-layout-gap);
   align-items: start;
 }
-qbs-page-intro,
+.intro,
 qbs-sign-in-form {
   flex: var(--qbs-flex-one) var(--qbs-flex-one) var(--qbs-column-min);
   min-width: var(--qbs-space-none);
 }
 qbs-sign-in-form {
   max-width: var(--qbs-form-max);
+}
+.holding {
+  margin-top: var(--qbs-space-xl);
+  font-size: var(--qbs-type-small);
+}
+.path {
+  color: var(--qbs-secondary-text);
+  overflow-wrap: anywhere;
 }

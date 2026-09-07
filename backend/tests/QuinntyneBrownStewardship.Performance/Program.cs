@@ -38,9 +38,10 @@ public static class Program
             {
                 var sender = scope.ServiceProvider.GetRequiredService<ISender>();
                 await sender.Send(new ImportCurriculumCommand(content));
+                await fixture.PublishCurriculum(await fixture.CurriculumId(content.Key));
                 await sender.Send(new ProvisionMentorCommand("mentor@example.com", ApiFixture.Password, "Performance mentor"));
                 var cohort = Guid.NewGuid();
-                await sender.Send(new CreateCohortCommand(cohort, DateOnly.FromDateTime(fixture.Clock.UtcNow.UtcDateTime).AddDays(-7), "mentor@example.com"));
+                await sender.Send(new CreateCohortCommand(cohort, DateOnly.FromDateTime(fixture.Clock.UtcNow.UtcDateTime).AddDays(-7), "mentor@example.com", content.Key, 12, 2));
                 await sender.Send(new PublishAvailabilityCommand(new("mentor@example.com", slots)));
                 for (var i = 0; i < 5; i++)
                 {
@@ -125,6 +126,55 @@ public static class Program
                 clients[client].DefaultRequestHeaders.Remove("X-CSRF-TOKEN");
                 clients[client].DefaultRequestHeaders.Add("X-CSRF-TOKEN", csrf!.Token);
             }, ClearSignInHistory));
+            // Traces to: L2-062 AC1–AC3. Five administrators read and revise the bundled programme, reorder it, and
+            // publish it again; reads stay within 300 ms, writes within 500 ms, and a publication within 2,000 ms.
+            var administrators = new List<HttpClient>();
+            // The measured sign-ins above spend the origin allowance, and these five are setup rather than samples.
+            await ClearSignInHistory();
+            try
+            {
+                for (var i = 0; i < 5; i++)
+                {
+                    var client = await fixture.Administrator(); administrators.Add(client);
+                    var csrf = await client.GetFromJsonAsync<CsrfResponse>("/authentication/csrf");
+                    client.DefaultRequestHeaders.Add("X-CSRF-TOKEN", csrf!.Token);
+                }
+                var curriculumId = await fixture.CurriculumId(content.Key);
+                var programme = (await administrators[0].GetFromJsonAsync<JsonElement>($"/administration/curricula/{curriculumId}")).GetProperty("modules").EnumerateArray().Select(x => x.GetProperty("id").GetGuid()).ToArray();
+                // Each administrator works on a module of their own; the first section of each holds a reading at the maximum.
+                var moduleDrafts = new JsonElement[5]; var sectionDrafts = new JsonElement[5];
+                for (var i = 0; i < 5; i++)
+                {
+                    moduleDrafts[i] = (await administrators[i].GetFromJsonAsync<JsonElement>($"/administration/modules/{programme[i]}"));
+                    var sectionId = moduleDrafts[i].GetProperty("sections")[0].GetProperty("id").GetGuid();
+                    var draft = await administrators[i].GetFromJsonAsync<JsonElement>($"/administration/sections/{sectionId}");
+                    using var filled = await administrators[i].PutAsJsonAsync($"/administration/sections/{sectionId}", new { title = draft.GetProperty("title").GetString(), reading = new string('r', 12000), revision = draft.GetProperty("revision").GetGuid() });
+                    filled.EnsureSuccessStatusCode();
+                    sectionDrafts[i] = await administrators[i].GetFromJsonAsync<JsonElement>($"/administration/sections/{sectionId}");
+                }
+                results.Add(await Measure("GET /administration/curricula", 300, (client, _) => administrators[client].GetAsync("/administration/curricula")));
+                results.Add(await Measure("GET /administration/curricula/{id}", 300, (client, _) => administrators[client].GetAsync($"/administration/curricula/{curriculumId}")));
+                results.Add(await Measure("GET /administration/modules/{id}", 300, (client, _) => administrators[client].GetAsync($"/administration/modules/{programme[client]}")));
+                results.Add(await Measure("GET /administration/sections/{id} (12,000-character reading)", 300, (client, _) => administrators[client].GetAsync($"/administration/sections/{sectionDrafts[client].GetProperty("id").GetGuid()}")));
+                results.Add(await Measure("PUT /administration/sections/{id}", 500, async (client, iteration) =>
+                {
+                    var draft = sectionDrafts[client];
+                    var response = await administrators[client].PutAsJsonAsync($"/administration/sections/{draft.GetProperty("id").GetGuid()}", new { title = $"Revised {iteration}", reading = new string('r', 12000), revision = draft.GetProperty("revision").GetGuid() });
+                    if (response.IsSuccessStatusCode) sectionDrafts[client] = await administrators[client].GetFromJsonAsync<JsonElement>($"/administration/sections/{draft.GetProperty("id").GetGuid()}");
+                    return response;
+                }));
+                results.Add(await Measure("PUT /administration/modules/{id}", 500, async (client, iteration) =>
+                {
+                    var draft = moduleDrafts[client];
+                    var response = await administrators[client].PutAsJsonAsync($"/administration/modules/{draft.GetProperty("id").GetGuid()}", new { title = $"Module revised {iteration}", summary = draft.GetProperty("summary").GetString(), effortEstimate = draft.GetProperty("effortEstimate").GetString(), practiceSteps = draft.GetProperty("practiceSteps").EnumerateArray().Select(x => x.GetString()).ToArray(), revision = draft.GetProperty("revision").GetGuid() });
+                    if (response.IsSuccessStatusCode) moduleDrafts[client] = await administrators[client].GetFromJsonAsync<JsonElement>($"/administration/modules/{draft.GetProperty("id").GetGuid()}");
+                    return response;
+                }));
+                // Any rotation of every module is a permutation, whatever arrangement the other administrators left.
+                results.Add(await Measure("PUT /administration/curricula/{id}/modules/order", 500, (client, iteration) => administrators[client].PutAsJsonAsync($"/administration/curricula/{curriculumId}/modules/order", new { order = programme.Skip((client + iteration + 20) % programme.Length).Concat(programme.Take((client + iteration + 20) % programme.Length)).ToArray() })));
+                results.Add(await Measure("POST /administration/curricula/{id}/publication", 2000, (client, _) => administrators[client].PostAsJsonAsync($"/administration/curricula/{curriculumId}/publication", new { })));
+            }
+            finally { foreach (var client in administrators) client.Dispose(); }
             var output = args.FirstOrDefault() ?? ".local/api-performance.json";
             Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(output))!);
             results.AddRange(await PayloadScenario.Capture(fixture, content, Path.Combine(Path.GetDirectoryName(Path.GetFullPath(output))!, "production-responses.json"), measureReads: true));

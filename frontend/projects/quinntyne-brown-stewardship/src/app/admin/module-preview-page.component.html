@@ -1,0 +1,5 @@
+<a class="action-link" routerLink="..">← Back to editor</a>
+<p class="eyebrow">Preview · read as a participant will read it</p>
+@if (error()) { <qbs-error-message [message]="error()" /> }
+@else if (module(); as module) { <qbs-module-reader [preview]="module" /> }
+@else { <qbs-status-message message="Preparing the preview…" /> }

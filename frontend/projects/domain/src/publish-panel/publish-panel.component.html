@@ -1,0 +1,30 @@
+<section class="panel stack compact" aria-labelledby="publication-heading">
+  <div class="heading-row"><h2 id="publication-heading" class="eyebrow">Publication</h2><qbs-state-pill [state]="draft().state" /></div>
+  <p class="meta muted">{{ lastPublished() }}</p>
+  @if (error()) { <qbs-error-message [message]="error()" /> }
+  @if (status()) { <qbs-status-message [message]="status()" /> }
+  <p class="readiness">{{ readiness() }}</p>
+  @if (pending()) { <p>{{ pending() }}</p> }
+  @if (movedBack()) { <p class="warning">{{ movedBack() }}</p> }
+  <button type="button" [disabled]="busy()" (click)="publish()">{{ busy() ? 'Publishing…' : action() }}</button>
+  <p class="muted">{{ reach() }}</p>
+</section>
+<section class="stack compact" aria-labelledby="shape-heading">
+  <h2 id="shape-heading" class="eyebrow">Shape</h2>
+  <dl class="shape">
+    <div><dt>Published modules</dt><dd>{{ published_().length }}</dd></div>
+    <div><dt>Sections</dt><dd>{{ sections() }}</dd></div>
+    <div><dt>Preparation prompts</dt><dd>{{ prompts() }}</dd></div>
+  </dl>
+  <p class="muted">A participant of a cohort following this programme sees {{ published_().length }} markers, and every total on every screen reads against {{ published_().length }}. Change the count here and that changes with it.</p>
+</section>
+<section class="stack compact" aria-labelledby="cohorts-heading">
+  <h2 id="cohorts-heading" class="eyebrow">Cohorts following</h2>
+  @if (draft().readiness.cohorts.length === 0) { <p class="muted">No cohort follows this programme yet.</p> }
+  @else {
+    <ul class="cohorts" aria-label="Cohorts following">
+      @for (cohort of draft().readiness.cohorts; track cohort.id) { <li>{{ follower(cohort) }}</li> }
+    </ul>
+  }
+  <p class="muted">Duration and cadence belong to the cohort, and the session allowance is the one divided by the other. Cohorts are created with the command-line tool.</p>
+</section>

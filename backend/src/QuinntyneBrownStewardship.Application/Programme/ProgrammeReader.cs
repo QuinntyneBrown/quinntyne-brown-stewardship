@@ -14,12 +14,13 @@ public sealed class ProgrammeReader(IProgrammeStore store, ICurrentParticipant p
     public CohortSummary Summary(Cohort cohort)
     {
         var today = DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(clock.UtcNow, TimeZoneInfo.FindSystemTimeZoneById(cohort.TimeZone)).DateTime);
-        return new(cohort.Id, cohort.MentorName, cohort.TimeZone, cohort.StartDate, cohort.EndDate, cohort.CurrentWeek(today), cohort.HasEnded(today), cohort.SessionAllowance);
+        return new(cohort.Id, cohort.MentorName, cohort.TimeZone, cohort.StartDate, cohort.EndDate, cohort.CurrentWeek(today), cohort.HasEnded(today), cohort.SessionAllowance, cohort.DurationWeeks, cohort.SessionCadenceWeeks);
     }
     public async Task<ModuleResponse> Module(int? ordinal, CancellationToken ct)
     {
         var enrollment = await Enrollment(ct);
-        var modules = await store.Modules(enrollment.Cohort.CurriculumKey, ct);
+        if (!enrollment.Cohort.Curriculum.IsPublished) throw new ProgrammeException(409, "This programme is not yet available.");
+        var modules = await store.PublishedModules(enrollment.Cohort.CurriculumId, ct);
         var completions = await store.Completions(enrollment.Id, ct);
         var current = Progress.Current(modules, completions);
         var module = modules.SingleOrDefault(x => x.Ordinal == (ordinal ?? current ?? modules.LastOrDefault()?.Ordinal))

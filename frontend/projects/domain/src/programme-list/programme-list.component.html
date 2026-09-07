@@ -1,0 +1,23 @@
+@if (error()) { <qbs-retry-notice [message]="error()" (retry)="load()" /> }
+@else if (data(); as data) {
+  @if (data.programmes.length === 0) {
+    <qbs-empty-state heading="No programmes yet" description="Nothing has been authored. Create the first programme with a key and a title, then add the modules a cohort will read." />
+  } @else {
+    <ul class="programmes" aria-label="Programmes">
+      @for (programme of data.programmes; track programme.id) {
+        <li>
+          <div class="detail"><span class="title">{{ programme.title }}</span><span class="meta muted">{{ programme.key }} · {{ programme.moduleCount }} {{ programme.moduleCount === 1 ? 'module' : 'modules' }}@if (programme.state === 'Published' && programme.publishedModuleCount < programme.moduleCount) { · {{ programme.publishedModuleCount }} published} · {{ cohorts(programme.cohortCount) }}</span></div>
+          <qbs-state-pill [state]="programme.state" />
+          <a class="open" [routerLink]="['/admin/programmes', programme.id]"><span class="visually-hidden">Open {{ programme.title }} for authoring</span><span aria-hidden="true">›</span></a>
+        </li>
+      }
+    </ul>
+    <p class="legend muted"><span>Draft — no participant reads it</span><span>Published — cohorts read it</span></p>
+  }
+  <section class="new panel stack" aria-labelledby="new-programme">
+    <h2 id="new-programme">New programme</h2>
+    <qbs-programme-form [keyMax]="data.limits.key" [titleMax]="data.limits.title" [pending]="creating()" [(key)]="key" [(title)]="title" [(keyError)]="keyError" [(titleError)]="titleError" (submitted)="create($event)" />
+    <p class="muted">The key is how a cohort names its programme, and no two programmes may share one.</p>
+    <p class="muted">A new programme is created in draft. It becomes readable only when it is published, and publication is refused while it would give a participant nothing to read.</p>
+  </section>
+} @else { <qbs-status-message message="Loading programmes…" /> }

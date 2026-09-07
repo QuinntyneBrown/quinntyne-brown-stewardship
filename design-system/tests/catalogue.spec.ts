@@ -8,6 +8,7 @@ for (const width of [390, 1440]) {
     await catalogue.open();
     await catalogue.expectNotice();
     await catalogue.useKeyboard();
+    await catalogue.expectStates();
     await catalogue.expectAccessible();
     await catalogue.expectFitsViewport();
   });

@@ -6,3 +6,5 @@ label {
   color: var(--qbs-muted);
   font-size: var(--qbs-type-small);
 }
+.field { position: relative; display: grid; }
+.count { position: absolute; right: var(--qbs-space-md); top: var(--qbs-space-none); bottom: var(--qbs-space-none); display: flex; align-items: center; font-size: var(--qbs-type-caption); font-variant-numeric: tabular-nums; pointer-events: none; }

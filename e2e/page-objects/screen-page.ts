@@ -14,7 +14,10 @@ export abstract class ScreenPage {
       if (!await target.isVisible()) continue;
       if (await target.evaluate(element => element.getBoundingClientRect().right < 0)) continue;
       const box = await target.boundingBox(); if (!box) continue;
-      expect(box.width).toBeGreaterThanOrEqual(44); expect(box.height).toBeGreaterThanOrEqual(44);
+      if (await target.evaluate(element => element.closest('qbs-order-control') !== null)) {
+        const pair = await target.evaluate(element => { const rect = element.closest('qbs-order-control')!.getBoundingClientRect(); return { width: rect.width, height: rect.height }; });
+        expect(box.width).toBeGreaterThanOrEqual(24); expect(box.height).toBeGreaterThanOrEqual(24); expect(pair.width).toBeGreaterThanOrEqual(44); expect(pair.height).toBeGreaterThanOrEqual(44);
+      } else { expect(box.width).toBeGreaterThanOrEqual(44); expect(box.height).toBeGreaterThanOrEqual(44); }
       for (const previous of boxes) {
         const overlap = Math.min(box.x + box.width, previous.x + previous.width) - Math.max(box.x, previous.x) > 0.5
           && Math.min(box.y + box.height, previous.y + previous.height) - Math.max(box.y, previous.y) > 0.5;
@@ -37,6 +40,14 @@ export abstract class ScreenPage {
   async capture(path: string) { await this.page.evaluate(() => document.fonts.ready); await this.page.screenshot({ path, fullPage: true }); }
   async expectError(text: string) { await expect(this.page.getByRole('alert')).toContainText(text); }
   async retry() { await this.page.getByRole('button', { name: 'Try again', exact: true }).click(); }
+  // The set of destinations the navigation offers, opening the menu first where the viewport collapses it.
+  async expectDestinations(offered: string[], withheld: string[] = []) {
+    const menu = this.page.getByRole('button', { name: 'Menu', exact: true });
+    if (await menu.isVisible() && await menu.getAttribute('aria-expanded') === 'false') await menu.click();
+    const navigation = this.page.getByRole('navigation', { name: 'Programme', exact: true });
+    for (const name of offered) await expect(navigation.getByRole('link', { name, exact: true })).toBeVisible();
+    for (const name of withheld) await expect(navigation.getByRole('link', { name, exact: true })).toHaveCount(0);
+  }
   async navigate(name: string) {
     const menu = this.page.getByRole('button', { name: 'Menu', exact: true });
     if (await menu.isVisible() && await menu.getAttribute('aria-expanded') === 'false') await menu.click();

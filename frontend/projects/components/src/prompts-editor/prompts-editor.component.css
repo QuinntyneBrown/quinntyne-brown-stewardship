@@ -1,0 +1,6 @@
+:host { display: grid; gap: var(--qbs-space-md); }
+.prompts { display: grid; gap: var(--qbs-space-md); margin: var(--qbs-space-none); padding: var(--qbs-space-none); list-style: none; }
+li { display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--qbs-space-md); border-top: var(--qbs-border-width) solid var(--qbs-line); padding-top: var(--qbs-space-md); }
+.ordinal { width: var(--qbs-ordinal-width); padding-top: var(--qbs-space-sm); font-variant-numeric: tabular-nums; }
+.field { flex: var(--qbs-flex-one); min-width: var(--qbs-column-min); }
+.answers { font-size: var(--qbs-type-small); }

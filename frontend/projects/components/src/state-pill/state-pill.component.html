@@ -1,0 +1,4 @@
+<span class="pill" [class.published]="state() === 'Published'"
+  ><span class="dot" aria-hidden="true">@if (state() === 'Published') {✓}</span
+  ><span class="visually-hidden">{{ prefix() }} </span>{{ label() }}</span
+>

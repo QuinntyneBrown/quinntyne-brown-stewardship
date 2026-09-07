@@ -10,6 +10,7 @@ export class SessionsPage extends ScreenPage {
   async reschedule() { await this.page.getByRole('button', { name: 'Reschedule', exact: true }).click(); await this.selectFirstOpen(); await this.page.getByRole('button', { name: 'Confirm change' }).click(); }
   async cancel() { await this.page.getByRole('button', { name: 'Cancel session', exact: true }).click(); await this.page.getByRole('dialog').getByRole('button', { name: 'Yes, cancel session' }).click(); }
   async expectCanBook() { await expect(this.page.getByRole('button', { name: 'Confirm booking', exact: true })).toBeVisible(); }
+  async expectAllowance(booked: number, allowance: number) { await expect(this.page.getByText(`${booked} of ${allowance} booked`)).toBeVisible(); }
   async prepare() { await this.page.getByRole('link', { name: 'Prepare for your session' }).click(); }
   async bookByKeyboard() {
     await this.activateByKeyboard(this.page.getByRole('button', { name: /Open ·/ }).first());

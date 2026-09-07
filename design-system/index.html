@@ -59,6 +59,30 @@
           read.
         </p>
       </section>
+      <section aria-labelledby="authoring">
+        <h2 id="authoring">Publication states and ordering</h2>
+        <p class="muted">
+          A state is a word first and a mark second, so it survives greyscale and
+          reads aloud as text. A move control is a stacked pair filling one
+          target, each half naming its own direction and position.
+        </p>
+        <div class="pills">
+          <span class="pill draft"><span class="dot" aria-hidden="true"></span>Draft</span>
+          <span class="pill published"><span class="dot" aria-hidden="true">✓</span>Published</span>
+        </div>
+        <div class="order-control" role="group" aria-label="Order of Repair as a discipline">
+          <button type="button" class="half" aria-label="Move Repair as a discipline up from position 4 of 12">▲</button>
+          <button type="button" class="half" aria-label="Move Repair as a discipline down from position 4 of 12">▼</button>
+        </div>
+        <nav class="trail" aria-label="Authoring trail">
+          <ol><li><a href="#authoring">Programmes</a></li><li><a href="#authoring">Stewardship — core</a></li><li><span aria-current="page">Module 03</span></li></ol>
+        </nav>
+        <dialog class="confirm" open aria-labelledby="confirm-title">
+          <h3 id="confirm-title">Leave without saving?</h3>
+          <p>The title you typed has not been saved. Leaving now discards it.</p>
+          <div class="actions"><button type="button">Keep editing</button><button type="button" class="secondary">Discard changes</button></div>
+        </dialog>
+      </section>
       <section aria-labelledby="feedback">
         <h2 id="feedback">Feedback</h2>
         <p class="error">Email address or password is incorrect</p>

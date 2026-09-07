@@ -1,0 +1,54 @@
+@if (error() && !draft()) { <qbs-retry-notice [message]="error()" (retry)="load()" /> }
+@else if (draft(); as draft) {
+  <div class="stack">
+    @if (error()) { <qbs-retry-notice [message]="error()" (retry)="load()" /> }
+    @if (status()) { <qbs-status-message [message]="status()" /> }
+    <section class="stack compact" aria-labelledby="programme-heading">
+      <p class="eyebrow">Programme</p>
+      <h1 id="programme-heading">{{ draft.title }}</h1>
+      <p class="meta muted">{{ meta() }}</p>
+      <form class="field-form" novalidate (submit)="$event.preventDefault(); saveTitle()" [attr.aria-busy]="busy()">
+        <qbs-text-field label="Title" name="title" type="text" autocomplete="off" [maxLength]="draft.limits.title" [showCount]="true" [(value)]="title" [error]="titleError()" />
+        <button type="submit" class="secondary" [disabled]="busy()">Save title</button>
+      </form>
+      @if (draft.canChangeKey) {
+        <form class="field-form" novalidate (submit)="$event.preventDefault(); saveKey()" [attr.aria-busy]="busy()">
+          <qbs-text-field label="Key" name="key" type="text" autocomplete="off" [maxLength]="draft.limits.key" [showCount]="true" [(value)]="key" [error]="keyError()" />
+          <button type="submit" class="secondary" [disabled]="busy()">Save key</button>
+        </form>
+      } @else { <p class="muted">The key cannot be changed while cohorts follow it.</p> }
+    </section>
+    <section class="stack compact" aria-labelledby="modules-heading">
+      <div class="heading-row"><h2 id="modules-heading">Modules</h2>@if (draft.modules.length) { <span class="meta muted">{{ shape() }}</span> }</div>
+      @if (draft.modules.length === 0) {
+        <qbs-empty-state heading="No modules yet" description="A programme is a sequence of modules, one for each week a cohort spends with it. Add the first module to begin; it will take position 01 and start in draft." action="Add the first module" (act)="focusAddModule()" />
+      } @else {
+        <ol class="modules" aria-label="Modules">
+          @for (module of draft.modules; track module.id; let index = $index) {
+            <li>
+              <qbs-order-control [label]="module.title" [position]="module.ordinal" [total]="draft.modules.length" (moveUp)="move(index, -1)" (moveDown)="move(index, 1)" />
+              <span class="ordinal muted">{{ ordinal(module.ordinal) }}</span>
+              <div class="detail"><span class="title">{{ module.title }}</span><span class="summary">{{ module.summary }}</span><span class="meta muted">{{ count(module.sectionCount, 'section') }} · {{ count(module.stepCount, 'practice step') }} · {{ count(module.promptCount, 'prompt') }}</span></div>
+              <qbs-state-pill [state]="module.state" />
+              <a class="edit" [routerLink]="['/admin/modules', module.id]">Edit<span class="visually-hidden"> {{ module.title }}</span></a>
+            </li>
+          }
+        </ol>
+      }
+    </section>
+    <form class="panel stack compact" novalidate aria-labelledby="add-module-heading" (submit)="$event.preventDefault(); addModule()" [attr.aria-busy]="busy()">
+      <h2 id="add-module-heading" class="eyebrow">Add module</h2>
+      <qbs-text-field #moduleTitleField label="Module title" name="module-title" type="text" autocomplete="off" [maxLength]="draft.limits.title" [showCount]="true" [(value)]="moduleTitle" [error]="moduleTitleError()" />
+      <qbs-text-area-field label="Module summary" name="module-summary" [maxLength]="draft.limits.summary" [(value)]="moduleSummary" [error]="moduleSummaryError()" />
+      <button type="submit" class="secondary" [disabled]="busy()">Add module</button>
+      <p class="muted">A new module is placed last and starts in draft.</p>
+    </form>
+    <qbs-publish-panel [draft]="draft" (published)="load()" (expired)="expired.emit()" />
+    <section class="panel stack compact" aria-labelledby="remove-heading">
+      <h2 id="remove-heading" class="eyebrow">Remove programme</h2>
+      <p class="muted">{{ removalReason() || 'No cohort follows this programme. Removing it takes its modules, sections and prompts with it.' }}</p>
+      <button type="button" class="secondary" [disabled]="!draft.canRemove || busy()" (click)="removeRequested.emit()">Remove programme</button>
+    </section>
+  </div>
+}
+@else { <qbs-status-message message="Loading programme…" /> }

@@ -1,0 +1,62 @@
+@if (error() && !draft()) { <qbs-retry-notice [message]="error()" (retry)="load()" /> }
+@else if (draft(); as draft) {
+  <div class="stack">
+    @if (sessionExpired()) { <p class="notice" role="alert">Your session expired. Your changes are still here. <a href="/sign-in" target="_blank" rel="noopener">Sign in in another tab</a>, then save again.</p> }
+    @if (conflict(); as current) {
+      <aside class="panel stack compact conflict" aria-labelledby="conflict-heading">
+        <h2 id="conflict-heading">This section changed since it was opened.</h2>
+        <p class="muted">{{ error() }}</p>
+        <div class="actions">
+          <button type="button" class="secondary" [attr.aria-expanded]="showCurrent()" (click)="showCurrent.set(!showCurrent())">{{ showCurrent() ? 'Hide the current content' : 'Show the current content' }}</button>
+          <button type="button" (click)="adoptCurrent()">Reload and keep my changes</button>
+          <button type="button" class="secondary" (click)="discard()">Discard my changes</button>
+        </div>
+        @if (showCurrent()) {
+          <dl class="current" aria-label="Current content">
+            <div><dt>Title</dt><dd>{{ current.title }}</dd></div>
+            <div><dt>Reading content</dt><dd class="reading-current">{{ current.reading }}</dd></div>
+          </dl>
+        }
+      </aside>
+    } @else if (error()) { <qbs-error-message [message]="error()" /> }
+    @if (status()) { <qbs-status-message [message]="status()" /> }
+    @if (refused().length) {
+      <aside class="panel stack compact" aria-labelledby="refused-heading">
+        <h2 id="refused-heading" class="eyebrow">What was refused</h2>
+        <ul class="refused">@for (item of refused(); track item) { <li>{{ item }}</li> }</ul>
+      </aside>
+    }
+    <div class="programme-grid">
+      <form class="stack" novalidate (submit)="$event.preventDefault(); save()" [attr.aria-busy]="busy()">
+        <p class="eyebrow">Section {{ draft.ordinal }} of {{ draft.sectionCount }}</p>
+        <h1>{{ draft.title }}</h1>
+        <qbs-text-field #titleField label="Title" name="title" type="text" autocomplete="off" [maxLength]="draft.limits.title" [showCount]="true" [(value)]="title" [error]="fieldError('title')" />
+        <qbs-text-area-field #readingField label="Reading content" name="reading" [maxLength]="draft.limits.reading" [tall]="true" [(value)]="reading" [error]="fieldError('reading')" />
+        <p class="muted">Typed as plain text. Anything that looks like markup is shown to a participant as the characters you typed. A blank line starts a new paragraph.</p>
+        <div class="actions">
+          <button type="submit" [disabled]="busy()">{{ busy() ? 'Saving…' : 'Save section' }}</button>
+          @if (dirty()) { <button type="button" class="secondary" (click)="discard()">Discard changes</button> }
+        </div>
+        <p class="muted">{{ dirty() ? 'Leaving this screen with unsaved text will ask first.' : 'No unsaved changes.' }}</p>
+      </form>
+      <aside class="stack">
+        <section class="panel stack compact" aria-labelledby="recorded-heading">
+          <h2 id="recorded-heading" class="eyebrow">Recorded against this section</h2>
+          <p class="recorded">{{ recorded() }}</p>
+          <p class="muted">{{ draft.canRemove ? 'Nothing recorded depends on this section. Removing it closes the gap in the module.' : 'This section cannot be removed while those records stand. Revising its text does not reopen them — completion is recorded against the section, not its wording.' }}</p>
+          <button type="button" class="secondary" [disabled]="!draft.canRemove || busy()" (click)="removeRequested.emit()">Remove section</button>
+        </section>
+        <section class="stack compact" aria-labelledby="siblings-heading">
+          <h2 id="siblings-heading" class="eyebrow">In this module</h2>
+          <ol class="siblings" aria-label="Sections of this module">
+            @for (sibling of draft.siblings; track sibling.id) {
+              <li [attr.aria-current]="sibling.id === draft.id ? 'page' : null"><span class="ordinal muted">{{ sibling.ordinal }}</span>@if (sibling.id === draft.id) { <span>{{ sibling.title }}</span> } @else { <a [routerLink]="['/admin/sections', sibling.id]">{{ sibling.title }}</a> }</li>
+            }
+          </ol>
+          <p class="muted">Order is arranged on the <a [routerLink]="['/admin/modules', draft.moduleId]">module screen</a>. A new section is placed last, and a participant who has finished the module reopens it when one is added.</p>
+        </section>
+      </aside>
+    </div>
+  </div>
+}
+@else { <qbs-status-message message="Loading section…" /> }

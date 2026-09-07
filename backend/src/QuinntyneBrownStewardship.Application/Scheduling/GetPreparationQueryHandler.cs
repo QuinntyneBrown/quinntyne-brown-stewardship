@@ -14,7 +14,7 @@ public sealed class GetPreparationQueryHandler(IProgrammeStore store, ProgrammeR
         var enrollment = await reader.Enrollment(ct);
         var bookings = await store.Bookings(enrollment.Id, ct);
         var booking = bookings.SingleOrDefault(x => x.Id == request.Id) ?? throw new ProgrammeException(404, "Session not found.");
-        var modules = await store.Modules(enrollment.Cohort.CurriculumKey, ct);
+        var modules = await store.PublishedModules(enrollment.Cohort.CurriculumId, ct);
         var session = reader.Booking(booking, enrollment.Cohort, modules, await store.Completions(enrollment.Id, ct));
         var module = modules.SingleOrDefault(x => x.Ordinal == session.ModuleOrdinal) ?? modules.LastOrDefault();
         var notes = module == null ? [] : await store.PromptAnswers(enrollment.Id, module.Id, ct);

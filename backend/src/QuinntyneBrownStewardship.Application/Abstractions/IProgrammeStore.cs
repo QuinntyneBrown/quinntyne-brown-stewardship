@@ -13,9 +13,10 @@ public interface IProgrammeStore
     Task<Participant?> Participant(Guid id, CancellationToken ct);
     Task<Participant?> ParticipantByEmail(string email, CancellationToken ct);
     Task<Cohort?> Cohort(Guid id, CancellationToken ct);
+    Task<Curriculum?> CurriculumByKey(string key, CancellationToken ct);
     Task<bool> SlotHasBookings(Guid id, CancellationToken ct);
-    Task<List<CurriculumModule>> Modules(string curriculumKey, CancellationToken ct);
-    Task<List<CurriculumModule>> ProgressModules(string curriculumKey, CancellationToken ct);
+    Task<List<CurriculumModule>> PublishedModules(Guid curriculumId, CancellationToken ct);
+    Task<List<CurriculumModule>> PublishedProgressModules(Guid curriculumId, CancellationToken ct);
     Task<List<SectionCompletion>> Completions(Guid enrollmentId, CancellationToken ct);
     Task<List<AvailabilitySlot>> Slots(Guid mentorId, CancellationToken ct);
     Task<List<Booking>> Bookings(Guid enrollmentId, CancellationToken ct);
@@ -27,4 +28,3 @@ public interface IProgrammeStore
     void Add<T>(T entity) where T : class;
     Task<T> Transaction<T>(Func<CancellationToken, Task<T>> operation, CancellationToken ct);
 }
-

@@ -1,9 +1,12 @@
 <qbs-signature-header />
 <main>
-  <qbs-page-intro eyebrow="Participant access" heading="Sign in to continue"
-    >Twelve modules, six sessions, one cohort. Use the email address your
-    invitation was sent to.</qbs-page-intro
-  >
+  <div class="intro">
+    <qbs-page-intro [eyebrow]="held() ? 'Sign in required' : 'Participant access'" heading="Sign in to continue">
+      @if (held()) { Nothing of the screen you asked for was shown. Sign in and you will be taken straight to it. }
+      @else { A programme of modules, one cohort, and conversations with your mentor. Use the email address your invitation was sent to. }
+    </qbs-page-intro>
+    @if (held(); as path) { <p class="holding muted">Holding: <span class="path">{{ path }}</span></p> }
+  </div>
   <qbs-sign-in-form
     [pending]="pending()"
     [message]="message()"

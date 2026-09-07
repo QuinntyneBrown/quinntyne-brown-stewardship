@@ -1,0 +1,4 @@
+<qbs-breadcrumb [trail]="trail()">{{ saved() }}</qbs-breadcrumb>
+@if (notice) { <qbs-status-message [message]="notice" /> }
+<qbs-programme-editor [id]="id" (loaded)="draft.set($event)" (expired)="expired()" (removeRequested)="remove()" (removed)="removed()" (moduleAdded)="moduleAdded($event)" />
+<qbs-confirm-dialog [heading]="editor().dirty() ? 'Leave without saving?' : 'Remove this programme?'" [consequence]="editor().dirty() ? 'The title or key you typed has not been saved. Leaving now discards it.' : 'Its modules, sections and prompts are removed with it. No cohort follows it, so nothing a participant reads changes.'" [keepLabel]="editor().dirty() ? 'Keep editing' : 'Keep programme'" [confirmLabel]="editor().dirty() ? 'Discard changes' : 'Remove programme'" />

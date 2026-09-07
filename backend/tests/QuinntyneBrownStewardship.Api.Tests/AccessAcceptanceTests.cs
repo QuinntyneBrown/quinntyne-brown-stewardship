@@ -25,9 +25,10 @@ public sealed class AccessAcceptanceTests(ApiFixture fixture) : IClassFixture<Ap
     {
         using var scope = fixture.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<StewardshipDbContext>();
-        var participant = await db.Participants.SingleAsync();
+        var participant = await db.Participants.SingleAsync(x => x.EmailAddress == ApiFixture.Email);
         var cohort = new QuinntyneBrownStewardship.Domain.Enrollment.Cohort
         {
+            CurriculumId = await fixture.SeedProgramme(), DurationWeeks = 12, SessionCadenceWeeks = 2,
             MentorName = "Assigned mentor",
             StartDate = DateOnly.FromDateTime(fixture.Clock.UtcNow.UtcDateTime).AddDays(-14)
         };
@@ -141,7 +142,10 @@ public sealed class AccessAcceptanceTests(ApiFixture fixture) : IClassFixture<Ap
     {
         using var client = fixture.Browser();
         Assert.Equal(HttpStatusCode.OK, (await ApiFixture.Post(client, "/authentication/sign-in", new { EmailAddress = ApiFixture.Email, ApiFixture.Password, ParticipantId = Guid.NewGuid(), IsAdmin = true })).StatusCode);
-        Assert.Equal(ApiFixture.Email, (await client.GetFromJsonAsync<SessionResponse>("/authentication/session"))!.EmailAddress);
+        var session = (await client.GetFromJsonAsync<SessionResponse>("/authentication/session"))!;
+        Assert.Equal(ApiFixture.Email, session.EmailAddress);
+        // Traces to: L2-041 AC3. A flag supplied by the client never confers authority.
+        Assert.False(session.IsAdministrator);
     }
 
     // Traces to: L2-037 AC2; provisioning acceptance.
@@ -150,10 +154,10 @@ public sealed class AccessAcceptanceTests(ApiFixture fixture) : IClassFixture<Ap
     {
         using var scope = fixture.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<StewardshipDbContext>();
-        var original = await db.Participants.AsNoTracking().SingleAsync();
+        var original = await db.Participants.AsNoTracking().SingleAsync(x => x.EmailAddress == ApiFixture.Email);
         Assert.DoesNotContain(ApiFixture.Password, original.PasswordHash);
         Assert.False(await scope.ServiceProvider.GetRequiredService<ISender>().Send(new ProvisionParticipantCommand("PARTICIPANT@example.com", "Another private password!")));
-        Assert.Equal(original.PasswordHash, (await db.Participants.AsNoTracking().SingleAsync()).PasswordHash);
+        Assert.Equal(original.PasswordHash, (await db.Participants.AsNoTracking().SingleAsync(x => x.EmailAddress == ApiFixture.Email)).PasswordHash);
         using var client = fixture.Browser();
         await ApiFixture.SignIn(client);
     }
@@ -288,7 +292,7 @@ public sealed class AccessAcceptanceTests(ApiFixture fixture) : IClassFixture<Ap
         var sender = scope.ServiceProvider.GetRequiredService<ISender>();
         await sender.Send(new ProvisionParticipantCommand("another@example.com", ApiFixture.Password));
         var other = await db.Participants.SingleAsync(x => x.EmailAddress == "another@example.com");
-        var cohort = new QuinntyneBrownStewardship.Domain.Enrollment.Cohort { MentorName = "Another mentor", StartDate = new DateOnly(2026, 9, 1) };
+        var cohort = new QuinntyneBrownStewardship.Domain.Enrollment.Cohort { CurriculumId = await fixture.SeedProgramme(), DurationWeeks = 12, SessionCadenceWeeks = 2, MentorName = "Another mentor", StartDate = new DateOnly(2026, 9, 1) };
         db.Enrollments.Add(new() { ParticipantId = other.Id, Cohort = cohort });
         await db.SaveChangesAsync();
         using var client = fixture.Browser();

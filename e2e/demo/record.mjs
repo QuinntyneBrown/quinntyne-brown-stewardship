@@ -15,13 +15,13 @@ const rehearsal = process.argv.includes("--rehearse");
 const config = {
   ...run,
   email: rehearsal ? "rehearsal@demo.invalid" : "participant@demo.invalid",
-  note: "Field reflection: listen to the people carrying the cost before choosing a technical solution.",
+  note: "Discover notes: lament this before solving it, and name who has least choice.",
   revisedNote:
-    "Field reflection: listen to the people carrying the cost before choosing a technical solution. We will test one small, reversible change and return next week.",
+    "Discover notes: lament this before solving it, and name who has least choice. We will take the problem statement back to them for correction.",
   answer:
-    "I will bring one decision, the people affected, and one question I have not resolved.",
+    "I will bring one lament, the people it names, and one question I have not resolved.",
   sessionNote:
-    "For our conversation: review the small experiment and agree on what to revisit.",
+    "For our conversation: review the discernment and agree which posture fits.",
 };
 const cliPath =
   process.env.PLAYWRIGHT_CLI_PATH ??

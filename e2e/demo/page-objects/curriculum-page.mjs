@@ -1,11 +1,11 @@
 export class CurriculumPage extends ShellPage {
   async ready(completed = 0) {
-    await this.text(`${completed} of 12 complete`);
+    await this.text(`${completed} of ${this.config.moduleCount} complete`);
     if (
       (await this.page
         .getByRole("list", { name: "Module path" })
         .getByRole("listitem")
-        .count()) !== 12
+        .count()) !== this.config.moduleCount
     )
       throw new Error("The curriculum path is incomplete.");
   }
@@ -46,7 +46,7 @@ export class CurriculumPage extends ShellPage {
   }
   async completedProgramme() {
     await this.go("/curriculum");
-    await this.ready(12);
+    await this.ready(this.config.moduleCount);
     await this.text("✓ Curriculum complete");
     await this.text(
       "This cohort has ended. Your completed modules remain available.",
