@@ -88,6 +88,18 @@ class CurriculumSummary {
   +string Title
   +PublicationState State
   +int ModuleCount
+  +int CohortCount
+}
+
+class ModuleDraftSummary {
+  +Guid Id
+  +int Ordinal
+  +string Title
+  +string Summary
+  +PublicationState State
+  +int SectionCount
+  +int PracticeStepCount
+  +int PromptCount
 }
 
 class CurriculumDraftResponse {
@@ -116,6 +128,8 @@ CreateCurriculumCommandHandler --> ICurriculumStore : persists through
 CreateCurriculumCommandHandler --> Curriculum : creates
 GetCurriculaQuery ..> CurriculumSummary : yields
 CurriculumDraftResponse --> Curriculum : projects
+CurriculumDraftResponse *-- ModuleDraftSummary : holds one per module
+CurriculumSummary --> Cohort : counts the followers of
 RenameCurriculumCommand ..> Curriculum : revises the title of
 ChangeCurriculumKeyCommandHandler ..> ChangeCurriculumKeyCommand : handles
 ChangeCurriculumKeyCommandHandler --> Curriculum : writes the key of

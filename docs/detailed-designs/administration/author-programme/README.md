@@ -147,7 +147,13 @@ to `administration/authorise-administrator`.
   curriculum. It extends the store abstraction the participant features already use with
   the lookups and the removal this subsystem needs.
 - **`CurriculumSummary`**, **`CurriculumDraftResponse`**, and **`ModuleDraftSummary`** —
-  the response records the two queries return.
+  the response records the two queries return. `CurriculumSummary` carries a count of the
+  cohorts following the programme as well as its module count, because the list states it on
+  every row and because the two refusals that guard a programme name it: a removal and a key
+  change are both refused while a cohort follows (L2-044 criteria 6 and 8).
+  `ModuleDraftSummary` carries what a module row shows without opening it, which is its
+  position, title and summary, its publication state, and the counts of its sections,
+  practice steps and prompts.
 
 The unique key is enforced by a unique index on `Curriculum.Key`. The handler does not
 read before it writes; it inserts and lets the constraint decide, translating the
