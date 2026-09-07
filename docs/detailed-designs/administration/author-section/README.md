@@ -103,6 +103,11 @@ completion belongs to `modules/complete-section`.
   a native `dialog`, shown before a removal.
 - **`ErrorMessageComponent`** — existing presentational component in the `components`
   library. It renders the refusal returned when a removal is declined.
+- **`StatePillComponent`** — presentational component in the `components` library, described
+  in `administration/author-programme`. It carries two distinct meanings on these screens and
+  takes the meaning as an input: a publication state on a programme or module, and a
+  removability state on a section or prompt that recorded history protects. Both render as
+  text, so neither depends on the chip colour to be understood (L2-034).
 - **`StatusMessageComponent`** — existing presentational component in the `components`
   library rendering a `role="status"` region. A save reports its outcome through it.
 - **`BreadcrumbComponent`** — presentational component in the `components` library, designed
@@ -148,7 +153,18 @@ completion belongs to `modules/complete-section`.
 - **`CurriculumOptions`** — options type bound through `Microsoft.Extensions.Options`,
   mirroring `NoteOptions`. It holds the maximum length of a title, of reading content, and
   of a practice step. `AddSectionCommandValidator` and `ReviseSectionCommandValidator` read
-  it, and `TextAreaFieldComponent` reports the same maximum to the author while they type.
+  it, and both field components report the same maximum to the author while they type.
+- **`TextFieldComponent`** — existing presentational component in the `components` library.
+  It already takes a `maxLength` and applies it to the input; it gains an optional character
+  count, rendered beside the field as the length written over the maximum. The count is
+  optional rather than automatic because this component also carries the sign-in fields,
+  where a count against a password length would be noise and a disclosure.
+- **`TextAreaFieldComponent`** — carries the count always, because every field it serves is
+  authored content with a stated maximum.
+
+A count that stops at the maximum would hide the condition it exists to report, so it keeps
+counting past it and the field reports itself invalid. That is what makes the refusal of
+L2-051 criterion 2 legible before the request is sent rather than only after it returns.
 - **`ICurriculumStore`** — application abstraction. It supplies `Remove<T>(entity)` and
   the dependency counts the rule reads: `CompletionCount(sectionId, token)`,
   `ModuleNoteCount(moduleId, token)`, and `PromptAnswerCount(moduleId, token)`. Counting

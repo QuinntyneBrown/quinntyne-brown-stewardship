@@ -93,6 +93,12 @@ to `administration/authorise-administrator`.
 - **`BreadcrumbComponent`** — presentational component in the `components` library, designed
   in `administration/author-module`. The programme index is the root of the trail every
   authoring screen renders.
+- **`EmptyStateComponent`** — presentational component in the `components` library taking a
+  heading, a sentence and the label of the action that ends the state. Three requirements ask
+  for one: a programme index with no programmes (L2-044 criterion 3), a programme with no
+  modules (L2-045 criterion 4), and a module with no sections (L2-048 criterion 4). It
+  follows `NotEnrolledNoticeComponent`, which already states an absence rather than rendering
+  an empty list.
 - **`IAuthoringService`** / **`AUTHORING_SERVICE`** / **`AuthoringService`** — the
   contract, its `InjectionToken`, and the HTTP implementation, each in its own file in the
   `api` library. `AuthoringServiceMock` binds to the same token under Playwright.
