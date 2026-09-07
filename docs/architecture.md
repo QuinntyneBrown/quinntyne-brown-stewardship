@@ -117,28 +117,29 @@ All endpoints require an authenticated participant except `/authentication/csrf`
 Every route below requires administrator authority and is refused with `403` without
 it.
 
-| Method   | Route                                        | Purpose                                         |
-| -------- | -------------------------------------------- | ----------------------------------------------- |
-| `GET`    | `/administration/curricula`                  | Every programme with its module count and state |
-| `POST`   | `/administration/curricula`                  | Create a programme in draft                     |
-| `GET`    | `/administration/curricula/{id}`             | One authored programme, whatever its state      |
-| `PUT`    | `/administration/curricula/{id}`             | Revise the programme title                      |
-| `DELETE` | `/administration/curricula/{id}`             | Remove a programme no cohort follows            |
-| `PUT`    | `/administration/curricula/{id}/key`         | Correct the key while no cohort follows         |
-| `PUT`    | `/administration/curricula/{id}/order`       | Reorder the modules of a programme              |
-| `POST`   | `/administration/curricula/{id}/publication` | Publish the programme and its modules           |
-| `POST`   | `/administration/curricula/{id}/modules`     | Add a module in draft                           |
-| `GET`    | `/administration/sections/{id}`              | One authored section with its reading content   |
-| `GET`    | `/administration/modules/{id}`               | One authored module                             |
-| `PUT`    | `/administration/modules/{id}`               | Revise title, summary, effort, practice steps   |
-| `DELETE` | `/administration/modules/{id}`               | Remove a module nothing recorded depends on     |
-| `PUT`    | `/administration/modules/{id}/order`         | Reorder the sections of a module                |
-| `POST`   | `/administration/modules/{id}/sections`      | Add a section                                   |
-| `POST`   | `/administration/modules/{id}/prompts`       | Add a preparation prompt                        |
-| `PUT`    | `/administration/sections/{id}`              | Revise a section                                |
-| `DELETE` | `/administration/sections/{id}`              | Remove a section                                |
-| `PUT`    | `/administration/prompts/{id}`               | Revise a prompt, preserving its identifier      |
-| `DELETE` | `/administration/prompts/{id}`               | Remove a prompt                                 |
+| Method   | Route                                          | Purpose                                         |
+| -------- | ---------------------------------------------- | ----------------------------------------------- |
+| `GET`    | `/administration/curricula`                    | Every programme with its module count and state |
+| `POST`   | `/administration/curricula`                    | Create a programme in draft                     |
+| `GET`    | `/administration/curricula/{id}`               | One authored programme, whatever its state      |
+| `PUT`    | `/administration/curricula/{id}`               | Revise the programme title                      |
+| `DELETE` | `/administration/curricula/{id}`               | Remove a programme no cohort follows            |
+| `PUT`    | `/administration/curricula/{id}/key`           | Correct the key while no cohort follows         |
+| `PUT`    | `/administration/curricula/{id}/modules/order` | Reorder the modules of a programme              |
+| `POST`   | `/administration/curricula/{id}/publication`   | Publish the programme and its modules           |
+| `POST`   | `/administration/curricula/{id}/modules`       | Add a module in draft                           |
+| `GET`    | `/administration/sections/{id}`                | One authored section with its reading content   |
+| `GET`    | `/administration/modules/{id}`                 | One authored module                             |
+| `PUT`    | `/administration/modules/{id}`                 | Revise title, summary, effort, practice steps   |
+| `DELETE` | `/administration/modules/{id}`                 | Remove a module nothing recorded depends on     |
+| `PUT`    | `/administration/modules/{id}/sections/order`  | Reorder the sections of a module                |
+| `POST`   | `/administration/modules/{id}/sections`        | Add a section                                   |
+| `POST`   | `/administration/modules/{id}/prompts`         | Add a preparation prompt                        |
+| `PUT`    | `/administration/modules/{id}/prompts/order`   | Reorder the preparation prompts of a module     |
+| `PUT`    | `/administration/sections/{id}`                | Revise a section                                |
+| `DELETE` | `/administration/sections/{id}`                | Remove a section                                |
+| `PUT`    | `/administration/prompts/{id}`                 | Revise a prompt, preserving its identifier      |
+| `DELETE` | `/administration/prompts/{id}`                 | Remove a prompt                                 |
 
 ## Front end
 

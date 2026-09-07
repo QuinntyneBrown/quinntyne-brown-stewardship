@@ -137,10 +137,15 @@ one is refused (L2-065).
   `QuinntyneBrownStewardship.Api.Controllers.Administration` so it does not collide with
   the participant-facing controller of the same name. It exposes
   `POST /administration/curricula/{id}/modules`, `GET /administration/modules/{id}`,
-  `PUT /administration/modules/{id}`, and `DELETE /administration/modules/{id}`.
+  `PUT /administration/modules/{id}`, and `DELETE /administration/modules/{id}`. The two
+  ordering routes it also carries are designed in `administration/order-curriculum`.
 - **`PromptsController`** — controller in the same folder exposing
   `POST /administration/modules/{id}/prompts`, `PUT /administration/prompts/{id}`, and
   `DELETE /administration/prompts/{id}`.
+- **`GetModuleDraftQuery`** and **`GetModuleDraftQueryHandler`** — the read behind the
+  editor, returning `ModuleDraftResponse` whatever the module's publication state. It is the
+  authoring counterpart of the participant-facing `GetModuleQuery`, which refuses a module a
+  participant has not unlocked.
 - **`AddModuleCommand`**, **`AddModuleCommandHandler`**, and
   **`AddModuleCommandValidator`** — the creation slice. The handler appends the module at
   the next free ordinal and creates it in draft.

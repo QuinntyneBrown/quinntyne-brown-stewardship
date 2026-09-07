@@ -74,16 +74,21 @@ feature.
 
 **API.**
 
-- **`CurriculaController`** — exposes `PUT /administration/curricula/{id}/order` for the
-  modules of a programme.
-- **`ModulesController`** — exposes `PUT /administration/modules/{id}/order` for the
-  sections of a module.
+- **`CurriculaController`** — exposes `PUT /administration/curricula/{id}/modules/order`.
+- **`ModulesController`** — exposes `PUT /administration/modules/{id}/sections/order` and
+  `PUT /administration/modules/{id}/prompts/order`. Each ordering route names the collection
+  it arranges, because a module holds two ordered collections and an unqualified route could
+  only ever mean one of them.
 - **`ReorderModulesCommand`**, **`ReorderModulesCommandHandler`**, and
   **`ReorderModulesCommandValidator`** — the module ordering slice. The validator requires
   the submitted identifiers to be a permutation of the programme's current children, which
   is what stops a partial or foreign list from producing a gap.
 - **`ReorderSectionsCommand`**, **`ReorderSectionsCommandHandler`**, and
   **`ReorderSectionsCommandValidator`** — the section ordering slice, with the same rule.
+- **`ReorderPromptsCommand`**, **`ReorderPromptsCommandHandler`**, and
+  **`ReorderPromptsCommandValidator`** — the prompt ordering slice. Preparation prompts are
+  read in order against the session that follows their module, so their arrangement is
+  authored exactly as the sections of a module are (L2-047 criterion 5).
 - **`OrdinalSequence`** — domain service holding the staged reassignment. It writes each
   affected row to a negative staging position, flushes, and then writes the final positions
   from 1 upward. It is the single place the two-pass rule lives, so the module and section
