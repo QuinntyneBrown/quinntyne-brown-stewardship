@@ -84,6 +84,10 @@ belongs to `notes/prepare-for-session`, which this feature supplies but does not
 - **`ModuleEditorPageComponent.canLeave`** — `CanDeactivateFn` guard on the module route,
   with a `beforeunload` handler for the tab-close case. It reads the editor's `dirty`
   signal and warns before unsaved authored content is discarded (L2-063).
+- **`StatusMessageComponent`** — existing presentational component in the `components`
+  library rendering a `role="status"` region. The editor writes the outcome of a save into
+  it, because a save returns no new content to render and would otherwise pass unremarked
+  (L2-060).
 
 **API.**
 

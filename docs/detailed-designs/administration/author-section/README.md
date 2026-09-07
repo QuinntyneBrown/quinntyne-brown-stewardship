@@ -53,6 +53,13 @@ recorded against the section identifier rather than against its text. Adding a *
 to a completed module does reopen that module, which is designed in
 `modules/complete-section` and consumed rather than changed here.
 
+Saving reports itself. A revision returns the content the administrator already has on
+screen, so nothing visibly changes when it succeeds, and an administrator reading by screen
+reader would have no evidence either way. The editor writes the outcome into a polite live
+region, so a save is perceivable without sight of the form (L2-060). The same region carries
+the refusal when a removal is declined, so success and refusal arrive by one route rather
+than two.
+
 A section of reading is the longest thing anyone types into Stewardship, so the editor
 guards it. An administrator who has changed a field and not saved it is warned before a
 navigation or a tab close discards the change, and choosing to remain leaves every unsaved
@@ -86,6 +93,8 @@ completion belongs to `modules/complete-section`.
   a native `dialog`, shown before a removal.
 - **`ErrorMessageComponent`** — existing presentational component in the `components`
   library. It renders the refusal returned when a removal is declined.
+- **`StatusMessageComponent`** — existing presentational component in the `components`
+  library rendering a `role="status"` region. A save reports its outcome through it.
 - **`SectionEditorPageComponent.canLeave`** — `CanDeactivateFn` guard on the authoring
   routes, mirroring the guard the note editor already carries. It returns `false` while the
   editor reports unsaved changes, and the page registers a `beforeunload` handler for the
