@@ -1,4 +1,6 @@
-@if (status() === 'loading') { <qbs-status-message message="Checking your enrollment…" /> }
+@if (bypass()) { <ng-container [ngTemplateOutlet]="content()" /> }
+@else if (status() === 'loading') { <qbs-status-message message="Checking your enrollment…" /> }
 @else if (status() === 'error') { <qbs-retry-notice message="We could not check your enrollment. Please try again." (retry)="load()" /> }
 @else if (status() === 'absent') { <qbs-not-enrolled-notice [description]="description()" /> }
+@else if (status() === 'unpublished') { <qbs-not-enrolled-notice eyebrow="Curriculum" heading="Your programme is not yet available." intro="Your cohort's programme is still being written and has not been published. Your mentor will let you know when it is." [description]="description()" /> }
 @else { <ng-container [ngTemplateOutlet]="content()" /> }

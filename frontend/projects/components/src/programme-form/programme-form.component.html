@@ -1,0 +1,5 @@
+<form novalidate (submit)="submit($event)" [attr.aria-busy]="pending()">
+  <qbs-text-field #keyField label="Key" name="key" type="text" autocomplete="off" [maxLength]="keyMax()" [showCount]="true" [(value)]="key" [error]="keyError()" />
+  <qbs-text-field #titleField label="Title" name="title" type="text" autocomplete="off" [maxLength]="titleMax()" [showCount]="true" [(value)]="title" [error]="titleError()" />
+  <button type="submit" [disabled]="pending()">{{ pending() ? "Creating…" : "Create programme" }}</button>
+</form>

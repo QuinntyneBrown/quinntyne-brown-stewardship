@@ -9,6 +9,10 @@ import { NoteEditorPage } from "../page-objects/note-editor-page";
 import { SessionDetailPage } from "../page-objects/session-detail-page";
 import { SignInPage } from "../page-objects/sign-in-page";
 import { EnrollmentPage } from "../page-objects/enrollment-page";
+import { AdminProgrammesPage } from "../page-objects/admin-programmes-page";
+import { AdminProgrammePage } from "../page-objects/admin-programme-page";
+import { AdminModulePage } from "../page-objects/admin-module-page";
+import { AdminSectionPage } from "../page-objects/admin-section-page";
 
 // Traces to: L2-039 AC3–4. Given a cold browser with a repeatable mid-tier/4G
 // lab profile, when each screen loads, then its complete compressed transfer is
@@ -23,6 +27,10 @@ for (const screen of [
   "note-editor",
   "note-edit",
   "session-detail",
+  "admin-programmes",
+  "admin-programme",
+  "admin-module",
+  "admin-section",
 ]) {
   test(`${screen} meets its cold-load budget`, async ({ page }, info) => {
     const production = new ProductionResponses(page);
@@ -57,6 +65,10 @@ for (const screen of [
         () => detail.open(fixture.sessionPath),
         () => detail.expectPrompts(),
       ],
+      "admin-programmes": [() => new AdminProgrammesPage(page).open(), () => new AdminProgrammesPage(page).expectHeading()],
+      "admin-programme": [() => new AdminProgrammePage(page).open(fixture.programmeId), () => new AdminProgrammePage(page).expectModules(12)],
+      "admin-module": [() => new AdminModulePage(page).open(fixture.moduleId), () => new AdminModulePage(page).expectSectionCount(5)],
+      "admin-section": [() => new AdminSectionPage(page).open(fixture.sectionId), () => new AdminSectionPage(page).expectPosition(1, 5)],
     };
     const result = await measurement.load(...actions[screen]);
     const api = await production.transfer();

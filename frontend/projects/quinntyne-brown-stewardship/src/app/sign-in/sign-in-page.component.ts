@@ -19,11 +19,18 @@ export class SignInPageComponent {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   readonly pending = signal(false);
+  // The held route is named and nothing in it is resolved: a title behind an identifier would disclose authored content to a visitor who has not signed in.
+  readonly held = signal(this.heldPath());
   readonly message = signal(
     this.route.snapshot.queryParamMap.has("unavailable")
       ? "We could not check your session. Please try signing in again."
       : "",
   );
+  private heldPath() {
+    const requested = this.route.snapshot.queryParamMap.get("returnUrl");
+    const safe = safeDestination(requested);
+    return requested && safe !== "/curriculum" ? safe : null;
+  }
   async signIn(credentials: Credentials) {
     this.pending.set(true);
     this.message.set("");

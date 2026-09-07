@@ -68,7 +68,22 @@
   --qbs-menu-display: none;
   --qbs-dialog-max: 32rem;
   --qbs-backdrop: rgb(0 0 0 / 70%);
+  --qbs-secondary-text: #c9c2b4;
+  --qbs-disabled-glyph: #3a352c;
+  --qbs-unavailable-border: #221f1a;
+  --qbs-radius-pill: 999px;
+  --qbs-pill-height: 1.625rem;
+  --qbs-pill-dot: 0.5625rem;
+  --qbs-stacked-control-min: 1.5rem;
+  --qbs-ordinal-width: 1.75rem;
+  --qbs-trail-min: 4.125rem;
+  --qbs-type-caption: 0.75rem;
+  --qbs-type-item-title: 1.375rem;
+  --qbs-textarea-tall-height: 32.5rem;
+  --qbs-trail-display: flex;
+  --qbs-trail-condensed-display: none;
+  --qbs-clip-hidden: inset(50%);
 }
 @media (width < 48rem) {
-  :root { --qbs-main-track: 1fr; --qbs-side-track: none; --qbs-nav-display: none; --qbs-menu-display: inline-flex; --qbs-path-columns: var(--qbs-control-min) var(--qbs-track); --qbs-state-column: 2; }
+  :root { --qbs-main-track: 1fr; --qbs-side-track: none; --qbs-nav-display: none; --qbs-menu-display: inline-flex; --qbs-path-columns: var(--qbs-control-min) var(--qbs-track); --qbs-state-column: 2; --qbs-trail-display: none; --qbs-trail-condensed-display: flex; }
 }

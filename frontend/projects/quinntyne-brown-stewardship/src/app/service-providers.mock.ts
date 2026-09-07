@@ -5,8 +5,8 @@ import {
   Provider,
 } from "@angular/core";
 import { COHORT_SERVICE, SIGN_IN_SERVICE } from "@qbs/api";
-import { CURRICULUM_SERVICE, SESSION_SERVICE, NOTE_SERVICE } from '@qbs/api';
-import { CurriculumServiceMock, SessionServiceMock, NoteServiceMock } from '@qbs/api/testing';
+import { CURRICULUM_SERVICE, SESSION_SERVICE, NOTE_SERVICE, AUTHORING_SERVICE } from '@qbs/api';
+import { CurriculumServiceMock, SessionServiceMock, NoteServiceMock, AuthoringServiceMock } from '@qbs/api/testing';
 import {
   CohortServiceMock,
   MockStateStore,
@@ -20,5 +20,6 @@ export const serviceProviders: (Provider | EnvironmentProviders)[] = [
   { provide: NOTE_SERVICE, useClass: NoteServiceMock },
   { provide: SIGN_IN_SERVICE, useClass: SignInServiceMock },
   { provide: COHORT_SERVICE, useClass: CohortServiceMock },
+  { provide: AUTHORING_SERVICE, useClass: AuthoringServiceMock },
   provideAppInitializer(() => installPlaywrightBridge(inject(MockStateStore))),
 ];

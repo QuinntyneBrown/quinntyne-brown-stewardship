@@ -4,12 +4,37 @@ export class ModulePage extends ScreenPage {
   constructor(page: Page) { super(page); }
   async open(ordinal?: number) { await this.page.goto(`/modules/${ordinal ?? 'current'}`); }
   async completeSection() { await this.page.getByRole('button', { name: 'Mark section complete' }).click(); }
-  async expectSection(position: number) { await expect(this.page.getByRole('progressbar', { name: `Section ${position} of 5`, exact: true })).toBeVisible(); }
-  async expectProgress(completed: number, position: number) {
-    const progress = this.page.getByRole('progressbar', { name: `Section ${position} of 5`, exact: true });
+  async expectSection(position: number, total = 5) { await expect(this.page.getByRole('progressbar', { name: `Section ${position} of ${total}`, exact: true })).toBeVisible(); }
+  async expectProgress(completed: number, position: number, total = 5) {
+    const progress = this.page.getByRole('progressbar', { name: `Section ${position} of ${total}`, exact: true });
     await expect(progress).toBeVisible();
-    await expect(progress).toHaveJSProperty('position', completed / 5);
+    await expect(progress).toHaveJSProperty('position', completed / total);
   }
+  // The reading is shown as typed: markup stays literal and a blank line starts a paragraph.
+  async expectReading(title: string, ...paragraphs: string[]) {
+    await expect(this.page.getByRole('heading', { level: 2, name: title })).toBeVisible();
+    const article = this.page.getByRole('article');
+    for (const paragraph of paragraphs) await expect(article.getByText(paragraph, { exact: true })).toBeVisible();
+    expect(await article.locator('p.reading').count()).toBe(paragraphs.length);
+  }
+  async choose(position: number) { await this.page.getByRole('navigation', { name: 'Module sections' }).getByRole('button').nth(position - 1).click(); }
+  async expectNoCompletionAction() {
+    await expect(this.page.getByRole('button', { name: 'Mark section complete' })).toHaveCount(0);
+    await expect(this.page.getByRole('link', { name: /Write an answer|Add a module note/ })).toHaveCount(0);
+    await expect(this.page.getByText('✓ Section complete')).toHaveCount(0);
+  }
+  async expectEverySectionSelectable() {
+    for (const button of await this.page.getByRole('navigation', { name: 'Module sections' }).getByRole('button').all()) await expect(button).toBeEnabled();
+  }
+  async expectHeading(title: string) { await expect(this.page.getByRole('heading', { level: 1, name: title })).toBeVisible(); }
+  // The practice block reads exactly as authored: the effort estimate and the steps in their order, or nothing at all.
+  async expectPractice(effort: string, ...steps: string[]) {
+    await expect(this.page.getByText(`Put it into practice · ${effort}`)).toBeVisible();
+    const items = this.page.getByRole('article').locator('ol.practice li');
+    await expect(items).toHaveCount(steps.length);
+    for (const [index, step] of steps.entries()) await expect(items.nth(index)).toHaveText(step);
+  }
+  async expectNoPractice() { await expect(this.page.getByRole('heading', { name: 'Your assignment' })).toHaveCount(0); await expect(this.page.getByText('Put it into practice')).toHaveCount(0); }
   async reload() { await this.page.reload(); }
   async addNote() { await this.page.getByRole('link', { name: 'Add a module note' }).click(); }
   async moreNotes() { await this.page.getByRole('button', { name: 'More notes', exact: true }).click(); }

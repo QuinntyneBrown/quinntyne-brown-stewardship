@@ -44,7 +44,7 @@ export class ModulePage extends ShellPage {
     await this.section(5);
     await this.pause(1600);
     await this.complete();
-    await this.text("1 of 12 complete");
+    await this.text(`1 of ${this.config.moduleCount} complete`);
     await this.pause(2000);
     await this.go("/modules/1");
     await this.section(5);

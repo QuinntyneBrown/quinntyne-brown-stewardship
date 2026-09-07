@@ -1,0 +1,5 @@
+:host { display: inline-flex; }
+span { display: inline-flex; flex-direction: column; width: var(--qbs-control-min); }
+.half { min-height: var(--qbs-stacked-control-min); padding: var(--qbs-space-none); background: var(--qbs-transparent); border-color: var(--qbs-transparent); color: var(--qbs-muted); font-size: var(--qbs-type-caption); }
+.half:hover { color: var(--qbs-text); }
+.half:disabled { color: var(--qbs-disabled-glyph); }

@@ -30,6 +30,19 @@ export class CataloguePage {
       "Confirmation sent to participant@example.com",
     );
   }
+  async expectStates() {
+    await expect(this.page.getByText("Draft")).toBeVisible();
+    await expect(this.page.getByText("Published")).toBeVisible();
+    await expect(
+      this.page.getByRole("button", { name: /Move .* up from position/ }),
+    ).toBeVisible();
+    await expect(
+      this.page.getByRole("navigation", { name: "Authoring trail" }).getByText("Module 03"),
+    ).toBeVisible();
+    await expect(
+      this.page.getByRole("dialog").getByRole("button", { name: "Keep editing" }),
+    ).toBeVisible();
+  }
   async expectAccessible() {
     expect(
       (

@@ -1,0 +1,8 @@
+<div [hidden]="previewing()">
+<qbs-breadcrumb [trail]="trail()">{{ state() }}</qbs-breadcrumb>
+@if (notice) { <qbs-status-message [message]="notice" /> }
+<p class="preview-link"><a class="action-link" routerLink="preview">Preview as a participant</a></p>
+<qbs-module-editor [id]="id" (loaded)="draft.set($event)" (expired)="expired()" (removeRequested)="removeModule()" (promptRemovalRequested)="removePrompt($event)" (sectionRemovalRequested)="removeSection($event)" (sectionAdded)="sectionAdded($event)" (removed)="removed()" />
+</div>
+<router-outlet (activate)="previewing.set(true)" (deactivate)="previewing.set(false)" />
+<qbs-confirm-dialog [heading]="question().heading" [consequence]="question().consequence" [keepLabel]="question().keep" [confirmLabel]="question().confirm" />

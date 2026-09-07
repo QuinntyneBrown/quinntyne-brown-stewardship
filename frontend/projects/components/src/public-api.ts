@@ -16,3 +16,14 @@ export * from "./progress-summary/progress-summary.component";
 export * from "./module-path/module-path.component";
 
 export * from "./slot-picker/slot-picker.component";
+export * from "./breadcrumb-item";
+export * from "./state-pill/state-pill.component";
+export * from "./empty-state/empty-state.component";
+export * from "./breadcrumb/breadcrumb.component";
+export * from "./programme-form/programme-form.component";
+export * from "./confirm-dialog/confirm-dialog.component";
+export * from "./prompt-draft";
+export * from "./text-area-field/text-area-field.component";
+export * from "./order-control/order-control.component";
+export * from "./practice-steps-editor/practice-steps-editor.component";
+export * from "./prompts-editor/prompts-editor.component";

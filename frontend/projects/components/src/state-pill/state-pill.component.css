@@ -1,0 +1,5 @@
+:host { display: inline-flex; }
+.pill { display: inline-flex; align-items: center; gap: var(--qbs-space-xs); min-height: var(--qbs-pill-height); padding: var(--qbs-space-none) var(--qbs-space-sm); border: var(--qbs-border-width) solid var(--qbs-disabled-glyph); border-radius: var(--qbs-radius-pill); color: var(--qbs-secondary-text); font-size: var(--qbs-type-caption); white-space: nowrap; }
+.pill.published { border-color: var(--qbs-line); background: var(--qbs-surface); color: var(--qbs-text); }
+.dot { display: inline-flex; align-items: center; justify-content: center; width: var(--qbs-pill-dot); height: var(--qbs-pill-dot); border: var(--qbs-border-width) solid var(--qbs-subtle); border-radius: var(--qbs-radius-pill); font-size: var(--qbs-type-label); line-height: var(--qbs-flex-one); }
+.published .dot { border-color: var(--qbs-muted); background: var(--qbs-muted); color: var(--qbs-page); }

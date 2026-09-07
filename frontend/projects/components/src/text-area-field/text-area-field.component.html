@@ -1,0 +1,4 @@
+<label [attr.for]="name()">{{ label() }}</label>
+<textarea #control [attr.id]="name()" [attr.name]="name()" [class.tall]="tall()" [value]="value()" (input)="value.set(control.value)" [attr.aria-invalid]="!!error() || over()" [attr.aria-describedby]="error() ? errorId() : null"></textarea>
+<span class="count muted" [class.over]="over()" aria-hidden="true">{{ length() }} / {{ maxLength() }}</span>
+@if (error()) { <p [attr.id]="errorId()" class="error" role="alert">{{ error() }}</p> }

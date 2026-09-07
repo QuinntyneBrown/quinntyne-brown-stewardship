@@ -119,3 +119,4 @@ button:disabled { cursor: not-allowed; }
 h1, h2, h3, p, a { overflow-wrap: anywhere; }
 dialog { max-width: min(var(--qbs-dialog-max), calc(var(--qbs-full) - var(--qbs-space-xl))); padding: var(--qbs-space-xl); background: var(--qbs-surface); color: var(--qbs-text); border: var(--qbs-border-width) solid var(--qbs-control-border); border-radius: var(--qbs-radius); }
 dialog::backdrop { background: var(--qbs-backdrop); }
+.visually-hidden { position: absolute; width: var(--qbs-border-width); height: var(--qbs-border-width); overflow: hidden; clip-path: var(--qbs-clip-hidden); white-space: nowrap; }

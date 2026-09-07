@@ -25,8 +25,15 @@ export class SignInPage {
       this.page.getByRole("heading", { name: "Sign in to continue" }),
     ).toBeVisible();
   }
+  async expectHolding(path: string) {
+    await expect(this.page.getByText("Holding:")).toContainText(path);
+  }
+  async expectNoAuthoredContent() {
+    await expect(this.page.getByRole("main")).not.toContainText(/Stewardship — core|Foundations for founders|Redemptive practice intensive/);
+  }
+  // Field messages are announced too, so the server's message is picked out by its text.
   async expectError(message: string) {
-    await expect(this.page.getByRole("alert")).toContainText(message);
+    await expect(this.page.getByRole("alert").filter({ hasText: message })).toBeVisible();
   }
   async expectEmptyFields() {
     await this.page

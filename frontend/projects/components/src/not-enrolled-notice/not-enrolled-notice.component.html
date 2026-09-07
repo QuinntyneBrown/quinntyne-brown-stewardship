@@ -1,7 +1,6 @@
 <qbs-page-intro
-  eyebrow="Enrollment"
-  heading="You are not yet enrolled in a cohort."
+  [eyebrow]="eyebrow()"
+  [heading]="heading()"
   headingId="enrollment-heading"
-  >A cohort will be assigned to you before the programme begins, and you will be
-  told when it starts. {{ description() }}</qbs-page-intro
+  >{{ intro() }} {{ description() }}</qbs-page-intro
 >

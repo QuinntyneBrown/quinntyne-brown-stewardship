@@ -7,4 +7,7 @@ export interface EnrollmentResult {
   currentWeek: number | null;
   sessionAllowance: number | null;
   hasEnded: boolean | null;
+  durationWeeks: number | null;
+  sessionCadenceWeeks: number | null;
+  isProgrammePublished: boolean | null;
 }

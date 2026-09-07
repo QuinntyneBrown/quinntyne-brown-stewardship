@@ -1,0 +1,4 @@
+<span role="group" [attr.aria-label]="'Order of ' + label()">
+  <button type="button" class="half" [attr.aria-label]="upName()" [disabled]="first()" (click)="moveUp.emit()">▲</button>
+  <button type="button" class="half" [attr.aria-label]="downName()" [disabled]="last()" (click)="moveDown.emit()">▼</button>
+</span>

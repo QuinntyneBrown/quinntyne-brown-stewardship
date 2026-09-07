@@ -1,0 +1,5 @@
+:host { display: grid; gap: var(--qbs-space-xs); }
+label { color: var(--qbs-muted); font-size: var(--qbs-type-small); }
+textarea.tall { min-height: var(--qbs-textarea-tall-height); }
+.count { justify-self: end; font-size: var(--qbs-type-caption); font-variant-numeric: tabular-nums; }
+.count.over { color: var(--qbs-error); }

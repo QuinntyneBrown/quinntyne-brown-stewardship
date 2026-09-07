@@ -1,0 +1,3 @@
+<qbs-breadcrumb [trail]="trail()">{{ state() }}</qbs-breadcrumb>
+<qbs-section-editor [id]="id" (loaded)="draft.set($event)" (expired)="expired()" (removeRequested)="remove()" (removed)="removed()" />
+<qbs-confirm-dialog [heading]="question().heading" [consequence]="question().consequence" [keepLabel]="question().keep" [confirmLabel]="question().confirm" />

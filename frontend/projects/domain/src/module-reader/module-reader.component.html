@@ -1,4 +1,4 @@
-<a class="action-link" routerLink="/curriculum">← Back to curriculum</a>
+@if (!preview()) { <a class="action-link" routerLink="/curriculum">← Back to curriculum</a> }
 @if (error()) { <qbs-retry-notice [message]="error()" (retry)="load()" /> }
 @if (data(); as module) {
   <div class="programme-grid reader-grid">
@@ -6,7 +6,7 @@
       <qbs-progress-summary [completed]="module.completedSections" [total]="module.sections.length" [label]="'Section ' + (section()?.ordinal ?? 1) + ' of ' + module.sections.length" />
       <nav aria-label="Module sections" class="section-navigation">
         @for (item of module.sections; track item.id) {
-          <button type="button" class="secondary section-link" [attr.aria-current]="item.id === selected() ? 'step' : null" (click)="choose(item.id)" [disabled]="!item.isComplete && item.id !== module.resumeSectionId">
+          <button type="button" class="secondary section-link" [attr.aria-current]="item.id === selected() ? 'step' : null" (click)="choose(item.id)" [disabled]="!preview() && !item.isComplete && item.id !== module.resumeSectionId">
             {{ item.ordinal }}. {{ item.title }} <span>{{ item.isComplete ? '✓ Complete' : item.id === module.resumeSectionId ? '→ Current' : '· Not started' }}</span>
           </button>
         }
@@ -16,25 +16,29 @@
       @if (section(); as section) {
         <p class="eyebrow">Section {{ section.ordinal }} of {{ module.sections.length }}</p>
         <h2 #sectionHeading tabindex="-1" class="section-title">{{ section.title }}</h2>
-        @for (paragraph of section.reading.split('
-
-'); track $index) { <p class="reading">{{ paragraph }}</p> }
-        @if (!section.isComplete && section.id === module.resumeSectionId) { <button type="button" (click)="complete()" [disabled]="saving()">{{ saving() ? 'Saving progress…' : 'Mark section complete' }}</button> }
+        @for (paragraph of paragraphs(section.reading); track $index) { <p class="reading">{{ paragraph }}</p> }
+        @if (preview()) {}
+        @else if (!section.isComplete && section.id === module.resumeSectionId) { <button type="button" (click)="complete()" [disabled]="saving()">{{ saving() ? 'Saving progress…' : 'Mark section complete' }}</button> }
         @else { <p class="notice">✓ Section complete</p> }
       }
-      <section class="panel stack"><p class="eyebrow">Put it into practice · {{ module.effortEstimate }}</p><h2>Your assignment</h2>
-        <ol class="practice">@for (step of module.practiceSteps; track $index) { <li>{{ step }}</li> }</ol>
-      </section>
+      @if (module.practiceSteps.length) {
+        <section class="panel stack"><p class="eyebrow">Put it into practice · {{ module.effortEstimate }}</p><h2>Your assignment</h2>
+          <ol class="practice">@for (step of module.practiceSteps; track $index) { <li>{{ step }}</li> }</ol>
+        </section>
+      }
       @if (module.preparationPrompts.length) {
         <section class="stack"><h2>Bring to your next conversation</h2>
         @for (prompt of module.preparationPrompts; track prompt.id) {
           <div class="panel stack compact"><p>{{ prompt.text }}</p>
-          @if (prompt.answer; as answer) { <p class="note-body">{{ answer.body }}</p><a class="action-link" [routerLink]="['/notes', answer.id]">Edit answer</a> }
+          @if (preview()) {}
+          @else if (prompt.answer; as answer) { <p class="note-body">{{ answer.body }}</p><a class="action-link" [routerLink]="['/notes', answer.id]">Edit answer</a> }
           @else { <a class="action-link" routerLink="/notes/new" [queryParams]="{ moduleId: module.id, promptId: prompt.id }">Write an answer</a> }</div>
         }</section>
       }
+      @if (!preview()) {
       <section class="stack"><h2>Module notes</h2><a class="action-link" routerLink="/notes/new" [queryParams]="{ moduleId: module.id }">Add a module note</a>
       <qbs-note-collection [initialNotes]="module.notes" [initialCursor]="module.notesCursor" [moduleId]="module.id" [generalOnly]="true" [showAttachment]="false" emptyMessage="No notes for this module yet." (expired)="expired.emit()" /></section>
+      }
     </article>
   </div>
 } @else if (!error()) { <qbs-status-message message="Loading your module…" /> }

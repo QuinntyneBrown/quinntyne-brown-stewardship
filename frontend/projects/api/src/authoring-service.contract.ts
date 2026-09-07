@@ -1,0 +1,32 @@
+import { CreatedResult } from "./created-result";
+import { CurriculaResult } from "./curricula-result";
+import { CurriculumDraftResult } from "./curriculum-draft-result";
+import { PublicationResult } from "./publication-result";
+import { ModuleDraftResult } from "./module-draft-result";
+import { ModuleRevisionRequest } from "./module-revision-request";
+import { RevisionResult } from "./revision-result";
+import { SectionDraftResult } from "./section-draft-result";
+import { SectionRevisionRequest } from "./section-revision-request";
+export interface IAuthoringService {
+  getProgrammes(): Promise<CurriculaResult>;
+  createProgramme(key: string, title: string): Promise<CreatedResult>;
+  getProgramme(id: string): Promise<CurriculumDraftResult>;
+  renameProgramme(id: string, title: string): Promise<void>;
+  changeKey(id: string, key: string): Promise<void>;
+  removeProgramme(id: string): Promise<void>;
+  publish(id: string): Promise<PublicationResult>;
+  addModule(curriculumId: string, title: string, summary: string): Promise<CreatedResult>;
+  getModule(id: string): Promise<ModuleDraftResult>;
+  reviseModule(id: string, request: ModuleRevisionRequest): Promise<RevisionResult>;
+  removeModule(id: string): Promise<void>;
+  addPrompt(moduleId: string, text: string): Promise<CreatedResult>;
+  revisePrompt(id: string, text: string): Promise<void>;
+  removePrompt(id: string): Promise<void>;
+  addSection(moduleId: string, title: string, reading: string): Promise<CreatedResult>;
+  getSection(id: string): Promise<SectionDraftResult>;
+  reviseSection(id: string, request: SectionRevisionRequest): Promise<RevisionResult>;
+  removeSection(id: string): Promise<void>;
+  reorderModules(curriculumId: string, order: string[]): Promise<void>;
+  reorderSections(moduleId: string, order: string[]): Promise<void>;
+  reorderPrompts(moduleId: string, order: string[]): Promise<void>;
+}

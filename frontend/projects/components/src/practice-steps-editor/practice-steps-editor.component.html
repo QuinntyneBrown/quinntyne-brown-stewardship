@@ -1,0 +1,12 @@
+<ol class="steps" aria-label="Practice steps">
+  @for (step of steps(); track $index; let index = $index) {
+    <li>
+      <qbs-order-control label="practice step" [generic]="true" [position]="index + 1" [total]="steps().length" (moveUp)="move(index, -1)" (moveDown)="move(index, 1)" />
+      <span class="ordinal muted" aria-hidden="true">{{ index + 1 }}</span>
+      <qbs-text-area-field class="field" [label]="'Practice step ' + (index + 1)" [name]="'practice-step-' + (index + 1)" [maxLength]="limit()" [value]="step" (valueChange)="set(index, $event)" [error]="error(index)" />
+      <button type="button" class="secondary remove" [attr.aria-label]="'Remove practice step ' + (index + 1) + ' of ' + steps().length" (click)="remove(index)">Remove</button>
+    </li>
+  }
+</ol>
+<button type="button" class="secondary" (click)="add()">Add step</button>
+<p class="muted">A module with no steps renders no practice block at all.</p>
