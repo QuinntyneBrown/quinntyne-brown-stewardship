@@ -83,6 +83,26 @@ interface ICurriculumStore {
   +Transaction<T>(operation, token: CancellationToken): Task<T>
 }
 
+class SectionDraftResponse {
+  +Guid Id
+  +Guid Revision
+  +int Ordinal
+  +string Title
+  +string Reading
+  +int CompletionCount
+  +bool IsRemovable
+  +Guid ModuleId
+  +string ModuleTitle
+  +int ModuleSectionCount
+  +Guid CurriculumId
+  +string CurriculumTitle
+}
+
+class GetSectionDraftQueryHandler {
+  -ICurriculumStore _store
+  +Handle(query: GetSectionDraftQuery, token: CancellationToken): Task<SectionDraftResponse>
+}
+
 class CurriculumOptions {
   +int TitleMaxLength
   +int ReadingMaxLength
@@ -106,4 +126,6 @@ RemoveSectionCommandHandler ..> OrdinalSequence : compacts the order with
 RemoveSectionCommandHandler --> ICurriculumStore : reads and writes through
 AddSectionCommandHandler ..> CurriculumOptions : bounds authored length with
 ReviseSectionCommand ..> ModuleSection : revises
+GetSectionDraftQueryHandler --> SectionDraftResponse : returns
+SectionDraftResponse --> ModuleSection : projects
 @enduml

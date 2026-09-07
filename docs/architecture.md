@@ -127,6 +127,7 @@ it.
 | `PUT`    | `/administration/curricula/{id}/order`       | Reorder the modules of a programme              |
 | `POST`   | `/administration/curricula/{id}/publication` | Publish the programme and its modules           |
 | `POST`   | `/administration/curricula/{id}/modules`     | Add a module in draft                           |
+| `GET`    | `/administration/sections/{id}`              | One authored section with its reading content   |
 | `GET`    | `/administration/modules/{id}`               | One authored module                             |
 | `PUT`    | `/administration/modules/{id}`               | Revise title, summary, effort, practice steps   |
 | `DELETE` | `/administration/modules/{id}`               | Remove a module nothing recorded depends on     |

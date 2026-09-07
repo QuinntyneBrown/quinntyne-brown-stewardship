@@ -132,8 +132,16 @@ completion belongs to `modules/complete-section`.
 **API.**
 
 - **`SectionsController`** — controller in `Api/Controllers/Administration` exposing
-  `POST /administration/modules/{id}/sections`, `PUT /administration/sections/{id}`, and
-  `DELETE /administration/sections/{id}`. It carries the administration policy.
+  `GET /administration/sections/{id}`, `POST /administration/modules/{id}/sections`,
+  `PUT /administration/sections/{id}`, and `DELETE /administration/sections/{id}`. It carries
+  the administration policy.
+- **`GetSectionDraftQuery`**, **`GetSectionDraftQueryHandler`**, and
+  **`SectionDraftResponse`** — the read behind the editor. The module screen lists sections
+  through `SectionDraftSummary`, which carries a word count and no reading content, so a
+  module of five sections does not drag sixty thousand characters onto a screen that shows
+  none of it. The editor needs the content, so it reads one section by itself. The response
+  carries the section, its revision for the concurrency check (L2-065), the counts the
+  removal panel states, and the module and programme the trail names.
 - **`AddSectionCommand`**, **`AddSectionCommandHandler`**, and
   **`AddSectionCommandValidator`** — the creation slice. The handler appends the section at
   the next free ordinal and stamps `CreatedAt` from `ISystemClock`.

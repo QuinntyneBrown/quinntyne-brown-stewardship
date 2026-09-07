@@ -45,6 +45,14 @@ class CurriculumReadiness {
   +{static} Evaluate(curriculum: Curriculum): CurriculumReadiness
 }
 
+class ReadinessResponse {
+  +bool IsPublishable
+  +string? Reason
+  +int ActiveCohortCount
+  +int ParticipantsMovedBack
+  +int UnpublishedModuleCount
+}
+
 class Cohort {
   +Guid Id
   +Guid CurriculumId
@@ -90,6 +98,8 @@ Curriculum --> PublicationState : holds
 CurriculumModule --> PublicationState : holds
 Cohort --> Curriculum : follows
 CurriculumReadiness ..> Curriculum : evaluates
+ReadinessResponse --> CurriculumReadiness : carries the verdict of
+ReadinessResponse --> Cohort : counts the followers of
 PublishCurriculumCommandHandler ..> PublishCurriculumCommand : handles
 PublishCurriculumCommandHandler ..> CurriculumReadiness : asks
 PublishCurriculumCommandHandler --> Curriculum : publishes
