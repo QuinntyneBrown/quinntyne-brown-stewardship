@@ -10,19 +10,23 @@ namespace QuinntyneBrownStewardship.Infrastructure.Persistence;
 
 public sealed class ProgrammeStore(StewardshipDbContext db) : IProgrammeStore
 {
-    public Task<Enrollment?> Enrollment(Guid participantId, CancellationToken ct) => db.Enrollments.Include(x => x.Cohort).SingleOrDefaultAsync(x => x.ParticipantId == participantId && x.IsActive, ct);
-    public Task<Enrollment?> EnrollmentById(Guid id, CancellationToken ct) => db.Enrollments.Include(x => x.Cohort).SingleOrDefaultAsync(x => x.Id == id, ct);
+    public Task<Enrollment?> Enrollment(Guid participantId, CancellationToken ct) => db.Enrollments.Include(x => x.Cohort).ThenInclude(x => x.Curriculum).SingleOrDefaultAsync(x => x.ParticipantId == participantId && x.IsActive, ct);
+    public Task<Enrollment?> EnrollmentById(Guid id, CancellationToken ct) => db.Enrollments.Include(x => x.Cohort).ThenInclude(x => x.Curriculum).SingleOrDefaultAsync(x => x.Id == id, ct);
     public Task<Participant?> Participant(Guid id, CancellationToken ct) => db.Participants.SingleOrDefaultAsync(x => x.Id == id, ct);
     public Task<Participant?> ParticipantByEmail(string email, CancellationToken ct) => db.Participants.SingleOrDefaultAsync(x => x.NormalizedEmail == email.Trim().ToUpperInvariant(), ct);
     public Task<Cohort?> Cohort(Guid id, CancellationToken ct) => db.Cohorts.SingleOrDefaultAsync(x => x.Id == id, ct);
+    // Both callers guard an act on the programme's current state, so the guard reads the row rather than
+    // whatever this context tracked earlier in the same process, which an import leaves behind as a draft.
+    public Task<Curriculum?> CurriculumByKey(string key, CancellationToken ct) => db.Curricula.AsNoTracking().SingleOrDefaultAsync(x => x.Key == key, ct);
     public Task<bool> SlotHasBookings(Guid id, CancellationToken ct) => db.Bookings.AnyAsync(x => x.SlotId == id, ct);
-    public Task<List<CurriculumModule>> Modules(string key, CancellationToken ct) => db.Modules.Include(x => x.Sections).Include(x => x.PreparationPrompts).AsSplitQuery().Where(x => x.CurriculumKey == key).OrderBy(x => x.Ordinal).ToListAsync(ct);
+    // Participants read published modules only; draft content belongs to the authoring screens.
+    public Task<List<CurriculumModule>> PublishedModules(Guid curriculumId, CancellationToken ct) => db.Modules.Include(x => x.Sections).Include(x => x.PreparationPrompts).AsSplitQuery().Where(x => x.CurriculumId == curriculumId && x.State == PublicationState.Published).OrderBy(x => x.Ordinal).ToListAsync(ct);
     // Progress and booking context require section identities and timestamps,
     // not the entire programme's reading material and preparation prompts.
-    public Task<List<CurriculumModule>> ProgressModules(string key, CancellationToken ct) => db.Modules.AsNoTracking().Where(x => x.CurriculumKey == key).OrderBy(x => x.Ordinal)
+    public Task<List<CurriculumModule>> PublishedProgressModules(Guid curriculumId, CancellationToken ct) => db.Modules.AsNoTracking().Where(x => x.CurriculumId == curriculumId && x.State == PublicationState.Published).OrderBy(x => x.Ordinal)
         .Select(x => new CurriculumModule
         {
-            Id = x.Id, CurriculumKey = x.CurriculumKey, Ordinal = x.Ordinal, Title = x.Title, Summary = x.Summary,
+            Id = x.Id, CurriculumId = x.CurriculumId, Ordinal = x.Ordinal, Title = x.Title, Summary = x.Summary, State = x.State,
             Sections = x.Sections.Select(s => new ModuleSection { Id = s.Id, ModuleId = s.ModuleId, Ordinal = s.Ordinal, CreatedAt = s.CreatedAt }).ToList()
         }).ToListAsync(ct);
     public Task<List<SectionCompletion>> Completions(Guid enrollmentId, CancellationToken ct) => db.Completions.Where(x => x.EnrollmentId == enrollmentId).ToListAsync(ct);
@@ -45,9 +49,7 @@ public sealed class ProgrammeStore(StewardshipDbContext db) : IProgrammeStore
     public async Task<T> Transaction<T>(Func<CancellationToken, Task<T>> operation, CancellationToken ct)
     {
         await using var transaction = await db.Database.BeginTransactionAsync(ct);
-        // A transaction-owned database lock works across API processes and keeps
-        // slot, allowance, completion and revision checks with their writes.
-        await db.Database.ExecuteSqlRawAsync("DECLARE @result int; EXEC @result = sp_getapplock @Resource = 'stewardship-programme-write', @LockMode = 'Exclusive', @LockOwner = 'Transaction', @LockTimeout = 10000; IF @result < 0 THROW 51000, 'Programme lock unavailable', 1;", ct);
+        await ProgrammeLock.Acquire(db.Database, ct);
         var result = await operation(ct);
         await db.SaveChangesAsync(ct);
         await transaction.CommitAsync(ct);

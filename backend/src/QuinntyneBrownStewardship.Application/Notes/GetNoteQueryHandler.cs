@@ -14,6 +14,6 @@ public sealed class GetNoteQueryHandler(IProgrammeStore store, ICurrentParticipa
         var enrollment = await store.EnrollmentById(note.EnrollmentId, ct) ?? throw new ProgrammeException(404, "Note not found.");
         var owner = enrollment.ParticipantId == participant.Id;
         if (!owner && (enrollment.Cohort.MentorId != participant.Id || !(await store.Participant(participant.Id, ct))!.IsMentor)) throw new ProgrammeException(404, "Note not found.");
-        return ProgrammeReader.Note(note, ProgrammeReader.NoteTitle(note, await store.Modules(enrollment.Cohort.CurriculumKey, ct), await store.Bookings(enrollment.Id, ct)), owner);
+        return ProgrammeReader.Note(note, ProgrammeReader.NoteTitle(note, await store.PublishedModules(enrollment.Cohort.CurriculumId, ct), await store.Bookings(enrollment.Id, ct)), owner);
     }
 }

@@ -16,7 +16,7 @@ public partial class Program
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.AddApplication().AddInfrastructure(builder.Configuration);
         builder.Services.AddAuthentication(SessionCookie.Scheme).AddScheme<AuthenticationSchemeOptions, SessionAuthenticationHandler>(SessionCookie.Scheme, _ => { });
-        builder.Services.AddAuthorization();
+        builder.Services.AddAuthorization(options => options.AddPolicy(AdministrationPolicy.Name, policy => policy.RequireRole(AdministrationPolicy.Role)));
         builder.Services.AddAntiforgery(options => { options.HeaderName = "X-CSRF-TOKEN"; options.Cookie.Name = "__Host-StewardshipCsrf"; options.Cookie.SecurePolicy = CookieSecurePolicy.Always; options.Cookie.SameSite = SameSiteMode.Strict; });
         builder.Services.AddControllersWithViews();
         builder.Services.AddExceptionHandler<ProblemDetailsExceptionHandler>();
@@ -36,7 +36,7 @@ public partial class Program
         app.Use(async (context, next) =>
         {
             if (HttpMethods.IsGet(context.Request.Method) && context.Request.GetTypedHeaders().Accept?.Any(x => x.MediaType == "text/html") == true
-                && new[] { "/curriculum", "/modules", "/sessions", "/notes" }.Any(x => context.Request.Path.StartsWithSegments(x)))
+                && new[] { "/curriculum", "/modules", "/sessions", "/notes", "/admin" }.Any(x => context.Request.Path.StartsWithSegments(x)))
                 context.Request.Path = "/index.html";
             await next();
         });

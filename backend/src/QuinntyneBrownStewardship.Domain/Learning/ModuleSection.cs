@@ -1,6 +1,6 @@
 namespace QuinntyneBrownStewardship.Domain.Learning;
 
-public sealed class ModuleSection
+public sealed class ModuleSection : IOrdered
 {
     public Guid Id { get; set; } = Guid.NewGuid();
     public Guid ModuleId { get; set; }
@@ -8,4 +8,5 @@ public sealed class ModuleSection
     public string Title { get; set; } = "";
     public string Reading { get; set; } = "";
     public DateTimeOffset CreatedAt { get; set; }
+    public Guid Revision { get; set; } = Guid.NewGuid();
 }

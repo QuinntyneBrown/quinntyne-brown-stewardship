@@ -34,5 +34,5 @@ const modules = source.split(/^# /m).filter(Boolean).map(block => {
 });
 const destination = `${root}/backend/src/QuinntyneBrownStewardship.Cli/Content`;
 await mkdir(destination, { recursive: true });
-await writeFile(`${destination}/starter-curriculum.json`, JSON.stringify({ key: 'starter', modules }, null, 2) + '\n');
+await writeFile(`${destination}/starter-curriculum.json`, JSON.stringify({ key: 'starter', title: 'Stewardship', modules }, null, 2) + '\n');
 console.log(`Built ${modules.length} modules from the curriculum manuscript.`);

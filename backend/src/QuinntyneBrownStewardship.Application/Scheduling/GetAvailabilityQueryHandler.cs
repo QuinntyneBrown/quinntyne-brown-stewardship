@@ -25,8 +25,8 @@ public sealed class GetAvailabilityQueryHandler(IProgrammeStore store, ISystemCl
         var bookings = await store.Bookings(enrollment.Id, ct);
         var count = bookings.Count(x => x.CancelledAt == null);
         var next = bookings.Where(x => x.CancelledAt == null && x.Slot.StartsAt > clock.UtcNow).OrderBy(x => x.Slot.StartsAt).FirstOrDefault();
-        var reason = summary.HasEnded ? "This cohort has ended. New bookings are unavailable." : next != null ? "You already hold a future session." : count >= cohort.SessionAllowance ? "All six sessions in this cohort have been used." : null;
-        var modules = await store.ProgressModules(cohort.CurriculumKey, ct);
+        var reason = summary.HasEnded ? "This cohort has ended. New bookings are unavailable." : next != null ? "You already hold a future session." : count >= cohort.SessionAllowance ? BookingOperations.ExhaustedMessage(cohort) : null;
+        var modules = await store.PublishedProgressModules(cohort.CurriculumId, ct);
         var completions = await store.Completions(enrollment.Id, ct);
         return new(summary, week, day, days, slots, count, cohort.SessionAllowance, reason, next == null ? null : reader.Booking(next, cohort, modules, completions),
             bookings.Where(x => x.CancelledAt == null && x.Slot.StartsAt <= clock.UtcNow).OrderByDescending(x => x.Slot.StartsAt).Select(x => reader.Booking(x, cohort, modules, completions)).ToList());

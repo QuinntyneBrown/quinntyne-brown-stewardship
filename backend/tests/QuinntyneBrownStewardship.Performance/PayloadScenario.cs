@@ -24,9 +24,10 @@ public static class PayloadScenario
         using var scope = fixture.Services.CreateScope();
         var sender = scope.ServiceProvider.GetRequiredService<ISender>();
         await sender.Send(new ImportCurriculumCommand(curriculum));
+        await fixture.PublishCurriculum(await fixture.CurriculumId(curriculum.Key));
         await sender.Send(new ProvisionMentorCommand("mentor@example.com", ApiFixture.Password, "Performance mentor"));
         var cohort = Guid.NewGuid();
-        await sender.Send(new CreateCohortCommand(cohort, DateOnly.FromDateTime(fixture.Clock.UtcNow.UtcDateTime).AddDays(-7), "mentor@example.com"));
+        await sender.Send(new CreateCohortCommand(cohort, DateOnly.FromDateTime(fixture.Clock.UtcNow.UtcDateTime).AddDays(-7), "mentor@example.com", curriculum.Key, 12, 2));
         await sender.Send(new EnrollParticipantCommand(ApiFixture.Email, cohort));
         using var client = fixture.Browser();
         BookingResponse? booking = null;
@@ -57,25 +58,15 @@ public static class PayloadScenario
             saved.EnsureSuccessStatusCode();
         }
         var responses = new Dictionary<string, object>();
+        using var administrator = await fixture.Administrator();
+        var curriculumId = await fixture.CurriculumId(curriculum.Key);
+        var firstModule = curriculum.Modules.OrderBy(x => x.Ordinal).First();
+        var firstSection = firstModule.Sections.OrderBy(x => x.Ordinal).First();
+        foreach (var (path, reader) in new[] { ("/authentication/session (administrator)", "/authentication/session"), ("/administration/curricula", "/administration/curricula"), ($"/administration/curricula/{curriculumId}", $"/administration/curricula/{curriculumId}"), ($"/administration/modules/{firstModule.Id}", $"/administration/modules/{firstModule.Id}"), ($"/administration/sections/{firstSection.Id}", $"/administration/sections/{firstSection.Id}") })
+            responses.Add(path, await Captured(administrator, reader));
         foreach (var path in new[] { "/authentication/session", "/enrollment", "/curriculum", "/modules/current", "/sessions/availability", "/sessions/history", "/notes", $"/notes/{noteId}", $"/sessions/{booking!.Id}", $"/sessions/{booking.Id}/preparation" })
-        {
-            using var request = new HttpRequestMessage(HttpMethod.Get, path);
-            request.Headers.AcceptEncoding.ParseAdd("br");
-            var start = Stopwatch.GetTimestamp();
-            using var response = await client.SendAsync(request);
-            response.EnsureSuccessStatusCode();
-            var compressed = await response.Content.ReadAsByteArrayAsync();
-            var elapsed = Stopwatch.GetElapsedTime(start).TotalMilliseconds;
-            Assert.Contains("br", response.Content.Headers.ContentEncoding);
-            using var decoder = new BrotliStream(new MemoryStream(compressed), CompressionMode.Decompress);
-            using var body = new MemoryStream(); await decoder.CopyToAsync(body);
-            var bytes = body.ToArray();
-            responses.Add(path, new { body = JsonSerializer.Deserialize<JsonElement>(bytes), uncompressedBytes = bytes.Length, compressedBytes = compressed.Length,
-                // Reserve transport headers in addition to the observed application headers.
-                headerBytes = Encoding.UTF8.GetByteCount(response.Headers + response.Content.Headers.ToString()) + 1000,
-                serverMilliseconds = Math.Round(elapsed, 2) });
-        }
-        var report = new { measuredAt = DateTimeOffset.UtcNow, scenario = "20 distinct 10,000-character Unicode module notes; 20 Unicode session notes; all three preparation answers at 10,000 Unicode characters; five past sessions and one future session; responses compressed by the production middleware", noteId, sessionId = booking!.Id, responses };
+            responses.Add(path, await Captured(client, path));
+        var report = new { measuredAt = DateTimeOffset.UtcNow, scenario = "20 distinct 10,000-character Unicode module notes; 20 Unicode session notes; all three preparation answers at 10,000 Unicode characters; five past sessions and one future session; the administrator's session and the four administration reads of the twelve-module programme; responses compressed by the production middleware", noteId, sessionId = booking!.Id, programmeId = curriculumId, moduleId = firstModule.Id, sectionId = firstSection.Id, responses };
         await File.WriteAllTextAsync(output, JsonSerializer.Serialize(report, new JsonSerializerOptions(JsonSerializerDefaults.Web) { WriteIndented = true }));
         var measurements = new List<Measurement>();
         if (!measureReads) return measurements;
@@ -96,5 +87,24 @@ public static class PayloadScenario
         return measurements;
     }
 
+    // One response as the browser receives it: the body, its compressed and uncompressed sizes, the headers with a transport reserve, and the server time.
+    private static async Task<object> Captured(HttpClient client, string path)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Get, path);
+        request.Headers.AcceptEncoding.ParseAdd("br");
+        var start = Stopwatch.GetTimestamp();
+        using var response = await client.SendAsync(request);
+        response.EnsureSuccessStatusCode();
+        var compressed = await response.Content.ReadAsByteArrayAsync();
+        var elapsed = Stopwatch.GetElapsedTime(start).TotalMilliseconds;
+        Assert.Contains("br", response.Content.Headers.ContentEncoding);
+        using var decoder = new BrotliStream(new MemoryStream(compressed), CompressionMode.Decompress);
+        using var body = new MemoryStream(); await decoder.CopyToAsync(body);
+        var bytes = body.ToArray();
+        return new { body = JsonSerializer.Deserialize<JsonElement>(bytes), uncompressedBytes = bytes.Length, compressedBytes = compressed.Length,
+            // Reserve transport headers in addition to the observed application headers.
+            headerBytes = Encoding.UTF8.GetByteCount(response.Headers + response.Content.Headers.ToString()) + 1000,
+            serverMilliseconds = Math.Round(elapsed, 2) };
+    }
     private static string LongBody() => new(Enumerable.Range(0, 10000).Select(_ => (char)RandomNumberGenerator.GetInt32(0x4e00, 0xa000)).ToArray());
 }

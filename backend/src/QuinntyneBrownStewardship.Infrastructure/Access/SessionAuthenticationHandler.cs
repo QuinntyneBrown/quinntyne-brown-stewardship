@@ -27,7 +27,10 @@ public sealed class SessionAuthenticationHandler(IOptionsMonitor<AuthenticationS
         session.Touch(clock.UtcNow);
         await db.SaveChangesAsync(Context.RequestAborted);
         Response.Cookies.Append(SessionCookie.Name, token, SessionCookie.Options(clock.UtcNow + lifetime.Value.IdleTimeout));
-        var identity = new ClaimsIdentity(new[] { new Claim(ClaimTypes.NameIdentifier, participant.Id.ToString()), new Claim(ClaimTypes.Email, participant.EmailAddress), new Claim("session_id", session.Id.ToString()) }, Scheme.Name);
+        var claims = new List<Claim> { new(ClaimTypes.NameIdentifier, participant.Id.ToString()), new(ClaimTypes.Email, participant.EmailAddress), new("session_id", session.Id.ToString()) };
+        // Authority is read from the account row on every request, so a withdrawal takes effect on the next request without revoking the session.
+        if (participant.IsAdministrator) claims.Add(new Claim(ClaimTypes.Role, AdministrationPolicy.Role));
+        var identity = new ClaimsIdentity(claims, Scheme.Name);
         return AuthenticateResult.Success(new(new ClaimsPrincipal(identity), Scheme.Name));
     }
 }

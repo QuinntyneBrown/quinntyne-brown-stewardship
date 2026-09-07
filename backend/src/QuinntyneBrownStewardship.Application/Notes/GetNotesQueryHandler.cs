@@ -12,7 +12,7 @@ public sealed class GetNotesQueryHandler(IProgrammeStore store, ProgrammeReader 
     {
         var cursor = NoteCursor.Parse(request.Cursor);
         var enrollment = await reader.Enrollment(ct);
-        var modules = await store.ProgressModules(enrollment.Cohort.CurriculumKey, ct);
+        var modules = await store.PublishedProgressModules(enrollment.Cohort.CurriculumId, ct);
         var completions = await store.Completions(enrollment.Id, ct);
         var current = Progress.Current(modules, completions);
         var bookings = await store.Bookings(enrollment.Id, ct);

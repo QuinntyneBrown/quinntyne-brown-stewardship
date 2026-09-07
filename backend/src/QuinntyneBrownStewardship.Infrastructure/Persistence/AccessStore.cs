@@ -25,5 +25,7 @@ public sealed class AccessStore(StewardshipDbContext db) : IAccessStore
         return latest + options.Window;
     }
     public async Task RecordAttempt(SignInAttempt attempt, CancellationToken ct) { db.SignInAttempts.Add(attempt); await db.SaveChangesAsync(ct); }
-    public Task<Enrollment?> FindEnrollment(Guid participantId, CancellationToken ct) => db.Enrollments.AsNoTracking().Include(x => x.Cohort).SingleOrDefaultAsync(x => x.ParticipantId == participantId && x.IsActive, ct);
+    // Confers or withdraws authority and touches nothing else on the account; false means no account holds the address.
+    public async Task<bool> SetAdministrator(string email, bool isAdministrator, CancellationToken ct) => await db.Participants.Where(x => x.NormalizedEmail == email).ExecuteUpdateAsync(s => s.SetProperty(x => x.IsAdministrator, isAdministrator), ct) > 0;
+    public Task<Enrollment?> FindEnrollment(Guid participantId, CancellationToken ct) => db.Enrollments.AsNoTracking().Include(x => x.Cohort).ThenInclude(x => x.Curriculum).SingleOrDefaultAsync(x => x.ParticipantId == participantId && x.IsActive, ct);
 }

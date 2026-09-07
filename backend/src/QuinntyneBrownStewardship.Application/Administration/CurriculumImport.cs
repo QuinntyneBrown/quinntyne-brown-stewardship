@@ -1,4 +1,4 @@
 using QuinntyneBrownStewardship.Domain.Learning;
 namespace QuinntyneBrownStewardship.Application.Administration;
 
-public sealed record CurriculumImport(string Key, List<CurriculumModule> Modules);
+public sealed record CurriculumImport(string Key, string? Title, List<CurriculumModule> Modules);

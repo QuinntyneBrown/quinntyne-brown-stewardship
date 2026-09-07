@@ -17,10 +17,10 @@ public static class Program
 {
     public static async Task<int> Main(string[] args)
     {
-        var expected = args.FirstOrDefault() switch { "migrate" => 1, "provision" or "import-curriculum" or "create-cohort" or "publish-availability" => 2, "provision-mentor" or "enroll" => 3, _ => 0 };
+        var expected = args.FirstOrDefault() switch { "migrate" => 1, "provision" or "provision-administrator" or "grant-administrator" or "revoke-administrator" or "import-curriculum" or "create-cohort" or "publish-availability" => 2, "provision-mentor" or "enroll" => 3, _ => 0 };
         if (expected == 0 || args.Length != expected)
         {
-            Console.Error.WriteLine("Usage: migrate | provision <email> | provision-mentor <email> <display-name> | import-curriculum <json-file> | create-cohort <json-file> | enroll <email> <cohort-id> | publish-availability <json-file>");
+            Console.Error.WriteLine("Usage: migrate | provision <email> | provision-mentor <email> <display-name> | provision-administrator <email> | grant-administrator <email> | revoke-administrator <email> | import-curriculum <json-file> | create-cohort <json-file> | enroll <email> <cohort-id> | publish-availability <json-file>");
             return 2;
         }
         var builder = Host.CreateApplicationBuilder();
@@ -40,8 +40,11 @@ public static class Program
             switch (args[0])
             {
                 case "import-curriculum":
-                    Console.WriteLine($"Imported {await sender.Send(new ImportCurriculumCommand(await Read<CurriculumImport>(args[1])))} modules.");
+                {
+                    var document = await Read<CurriculumImport>(args[1]);
+                    Console.WriteLine($"Imported {await sender.Send(new ImportCurriculumCommand(document))} modules into the draft programme {document.Key}. Publish it from the authoring screens before creating a cohort.");
                     return 0;
+                }
                 case "create-cohort":
                     Console.WriteLine($"Cohort: {await sender.Send(await Read<CreateCohortCommand>(args[1]))}");
                     return 0;
@@ -49,6 +52,14 @@ public static class Program
                     if (!Guid.TryParse(args[2], out var cohortId)) { Console.Error.WriteLine("Supply a valid cohort identifier."); return 2; }
                     Console.WriteLine($"Enrollment: {await sender.Send(new EnrollParticipantCommand(args[1], cohortId))}");
                     return 0;
+                case "grant-administrator":
+                case "revoke-administrator":
+                {
+                    var granted = args[0] == "grant-administrator";
+                    if (!await sender.Send(new SetAdministratorAuthorityCommand(args[1], granted))) { Console.Error.WriteLine("No account holds that email address."); return 1; }
+                    Console.WriteLine(granted ? "Administrator authority granted." : "Administrator authority withdrawn. It takes effect on the next request.");
+                    return 0;
+                }
                 case "publish-availability":
                     Console.WriteLine($"Published {await sender.Send(new PublishAvailabilityCommand(await Read<AvailabilityImport>(args[1])))} slots.");
                     return 0;
@@ -57,10 +68,13 @@ public static class Program
             var password = PasswordPrompt.Read();
             Console.Write("Confirm password: ");
             if (password != PasswordPrompt.Read()) { Console.Error.WriteLine("Passwords do not match."); return 2; }
-            var created = args[0] == "provision-mentor"
-                ? await sender.Send(new ProvisionMentorCommand(args[1], password, args[2]))
-                : await sender.Send(new ProvisionParticipantCommand(args[1], password));
-            Console.WriteLine(created ? args[0] == "provision-mentor" ? "Mentor created." : "Participant created without an enrollment." : "That email address is already registered.");
+            var created = args[0] switch
+            {
+                "provision-mentor" => await sender.Send(new ProvisionMentorCommand(args[1], password, args[2])),
+                "provision-administrator" => await sender.Send(new ProvisionAdministratorCommand(args[1], password)),
+                _ => await sender.Send(new ProvisionParticipantCommand(args[1], password))
+            };
+            Console.WriteLine(created ? args[0] switch { "provision-mentor" => "Mentor created.", "provision-administrator" => "Administrator created.", _ => "Participant created without an enrollment." } : "That email address is already registered.");
             return created ? 0 : 1;
         }
         catch (ValidationException exception) { foreach (var error in exception.Errors) Console.Error.WriteLine(error.ErrorMessage); return 2; }

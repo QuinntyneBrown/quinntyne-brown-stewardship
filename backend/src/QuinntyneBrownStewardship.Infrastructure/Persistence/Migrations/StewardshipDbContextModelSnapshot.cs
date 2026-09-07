@@ -38,6 +38,9 @@ namespace QuinntyneBrownStewardship.Infrastructure.Persistence.Migrations
                         .HasMaxLength(254)
                         .HasColumnType("nvarchar(254)");
 
+                    b.Property<bool>("IsAdministrator")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsMentor")
                         .HasColumnType("bit");
 
@@ -130,10 +133,11 @@ namespace QuinntyneBrownStewardship.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("CurriculumKey")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                    b.Property<Guid>("CurriculumId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("DurationWeeks")
+                        .HasColumnType("int");
 
                     b.Property<Guid?>("MentorId")
                         .HasColumnType("uniqueidentifier");
@@ -142,6 +146,9 @@ namespace QuinntyneBrownStewardship.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasMaxLength(254)
                         .HasColumnType("nvarchar(254)");
+
+                    b.Property<int>("SessionCadenceWeeks")
+                        .HasColumnType("int");
 
                     b.Property<DateOnly>("StartDate")
                         .HasColumnType("date");
@@ -152,6 +159,8 @@ namespace QuinntyneBrownStewardship.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CurriculumId");
 
                     b.HasIndex("MentorId");
 
@@ -184,16 +193,81 @@ namespace QuinntyneBrownStewardship.Infrastructure.Persistence.Migrations
                     b.ToTable("Enrollments");
                 });
 
+            modelBuilder.Entity("QuinntyneBrownStewardship.Domain.Learning.Curriculum", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTimeOffset?>("PublishedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(254)
+                        .HasColumnType("nvarchar(254)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Key")
+                        .IsUnique();
+
+                    b.ToTable("Curricula");
+                });
+
+            modelBuilder.Entity("QuinntyneBrownStewardship.Domain.Learning.CurriculumAudit", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("At")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("CorrelationId")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<Guid>("TargetId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TargetId", "At");
+
+                    b.ToTable("CurriculumAudits");
+                });
+
             modelBuilder.Entity("QuinntyneBrownStewardship.Domain.Learning.CurriculumModule", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("CurriculumKey")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                    b.Property<Guid>("CurriculumId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("EffortEstimate")
                         .IsRequired()
@@ -206,6 +280,15 @@ namespace QuinntyneBrownStewardship.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("Revision")
+                        .IsConcurrencyToken()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
+
                     b.Property<string>("Summary")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -217,7 +300,7 @@ namespace QuinntyneBrownStewardship.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CurriculumKey", "Ordinal")
+                    b.HasIndex("CurriculumId", "Ordinal")
                         .IsUnique();
 
                     b.ToTable("Modules");
@@ -241,6 +324,10 @@ namespace QuinntyneBrownStewardship.Infrastructure.Persistence.Migrations
                     b.Property<string>("Reading")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Revision")
+                        .IsConcurrencyToken()
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -456,10 +543,18 @@ namespace QuinntyneBrownStewardship.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("QuinntyneBrownStewardship.Domain.Enrollment.Cohort", b =>
                 {
+                    b.HasOne("QuinntyneBrownStewardship.Domain.Learning.Curriculum", "Curriculum")
+                        .WithMany()
+                        .HasForeignKey("CurriculumId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("QuinntyneBrownStewardship.Domain.Access.Participant", null)
                         .WithMany()
                         .HasForeignKey("MentorId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Curriculum");
                 });
 
             modelBuilder.Entity("QuinntyneBrownStewardship.Domain.Enrollment.Enrollment", b =>
@@ -477,6 +572,15 @@ namespace QuinntyneBrownStewardship.Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Cohort");
+                });
+
+            modelBuilder.Entity("QuinntyneBrownStewardship.Domain.Learning.CurriculumModule", b =>
+                {
+                    b.HasOne("QuinntyneBrownStewardship.Domain.Learning.Curriculum", null)
+                        .WithMany("Modules")
+                        .HasForeignKey("CurriculumId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("QuinntyneBrownStewardship.Domain.Learning.ModuleSection", b =>
@@ -569,6 +673,11 @@ namespace QuinntyneBrownStewardship.Infrastructure.Persistence.Migrations
                         .HasForeignKey("BookingId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("QuinntyneBrownStewardship.Domain.Learning.Curriculum", b =>
+                {
+                    b.Navigation("Modules");
                 });
 
             modelBuilder.Entity("QuinntyneBrownStewardship.Domain.Learning.CurriculumModule", b =>
