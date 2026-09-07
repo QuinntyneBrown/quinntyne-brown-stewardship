@@ -145,20 +145,25 @@ read before it writes; it inserts and lets the constraint decide, translating th
 violation into a `ProgrammeException` carrying `409`. That is what makes L2-044
 criterion 2 hold under concurrency.
 
-`StatePillComponent` needs two treatments the design system does not yet carry, and
+`StatePillComponent` needs a treatment the design system does not yet carry, and
 `AGENTS.md` requires the token before the stylesheet that reads it. The chip has a fully
 rounded end, which the single existing `--qbs-radius` of `0.25rem` cannot express, so
-`design-system/tokens.css` gains a pill radius. The chip carries a small filled dot whose
-colour separates draft from published, so it gains one colour token for each state. Their
-measured values are `<TO SUPPLY>` until the design system settles them, and each shall meet
-the 3:1 contrast minimum of L2-031 against the chip background. The state name remains the
-accessible label in both cases, so the colour decorates a distinction the text already
-carries rather than being the only thing that carries it (L2-060, L2-034).
+`design-system/tokens.css` gains a pill radius. The chip also carries a small filled dot
+whose colour separates draft from published; the state name remains the accessible label in
+both cases, so that colour decorates a distinction the text already carries rather than
+being the only thing that carries it (L2-060, L2-034).
+
+Three colours the mockups rely on have no token, and they are not new to the administration
+screens: `#C9C2B4` for secondary text, `#3A352C` for the glyph of a control that cannot act,
+and `#221F1A` for a raised surface all appear in the participant mockups as well. The
+administration screens inherit the shortfall rather than introduce it, so the tokens are
+added once and serve both. `#C9C2B4` measures 10.5:1 against the page and clears L2-031
+comfortably.
 
 No component stylesheet in this subsystem shall hold a hex value, a dimension, or a font
-stack. Where the administration mockups introduce a value the token set has no name for,
-the token is added to `design-system/tokens.css` first and mirrored into the front end by
-`npm run tokens`, in the order `AGENTS.md` states.
+stack. Where a mockup uses a value the token set has no name for, the token is added to
+`design-system/tokens.css` first and mirrored into the front end by `npm run tokens`, in the
+order `AGENTS.md` states.
 
 ## Requirements
 

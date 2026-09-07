@@ -39,6 +39,14 @@ named token rather than a property of a screen nobody re-checked. The tokens dra
 the current screen mockups include several whose measured ratio falls below the minimum;
 their replacement values are `<TO SUPPLY>` and are settled in the mockup correction pass.
 
+One measured value falls below the minimum by design rather than by oversight. The glyph of
+a move control that cannot act, on the first or last item of a set, sits at roughly 1.5:1
+against the page. WCAG 2.1 places no contrast requirement on an inactive component, and the
+control states its condition in its accessible name, so a reader who cannot see the glyph is
+told that the item is first of twelve and cannot move up. The low ratio is the signal that
+the control is inert, and `--qbs-disabled-opacity` stays at `1` because the colour carries
+that distinction instead of a dimming.
+
 The authoring screens carry the same obligations, and two of them bite harder there than
 anywhere in the participant experience (L2-060). Ordering is the first: a control that
 moves a module or a section shall be operable by keyboard alone, and the resulting
