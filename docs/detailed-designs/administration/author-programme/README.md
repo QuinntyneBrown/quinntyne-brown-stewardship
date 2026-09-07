@@ -90,6 +90,9 @@ to `administration/authorise-administrator`.
 - **`StatePillComponent`** — presentational component in the `components` library
   rendering a publication state as text within a chip. It injects nothing, and its label is
   the state name so the state survives greyscale and a screen reader.
+- **`BreadcrumbComponent`** — presentational component in the `components` library, designed
+  in `administration/author-module`. The programme index is the root of the trail every
+  authoring screen renders.
 - **`IAuthoringService`** / **`AUTHORING_SERVICE`** / **`AuthoringService`** — the
   contract, its `InjectionToken`, and the HTTP implementation, each in its own file in the
   `api` library. `AuthoringServiceMock` binds to the same token under Playwright.

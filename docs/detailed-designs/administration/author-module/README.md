@@ -65,11 +65,17 @@ planning aid for the author and not a schedule. Nothing unlocks a module because
 passed, and no participant is told which week they are on from the module they reached, so
 the figure appears here and on no participant screen.
 
-The module editor is reached at `/admin/modules/:id`, a route that names the module and not
-the programme holding it, so the screen renders the way back rather than relying on one.
-`platform/responsive-shell` settles why: a narrow screen shows one place at a time, so the
-return has to be visible on the screen itself. The module carries the identifier of its
-programme, so the editor names that programme and links to it without a further read
+The authoring routes are flat. `/admin/modules/:id` names a module and not the programme
+holding it, and `/admin/sections/:id` names neither, so no authoring screen can be placed
+from its URL alone. Every one of them therefore renders a trail: the programme index, then
+the programme, then the module, then the section, each level a link to the screen above it.
+The trail deepens with the screen, from one level on the programme index to four in the
+section editor, and it is the only route back from a section to the module holding it.
+
+At XS the trail condenses to a single label naming the level above, `Authoring - module 03`
+rather than the full path, because four levels of link would take more of a narrow screen
+than the content they lead away from. The way back stays visible at every width, which is
+what `platform/responsive-shell` requires of a screen that shows one place at a time
 (L2-059).
 
 What a section holds belongs to `administration/author-section`. Reordering the modules of
@@ -107,6 +113,12 @@ belongs to `notes/prepare-for-session`, which this feature supplies but does not
   library rendering a `role="status"` region. The editor writes the outcome of a save into
   it, because a save returns no new content to render and would otherwise pass unremarked
   (L2-060).
+- **`BreadcrumbComponent`** — presentational component in the `components` library. It takes
+  the ordered trail as an input, renders each level above the current one as a link and the
+  current one as plain text, and condenses to the single level above at XS. It injects
+  nothing but Angular's `RouterLink`, which `AGENTS.md` permits a presentational component,
+  so it stays publishable with the rest of the library. All four authoring page components
+  compose it.
 
 **API.**
 

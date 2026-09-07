@@ -105,6 +105,10 @@ completion belongs to `modules/complete-section`.
   library. It renders the refusal returned when a removal is declined.
 - **`StatusMessageComponent`** — existing presentational component in the `components`
   library rendering a `role="status"` region. A save reports its outcome through it.
+- **`BreadcrumbComponent`** — presentational component in the `components` library, designed
+  in `administration/author-module`. The section editor carries the deepest trail of the four
+  authoring screens, and that trail is its only route back to the module holding the
+  section.
 - **`SectionEditorPageComponent.canLeave`** — `CanDeactivateFn` guard on the authoring
   routes, mirroring the guard the note editor already carries. It returns `false` while the
   editor reports unsaved changes, and the page registers a `beforeunload` handler for the
