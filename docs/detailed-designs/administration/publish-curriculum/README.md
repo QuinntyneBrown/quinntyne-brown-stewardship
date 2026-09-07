@@ -103,6 +103,13 @@ to `curriculum/unlock-and-resume`, and how the allowance governs booking belongs
 - **`ProgrammeMockStore`** — mock data source in the `api` library testing entry point. Its
   hard-coded twelve module titles, fixed five sections, and `12 - completed` arithmetic are
   replaced by a fabricated programme whose size the test states.
+- **`CohortServiceMock`**, **`SessionServiceMock`**, and **`CurriculumServiceMock`** — the
+  three service mocks bound to the tokens beside that store. Each carries a shape literal of
+  its own rather than reading one from the store: a `sessionAllowance` of 6 and an end date
+  twelve weeks after the start in the first, an `allowance` of 6 in the second, and a
+  fallback ordinal of 12 in the second and third. Correcting the store alone would leave the
+  figures the sessions screen is asserted against untouched, so each takes its shape from the
+  fabricated cohort instead (L2-057).
 - **`PublicationResult`** — `api` result type carrying the outcome and, when publication is
   refused, the reason.
 - **`ReadinessResult`** — `api` result type carried on the draft response, holding whether
