@@ -138,6 +138,13 @@ to `curriculum/unlock-and-resume`, and how the allowance governs booking belongs
 - **`Cohort`** — existing domain entity. `DurationWeeks` and `SessionCadenceWeeks` change
   from expression-bodied constants to stored properties; `SessionAllowance`, `EndDate`, and
   `CurrentWeek` continue to derive from them and so become correct for any cohort.
+- **`CohortSummary`** — existing response record. It carries `CurrentWeek` and
+  `SessionAllowance` and neither the duration nor the cadence they are measured against, so
+  the client has no value to put where the literal twelve stands. A screen reading "Week 3 of
+  12" cannot be corrected by reaching for a field that is not there. It gains
+  `DurationWeeks` and `SessionCadenceWeeks`, both of which the cohort now stores rather
+  than computes, which is what lets every figure on the curriculum screen come from the
+  response (L2-057, L2-058).
 - **`ProgrammeReader`** — existing shared read helper. It filters modules to the published
   state and reads the module count from the programme, which is what makes L2-053 and
   L2-056 hold for every participant screen at once.
