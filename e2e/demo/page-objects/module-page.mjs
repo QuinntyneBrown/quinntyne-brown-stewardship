@@ -1,4 +1,48 @@
 export class ModulePage extends ShellPage {
+  async develop() {
+    await this.go("/modules/4");
+    await this.page
+      .getByRole("heading", {
+        name: "Develop with the Holy Spirit",
+        exact: true,
+      })
+      .waitFor();
+    const response = await this.page.request.get(
+      this.config.baseUrl + "/modules/4",
+    );
+    if (response.status() !== 200)
+      throw new Error(
+        "DEMO-04: Develop is not available to the prepared advanced account.",
+      );
+    const data = await response.json();
+    const reading = data.sections.map((s) => s.reading).join("\n");
+    for (const movement of [
+      "Request",
+      "Receive",
+      "Review",
+      "Render",
+      "Rejoice",
+    ]) {
+      if (!reading.includes(movement))
+        throw new Error(`DEMO-01: Missing ${movement}.`);
+    }
+    await this.choose("The Co-Creation Cycle");
+    this.page.__demo.checks.push(
+      "DEMO-04: The advanced account can review all five Rs through the real Develop reader.",
+    );
+  }
+  async choose(title) {
+    await this.page
+      .getByRole("navigation", { name: "Module sections" })
+      .getByRole("button", { name: new RegExp(title) })
+      .click();
+    const heading = this.page.getByRole("heading", {
+      name: title,
+      exact: true,
+    });
+    await heading.waitFor();
+    await heading.scrollIntoViewIfNeeded();
+  }
   async section(position) {
     await this.page
       .getByRole("progressbar", {

@@ -1,0 +1,112 @@
+{
+  "sha256": "d8f060d2054378699827e6a500acebea49090038e17767cf06cbafe5d36b9969",
+  "baseRevision": "e041a87476c0de25c12e190f6aaa2f1d3c5f73f3",
+  "recordedAt": "2026-09-07T21:30:33.546Z",
+  "chapters": 13,
+  "observedHttpResponses": 108,
+  "checks": [
+    "The live HTTPS API and SQL database report Healthy.",
+    "The application favicon returns 200.",
+    "DEMO-01: The live curriculum contains Prepare followed by the four Ds in order.",
+    "Section progress persisted after reload; completing module 1 unlocked module 2; completed reading remains available.",
+    "DEMO-01: The live curriculum contains Prepare followed by the four Ds in order.",
+    "DEMO-03: The complete reflection persists after reload.",
+    "DEMO-04: The advanced account can review all five Rs through the real Develop reader.",
+    "Signed-out notes API returns 401; browser history and direct URLs return to sign-in."
+  ],
+  "unexpectedResponses": [],
+  "pageErrors": [],
+  "media": {
+    "duration": 332.12,
+    "width": 1280,
+    "height": 720,
+    "bytes": 11131634,
+    "meanDb": -22,
+    "fullDecode": true
+  },
+  "playback": {
+    "seeking": 0,
+    "errors": [],
+    "rateChanges": 0,
+    "duration": 332.12,
+    "quality": {
+      "totalVideoFrames": 8303,
+      "droppedVideoFrames": 18,
+      "corruptedVideoFrames": 0
+    },
+    "sha256": "d8f060d2054378699827e6a500acebea49090038e17767cf06cbafe5d36b9969",
+    "wallSeconds": 332.864,
+    "reviewedAt": "2026-09-07T21:46:17.055Z",
+    "checkpoints": [
+      {
+        "name": "opening",
+        "time": 1
+      },
+      {
+        "name": "01-welcome-to-stewardship",
+        "time": 7.042
+      },
+      {
+        "name": "02-faithtech-the-four-ds",
+        "time": 28.927
+      },
+      {
+        "name": "03-read-practise-prepare",
+        "time": 64.773
+      },
+      {
+        "name": "04-progress-that-stays-with-you",
+        "time": 95.11
+      },
+      {
+        "name": "05-save-a-reflection",
+        "time": 123.679
+      },
+      {
+        "name": "06-make-time-with-your-mentor",
+        "time": 155.26500000000001
+      },
+      {
+        "name": "07-bring-a-thoughtful-question",
+        "time": 182.143
+      },
+      {
+        "name": "08-develop-the-five-rs",
+        "time": 203.597
+      },
+      {
+        "name": "09-request-and-receive",
+        "time": 227.095
+      },
+      {
+        "name": "10-review-and-render",
+        "time": 245.073
+      },
+      {
+        "name": "11-rejoice-then-begin-again",
+        "time": 266.40000000000003
+      },
+      {
+        "name": "12-carry-the-programme-with-you",
+        "time": 298.026
+      },
+      {
+        "name": "13-continue-with-intention",
+        "time": 316.398
+      },
+      {
+        "name": "ending",
+        "time": 331.31
+      }
+    ]
+  },
+  "visual": {
+    "sha256": "d8f060d2054378699827e6a500acebea49090038e17767cf06cbafe5d36b9969",
+    "notes": "Inspected the opening, all thirteen chapter frames, and ending decoded from the WebM during complete normal-speed playback. The FaithTech path, saved reflection, booked mentor session, saved preparation answer, and all five R readings are visible. Captions are legible in a separate lower strip; mobile footage is centered at native width. The final frame remains on protected sign-in. Full decode passed; Windows David narration has measured mean level -22 dB, with complete clips fitting their chapter windows.",
+    "reviewedAt": "2026-09-07T21:47:26.6102577+00:00"
+  },
+  "cleanup": {
+    "errors": [],
+    "completedAt": "2026-09-07T17:32:45.6354557-04:00"
+  }
+}

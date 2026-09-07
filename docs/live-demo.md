@@ -1,5 +1,9 @@
 # Five-minute live application walkthrough
 
+For the current FaithTech participant recording with Microsoft David narration,
+see the [verified demo artifacts and rerun guide](demo/README.md). This document
+preserves the earlier, broader 17-chapter MP4 walkthrough and its commands.
+
 The walkthrough exercises the production Angular bundle at
 `https://localhost:7240`, using the real HTTP adapters, HTTPS API, and a dedicated
 SQL Server database. Playwright CLI drives the browser and captures the footage.

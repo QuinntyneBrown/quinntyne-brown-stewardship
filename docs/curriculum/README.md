@@ -57,6 +57,13 @@ and Create, the Co-Creation Cycle and the Scripture selections are taken from
 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). The teaching prose around them is
 this repository's own, and FaithTech does not endorse this software.
 
+The participant demo also cross-checks the cycle names against
+[Liturgy](https://github.com/QuinntyneBrown/Liturgy), which demonstrates the four Ds
+and the five Rs inside Develop. Liturgy is a reference example; Stewardship does
+not implement its project boards or phase-gate engine. These sources were reviewed
+on September 7, 2026. The existing five-module manuscript already covers both
+cycles, so the demo imports it rather than creating a second curriculum.
+
 Replacing this curriculum with your own is the expected thing to do. Nothing about the
 platform depends on its subject, and only its module count reaches the demo, which reads
 that count from the document it imports.

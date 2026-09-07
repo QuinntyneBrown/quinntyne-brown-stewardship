@@ -1,13 +1,23 @@
-param([int]$Port = 7240)
+param([int]$Port = 7240, [string]$OutputDirectory = '.local/live-demo', [switch]$ParticipantDemo)
 $ErrorActionPreference = 'Stop'
 $workspace = Split-Path $PSScriptRoot -Parent
 Set-Location $workspace
+$output = [IO.Path]::GetFullPath($OutputDirectory, $workspace)
+$localRoot = [IO.Path]::GetFullPath((Join-Path $workspace '.local')) + [IO.Path]::DirectorySeparatorChar
+if (-not $output.StartsWith($localRoot, [StringComparison]::OrdinalIgnoreCase)) { throw 'Demo output must be inside this workspace .local directory.' }
+if ($ParticipantDemo -and (Test-Path -LiteralPath "$output/run.json")) { throw 'Choose a fresh output directory for each participant take.' }
+$savedEnvironment = @{}
+foreach ($name in @('ConnectionStrings__Stewardship','STEWARDSHIP_TEST_SQL','ASPNETCORE_ENVIRONMENT','ASPNETCORE_URLS','HttpsPort')) { $savedEnvironment[$name] = [Environment]::GetEnvironmentVariable($name) }
+$process = $null
+try {
 if (Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue) { throw "Port $Port is already in use. Choose another demo port." }
+if (Get-NetTCPConnection -LocalPort ($Port-2000) -State Listen -ErrorAction SilentlyContinue) { throw 'The demo HTTP redirect port is already occupied.' }
 . "$PSScriptRoot/use-local-sql.ps1"
-$demoDatabase = 'StewardshipDemo_' + (Get-Date -Format 'yyyyMMdd_HHmmss')
+$demoDatabase = 'StewardshipDemo_' + [Guid]::NewGuid().ToString('N')
 $env:ConnectionStrings__Stewardship = $env:ConnectionStrings__Stewardship.Replace('Database=Stewardship;', "Database=$demoDatabase;")
-$output = Join-Path $workspace '.local/live-demo'
 New-Item -ItemType Directory -Force -Path $output | Out-Null
+# Track the allocated database before the first command, including partial setup failures.
+@{baseUrl="https://localhost:$Port"; database=$demoDatabase; connectionString=$env:ConnectionStrings__Stewardship; processId=$null; preparedAt=[DateTimeOffset]::Now.ToString('o')} | ConvertTo-Json | Set-Content -LiteralPath "$output/run.json"
 $cli = Join-Path $workspace 'backend/src/QuinntyneBrownStewardship.Cli/bin/Release/net10.0/QuinntyneBrownStewardship.Cli.dll'
 $demoPassword = 'Demo-' + [Guid]::NewGuid().ToString('N') + '!'
 function Invoke-DemoCli([string[]]$Arguments, [switch]$Password) {
@@ -29,7 +39,7 @@ Invoke-DemoCli @('import-curriculum', $curriculumPath)
 # the readiness rule itself is proven by the API acceptance suite.
 Invoke-DemoSql "UPDATE Curricula SET State = N'Published', PublishedAt = SYSDATETIMEOFFSET() WHERE [Key] = 'starter'; UPDATE m SET m.State = N'Published' FROM Modules m JOIN Curricula c ON c.Id = m.CurriculumId WHERE c.[Key] = 'starter';"
 Invoke-DemoCli @('provision-mentor', 'mentor@demo.invalid', 'Quinntyne Brown') -Password
-foreach ($account in @('participant', 'rehearsal', 'awaiting', 'cutoff', 'graduate', 'reserved')) {
+foreach ($account in @('participant', 'rehearsal', 'awaiting', 'cutoff', 'graduate', 'reserved', 'advanced')) {
     Invoke-DemoCli @('provision', "$account@demo.invalid") -Password
 }
 $cohort = [Guid]::NewGuid(); $endedCohort = [Guid]::NewGuid()
@@ -43,7 +53,7 @@ foreach ($definition in @(
     $definition | ConvertTo-Json | Set-Content -LiteralPath "$output/cohort.json"
     Invoke-DemoCli @('create-cohort', "$output/cohort.json")
 }
-foreach ($account in @('participant', 'rehearsal', 'cutoff', 'reserved')) { Invoke-DemoCli @('enroll', "$account@demo.invalid", $cohort.ToString()) }
+foreach ($account in @('participant', 'rehearsal', 'cutoff', 'reserved', 'advanced')) { Invoke-DemoCli @('enroll', "$account@demo.invalid", $cohort.ToString()) }
 Invoke-DemoCli @('enroll', 'graduate@demo.invalid', $endedCohort.ToString())
 $firstDay = (Get-Date).Date.AddDays(3)
 $slots = @()
@@ -72,7 +82,8 @@ INSERT INTO Completions (Id,EnrollmentId,SectionId,CompletedAt)
 SELECT NEWID(),e.Id,s.Id,DATEADD(day,-22,@now) FROM Enrollments e
 JOIN Participants p ON p.Id=e.ParticipantId CROSS JOIN Sections s
 WHERE (p.EmailAddress IN ('participant@demo.invalid','rehearsal@demo.invalid') AND s.ModuleId=@module AND s.Ordinal<=2)
-OR p.EmailAddress='graduate@demo.invalid';
+OR p.EmailAddress='graduate@demo.invalid'
+OR (p.EmailAddress='advanced@demo.invalid' AND s.ModuleId IN (SELECT Id FROM Modules WHERE Ordinal<=4));
 DECLARE @enrollment uniqueidentifier, @email nvarchar(254), @i int, @slot uniqueidentifier, @booking uniqueidentifier;
 DECLARE accounts CURSOR LOCAL FAST_FORWARD FOR
 SELECT e.Id,p.EmailAddress FROM Enrollments e JOIN Participants p ON p.Id=e.ParticipantId
@@ -117,7 +128,7 @@ $env:ASPNETCORE_URLS = "https://localhost:$Port;http://localhost:$($Port-2000)"
 $env:HttpsPort = $Port.ToString()
 $api = Join-Path $workspace 'backend/src/QuinntyneBrownStewardship.Api/bin/Release/net10.0/QuinntyneBrownStewardship.Api.dll'
 $process = Start-Process -FilePath dotnet -ArgumentList @($api) -WorkingDirectory (Join-Path $workspace 'backend/src/QuinntyneBrownStewardship.Api') -WindowStyle Hidden -PassThru -RedirectStandardOutput "$output/api.stdout.log" -RedirectStandardError "$output/api.stderr.log"
-@{baseUrl="https://localhost:$Port"; database=$demoDatabase; processId=$process.Id; password=$demoPassword; firstDay=$firstDay.ToString('yyyy-MM-dd'); moduleCount=$moduleCount; sessionAllowance=$sessionAllowance; preparedAt=[DateTimeOffset]::Now.ToString('o')} | ConvertTo-Json | Set-Content -LiteralPath "$output/run.json"
+@{baseUrl="https://localhost:$Port"; database=$demoDatabase; connectionString=$env:ConnectionStrings__Stewardship; processId=$process.Id; processStartedAt=$process.StartTime.ToUniversalTime().ToString('o'); password=$demoPassword; firstDay=$firstDay.ToString('yyyy-MM-dd'); moduleCount=$moduleCount; sessionAllowance=$sessionAllowance; preparedAt=[DateTimeOffset]::Now.ToString('o')} | ConvertTo-Json | Set-Content -LiteralPath "$output/run.json"
 $ready = $false
 for ($attempt = 0; $attempt -lt 30; $attempt++) {
     if ($process.HasExited) { throw "The demo API exited. See $output/api.stderr.log." }
@@ -128,3 +139,9 @@ for ($attempt = 0; $attempt -lt 30; $attempt++) {
 }
 if (-not $ready) { throw "The demo API did not become healthy. See $output/api.stderr.log." }
 Write-Output "Demo prepared at https://localhost:$Port with database $demoDatabase and API process $($process.Id)."
+} catch {
+    if ($process -and -not $process.HasExited) { Stop-Process -Id $process.Id -Force -ErrorAction Continue }
+    throw
+} finally {
+    foreach ($name in $savedEnvironment.Keys) { [Environment]::SetEnvironmentVariable($name, $savedEnvironment[$name]) }
+}
