@@ -80,7 +80,7 @@ and will form the initial `0.1.0` release.
 
 **Curriculum administration (requirements and design only)**
 
-- Requirements `L1-011` through `L1-014` and `L2-041` through `L2-063` covering
+- Requirements `L1-011` through `L1-014` and `L2-041` through `L2-064` covering
   administrator access, curriculum authoring, publication, and derived programme
   shape.
 - Detailed designs under `docs/detailed-designs/administration` for six authoring

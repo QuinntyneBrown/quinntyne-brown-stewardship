@@ -40,6 +40,21 @@ class AdministrationPolicy {
   +{static} Configure(options: AuthorizationOptions): void
 }
 
+class ProvisionAdministratorCommand {
+  +string EmailAddress
+  +string Password
+}
+
+class SetAdministratorAuthorityCommand {
+  +string EmailAddress
+  +bool Held
+}
+
+class SetAdministratorAuthorityCommandHandler {
+  -IAccessStore _store
+  +Handle(command: SetAdministratorAuthorityCommand, token: CancellationToken): Task<bool>
+}
+
 class GetSessionQuery {
 }
 
@@ -60,4 +75,7 @@ AdministrationPolicy ..> SessionAuthenticationHandler : requires the claim issue
 GetSessionQueryHandler ..> GetSessionQuery : handles
 GetSessionQueryHandler --> ICurrentParticipant : reads
 GetSessionQueryHandler --> SessionResponse : returns
+ProvisionAdministratorCommand ..> Participant : creates holding the authority
+SetAdministratorAuthorityCommandHandler ..> SetAdministratorAuthorityCommand : handles
+SetAdministratorAuthorityCommandHandler --> Participant : sets IsAdministrator on
 @enduml

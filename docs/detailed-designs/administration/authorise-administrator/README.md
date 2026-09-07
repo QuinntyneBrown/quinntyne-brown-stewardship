@@ -82,10 +82,35 @@ may then do belongs to the five sibling features of this subsystem.
   its response record. `SessionResponse` gains `bool IsAdministrator`, answering L2-041.
 - **`Participant`** — existing domain entity. It gains `bool IsAdministrator` beside the
   `IsMentor` flag it already carries.
+- **`ProvisionAdministratorCommand`**, **`ProvisionAdministratorCommandHandler`**, and
+  **`ProvisionAdministratorCommandValidator`** — the provisioning slice behind the
+  command-line `provision-administrator` verb. It mirrors `ProvisionMentorCommand` and
+  creates an account already holding the authority.
+- **`SetAdministratorAuthorityCommand`** and
+  **`SetAdministratorAuthorityCommandHandler`** — one slice behind both
+  `grant-administrator` and `revoke-administrator`. It carries the email address and the
+  authority to set, reports when no account holds that address, and changes nothing else on
+  the account (L2-064 criterion 4).
 
 An account may hold administrator authority and participate in a cohort at the same time.
-The two flags are independent, and neither implies the other. Nothing in this design
-grants a mentor authority over curriculum.
+The two flags are independent, and neither implies the other. Nothing in this design grants
+a mentor authority over curriculum.
+
+Authority is conferred from outside the application. Every authoring screen requires an
+administrator, so the first administrator cannot be made on one; an operator with access to
+the deployment provisions it instead (L2-064). The command-line tool gains
+`provision-administrator` to create an account holding the authority, and
+`grant-administrator` and `revoke-administrator` to confer it on and withdraw it from an
+account that already exists. Conferring authority on a participant leaves their enrollment
+and their recorded progress untouched, because the flag sits beside `IsMentor` on the
+account and touches nothing else (L2-064 criterion 2). Withdrawal takes effect on the next
+request rather than immediately, because the role claim is issued when the session cookie is
+read; the session is not revoked, so a participant who loses the authority keeps reading
+their own programme.
+
+No authoring screen and no authoring endpoint offers a way to grant this authority. Keeping
+the grant out of the application is what stops an administrator escalating another account,
+and it is why the operator path is the only one.
 
 ## Requirements
 
@@ -99,6 +124,7 @@ a level-1 (L1) requirement, cited by identifier. Requirement text is quoted from
 | `L2-042` | `L1-011` | Every authoring screen requires administrator authority, whether reached by navigation or by direct URL. |
 | `L2-043` | `L1-011` | The API refuses authoring calls from participants and from unauthenticated clients, and refuses them before any change is made. |
 | `L2-061` | `L1-009` | Authoring endpoints carry every protection the participant endpoints carry, and the role check besides. |
+| `L2-064` | `L1-011` | The first administrator cannot be created through a screen that requires an administrator. Authority is conferred by an operator with access to the deployment rather than through the application, and it can be withdrawn the same way. |
 
 ## Diagrams
 
@@ -124,7 +150,8 @@ is issued, which is what makes L2-041 criterion 3 hold.
 
 `Participant` carries two independent flags, and the session response carries the one that
 governs authoring. `ICurrentParticipant` exposes the authority to handlers so that no
-handler reads `HttpContext` directly.
+handler reads `HttpContext` directly. The two provisioning commands are the only writers of
+`IsAdministrator`, and both are reachable from the command-line tool alone (L2-064).
 
 ![Class diagram for authorising an administrator](diagrams/class-structure.png)
 
