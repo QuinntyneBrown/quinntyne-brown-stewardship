@@ -124,7 +124,11 @@ completion belongs to `modules/complete-section`.
   section. These records are what a section removal is checked against.
 - **`Note`** — existing domain entity carrying an optional `ModuleId` and an optional
   `PromptId`, both foreign keys with `DeleteBehavior.Restrict`. A note is a dependent record
-  exactly as a completion is, so a module removal is checked against notes as well.
+  exactly as a completion is, so a module removal is checked against notes as well. Its
+  `Revision` concurrency token is the pattern `ModuleSection` follows for L2-065.
+- **`ModuleSection.Revision`** — `Guid` configured as a concurrency token. A save carrying a
+  stale revision fails rather than overwriting the revision stored since, and the handler
+  translates the failure into a `409` the editor can explain.
 - **`ICurriculumStore`** — application abstraction. It supplies `Remove<T>(entity)` and
   the dependency counts the rule reads: `CompletionCount(sectionId, token)`,
   `ModuleNoteCount(moduleId, token)`, and `PromptAnswerCount(moduleId, token)`. Counting
@@ -151,6 +155,7 @@ a level-1 (L1) requirement, cited by identifier. Requirement text is quoted from
 | `L2-048` | `L1-012` | Sections carry the reading content of a module and are authored within it. |
 | `L2-050` | `L1-012` | Recorded participant history outranks authoring convenience. Content a participant has completed, answered, or written a note against cannot be deleted out from under that record. |
 | `L2-063` | `L1-012` | Authored content is long, and a section of reading is the longest of it. An administrator who leaves an authoring screen holding unsaved changes must be warned before those changes are lost. |
+| `L2-065` | `L1-012` | Curriculum is shared, and two administrators may hold the same module or section open. A save must not overwrite a revision made since the content was loaded, and a failed save must not cost the administrator their work. |
 
 ## Diagrams
 

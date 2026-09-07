@@ -46,6 +46,19 @@ the effort estimate, a practice step, or a prompt and has not saved it is warned
 navigation or a tab close discards the change (L2-063). The warning is driven by a single
 `dirty` signal over the whole form, so a change to any part of the module raises it.
 
+Curriculum is shared, which is what separates it from a note. A participant's note belongs
+to one participant, and it still carries a revision token so a second save cannot silently
+overwrite the first. A module belongs to every administrator, so the same protection
+matters more, not less: two administrators may hold one module open, and the later save is
+refused rather than allowed to discard the earlier one (L2-065). The refusal states that
+the content changed and offers the current content, so the administrator can see what they
+would have overwritten before deciding.
+
+A failed save keeps the work. The editor reports the failure and leaves every unsaved change
+in the form, including when the session has expired, because redirecting to sign-in with
+long-form authored content in a textarea would discard exactly what L2-063 exists to protect
+(L2-065 criterion 5).
+
 The module editor is reached at `/admin/modules/:id`, a route that names the module and not
 the programme holding it, so the screen renders the way back rather than relying on one.
 `platform/responsive-shell` settles why: a narrow screen shows one place at a time, so the
@@ -113,7 +126,9 @@ belongs to `notes/prepare-for-session`, which this feature supplies but does not
   with its handler — the preparation prompt slices. `RevisePromptCommand` changes the text
   and leaves the identifier alone, which is what preserves an attached answer.
 - **`CurriculumModule`** — domain entity for one module, owning its ordinal, title,
-  summary, effort estimate, practice steps, sections, and prompts.
+  summary, effort estimate, practice steps, sections, and prompts. It gains a `Guid
+  Revision` configured as a concurrency token, mirroring `Note.Revision`, so a stale save
+  fails at the database rather than overwriting.
 - **`PreparationPrompt`** — domain entity for one prompt, owning its ordinal and its text.
 - **`OrdinalSequence`** — domain service that assigns contiguous positions to an ordered
   set of children. It is described in `administration/order-curriculum` and used here when
@@ -135,6 +150,7 @@ a level-1 (L1) requirement, cited by identifier. Requirement text is quoted from
 | `L2-046` | `L1-012` | Each module carries an effort estimate and an ordered list of practice steps, both authored. |
 | `L2-047` | `L1-012` | Preparation prompts are authored per module and carried to the session that follows it. |
 | `L2-063` | `L1-012` | Authored content is long, and a section of reading is the longest of it. An administrator who leaves an authoring screen holding unsaved changes must be warned before those changes are lost. |
+| `L2-065` | `L1-012` | Curriculum is shared, and two administrators may hold the same module or section open. A save must not overwrite a revision made since the content was loaded, and a failed save must not cost the administrator their work. |
 
 ## Diagrams
 
