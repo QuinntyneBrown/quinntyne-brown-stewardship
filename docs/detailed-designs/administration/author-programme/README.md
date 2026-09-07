@@ -110,9 +110,12 @@ to `administration/authorise-administrator`.
 **API.**
 
 - **`CurriculaController`** — exposes `GET /administration/curricula`,
-  `POST /administration/curricula`, `GET /administration/curricula/{id}`, and
-  `PUT /administration/curricula/{id}`. It carries the administration policy and binds,
-  dispatches, and returns.
+  `POST /administration/curricula`, `GET /administration/curricula/{id}`,
+  `PUT /administration/curricula/{id}`, `PUT /administration/curricula/{id}/key`, and
+  `DELETE /administration/curricula/{id}`. The key has a route of its own rather than
+  travelling with the title, because the two are saved separately and only one of them is
+  refused while a cohort follows the programme. It carries the administration policy and
+  binds, dispatches, and returns.
 - **`GetCurriculaQuery`** and **`GetCurriculaQueryHandler`** — the query and the MediatR
   handler behind the programme index. The handler reads every programme with its module
   count and publication state.

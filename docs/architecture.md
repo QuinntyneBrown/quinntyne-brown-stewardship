@@ -124,6 +124,7 @@ it.
 | `GET`    | `/administration/curricula/{id}`             | One authored programme, whatever its state      |
 | `PUT`    | `/administration/curricula/{id}`             | Revise the programme title                      |
 | `DELETE` | `/administration/curricula/{id}`             | Remove a programme no cohort follows            |
+| `PUT`    | `/administration/curricula/{id}/key`         | Correct the key while no cohort follows         |
 | `PUT`    | `/administration/curricula/{id}/order`       | Reorder the modules of a programme              |
 | `POST`   | `/administration/curricula/{id}/publication` | Publish the programme and its modules           |
 | `POST`   | `/administration/curricula/{id}/modules`     | Add a module in draft                           |
