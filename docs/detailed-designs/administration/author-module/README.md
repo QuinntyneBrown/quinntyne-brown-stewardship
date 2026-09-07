@@ -105,7 +105,18 @@ belongs to `notes/prepare-for-session`, which this feature supplies but does not
   a native `dialog`, used before a removal. It takes the prompt text as an input and emits
   the decision.
 - **`ModuleDraftResult`**, **`SectionDraftResult`**, and **`PromptDraftResult`** — `api`
-  result types carrying the authored module and its parts.
+  result types carrying the authored module and its parts. Each mirrors the response record
+  it deserialises.
+
+Three things the module editor shows are not properties of the module, and the response
+carries them so the screen needs no second request. The trail names the programme, so the
+response names it too. The position reads as one of a total, so it carries the count of
+modules in the programme. Each section and prompt row states whether it can be removed, and
+that shall be a field rather than a comparison the client makes: removability follows from
+completions, attached notes and answered prompts together (L2-050), so a client deriving it
+from a completion count alone would mark a section removable that the server refuses. The
+response also carries the module's revision, which the client returns on a save so a stale
+one is refused (L2-065).
 - **`ModuleEditorPageComponent.canLeave`** — `CanDeactivateFn` guard on the module route,
   with a `beforeunload` handler for the tab-close case. It reads the editor's `dirty`
   signal and warns before unsaved authored content is discarded (L2-063).

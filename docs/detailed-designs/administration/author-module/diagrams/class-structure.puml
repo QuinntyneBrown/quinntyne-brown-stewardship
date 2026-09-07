@@ -85,13 +85,37 @@ class RevisePromptCommandHandler {
 
 class ModuleDraftResponse {
   +Guid Id
+  +Guid Revision
   +int Ordinal
   +string Title
   +string Summary
   +string EffortEstimate
+  +PublicationState State
+  +Guid CurriculumId
+  +string CurriculumTitle
+  +int CurriculumModuleCount
+  +int CompletionCount
+  +bool IsRemovable
   +IReadOnlyList<string> PracticeSteps
   +IReadOnlyList<SectionDraftSummary> Sections
   +IReadOnlyList<PromptDraftSummary> Prompts
+}
+
+class SectionDraftSummary {
+  +Guid Id
+  +int Ordinal
+  +string Title
+  +int WordCount
+  +int CompletionCount
+  +bool IsRemovable
+}
+
+class PromptDraftSummary {
+  +Guid Id
+  +int Ordinal
+  +string Text
+  +int AnswerCount
+  +bool IsRemovable
 }
 
 CurriculumModule "1" *-- "*" ModuleSection : owns
@@ -104,5 +128,7 @@ RemoveModuleCommandHandler --> CurriculumModule : removes
 RevisePromptCommandHandler ..> RevisePromptCommand : handles
 RevisePromptCommandHandler --> PreparationPrompt : changes the text of
 ModuleDraftResponse --> CurriculumModule : projects
+ModuleDraftResponse *-- SectionDraftSummary : holds one per section
+ModuleDraftResponse *-- PromptDraftSummary : holds one per prompt
 AddModuleCommand ..> CurriculumModule : creates
 @enduml
