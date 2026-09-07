@@ -34,7 +34,7 @@ tests are written against.
 | Document                                                         | Contents                                                                            |
 | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
 | [specs/L1.md](specs/L1.md)                                       | Fourteen high-level requirements covering the participant and authoring experience. |
-| [specs/L2.md](specs/L2.md)                                       | Sixty-five detailed requirements with acceptance criteria.                          |
+| [specs/L2.md](specs/L2.md)                                       | Sixty-six detailed requirements with acceptance criteria.                           |
 | [slices/programme-completion.md](slices/programme-completion.md) | Acceptance slices for the participant programme.                                    |
 | [slices/awaiting-enrollment.md](slices/awaiting-enrollment.md)   | Acceptance slices for a participant with no cohort.                                 |
 | [slices/requirements-audit.md](slices/requirements-audit.md)     | Coverage of requirements by slice.                                                  |

@@ -78,6 +78,19 @@ than the content they lead away from. The way back stays visible at every width,
 what `platform/responsive-shell` requires of a screen that shows one place at a time
 (L2-059).
 
+An author cannot see what they are writing. Reading content is one string in a textarea,
+and the participant screen splits it on a blank line and renders each part as a paragraph,
+so the structure of what a participant reads is a convention the editor never shows. Until
+now the only way to learn whether a section reads as one block or five was to publish it to
+the cohorts already following the programme, which is the thing draft state exists to avoid.
+The editor therefore previews the module as a participant reads it (L2-066).
+
+The preview needs nothing from the server. The editor already holds the authored module, so
+the preview renders from what is in hand: no request, no endpoint, and no second source that
+could disagree with the first. It offers no completion action, because a completion is a
+participant's record and an administrator has none to add to, and returning from it leaves
+every unsaved change where it was typed (L2-066 criteria 3 and 4).
+
 What a section holds belongs to `administration/author-section`. Reordering the modules of
 a programme belongs to `administration/order-curriculum`. When the authored module becomes
 visible belongs to `administration/publish-curriculum`. How a prompt reaches a session
@@ -124,6 +137,13 @@ one is refused (L2-065).
   library rendering a `role="status"` region. The editor writes the outcome of a save into
   it, because a save returns no new content to render and would otherwise pass unremarked
   (L2-060).
+- **`ModulePreviewPageComponent`** — routed page component owning `/admin/modules/:id/preview`.
+  It composes the participant reader over the authored module and offers the way back to the
+  editor.
+- **`ModuleReaderComponent`** — existing `domain` component rendering a module for a
+  participant. It gains an input suppressing the completion action, so one component renders
+  both the read and the preview and the two cannot drift into rendering the same content
+  differently.
 - **`BreadcrumbComponent`** — presentational component in the `components` library. It takes
   the ordered trail as an input, renders each level above the current one as a link and the
   current one as plain text, and condenses to the single level above at XS. It injects
@@ -184,6 +204,7 @@ a level-1 (L1) requirement, cited by identifier. Requirement text is quoted from
 | `L2-046` | `L1-012` | Each module carries an effort estimate and an ordered list of practice steps, both authored. |
 | `L2-047` | `L1-012` | Preparation prompts are authored per module and carried to the session that follows it. |
 | `L2-063` | `L1-012` | Authored content is long, and a section of reading is the longest of it. An administrator who leaves an authoring screen holding unsaved changes must be warned before those changes are lost. |
+| `L2-066` | `L1-012` | Reading content is stored as one string and rendered as paragraphs, so what an administrator types and what a participant reads are not the same text. An administrator must be able to see authored content rendered before publishing it, and publication must not be the only way to find out how it reads. |
 | `L2-065` | `L1-012` | Curriculum is shared, and two administrators may hold the same module or section open. A save must not overwrite a revision made since the content was loaded, and a failed save must not cost the administrator their work. |
 
 ## Diagrams

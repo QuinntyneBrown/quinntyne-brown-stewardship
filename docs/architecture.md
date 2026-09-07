@@ -206,11 +206,12 @@ implementations, so `domain` types carry no HTTP dependency.
 
 Authoring routes sit behind an administrator guard in addition to the auth guard.
 
-| Route                   | Screen                                       |
-| ----------------------- | -------------------------------------------- |
-| `/admin/programmes`     | Programme index with publication state       |
-| `/admin/programmes/:id` | Programme editor, module list, publish panel |
-| `/admin/modules/:id`    | Module editor with unsaved-change guard      |
+| Route                        | Screen                                                   |
+| ---------------------------- | -------------------------------------------------------- |
+| `/admin/programmes`          | Programme index with publication state                   |
+| `/admin/programmes/:id`      | Programme editor, module list, publish panel             |
+| `/admin/modules/:id`         | Module editor with unsaved-change guard                  |
+| `/admin/modules/:id/preview` | The module as a participant reads it, before publication |
 
 Everything under the programme shell is behind an auth guard that preserves the
 deep link through sign-in.
