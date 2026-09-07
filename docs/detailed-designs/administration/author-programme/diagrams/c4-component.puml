@@ -9,6 +9,7 @@ Container_Boundary(spa, "Stewardship web client") {
   Component(list, "ProgrammeListComponent", "Angular domain component", "Injects AUTHORING_SERVICE and renders one row per programme")
   Component(form, "ProgrammeFormComponent", "Angular presentational component", "Takes the key and title as inputs and emits the submitted values")
   Component(pill, "StatePillComponent", "Angular presentational component", "Renders the publication state as text")
+  Component(empty, "EmptyStateComponent", "Angular presentational component", "States an absence in place of an empty list")
 }
 
 Container_Boundary(api, "Stewardship API") {
@@ -26,6 +27,7 @@ Container_Boundary(api, "Stewardship API") {
 Rel(listpage, list, "Composes")
 Rel(editpage, form, "Composes")
 Rel(list, pill, "Renders one per programme")
+Rel(list, empty, "Renders instead of rows when none exist")
 Rel(list, controller, "Requests the programme list", "JSON/HTTPS")
 Rel(form, controller, "Submits the authored programme", "JSON/HTTPS")
 Rel(controller, validator, "Passes the command through")

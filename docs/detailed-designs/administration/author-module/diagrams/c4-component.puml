@@ -9,6 +9,7 @@ Container_Boundary(spa, "Stewardship web client") {
   Component(steps, "PracticeStepsEditorComponent", "Angular presentational component", "Edits the ordered practice steps")
   Component(prompts, "PromptsEditorComponent", "Angular presentational component", "Edits the ordered preparation prompts")
   Component(textarea, "TextAreaFieldComponent", "Angular presentational component", "Wraps a textarea with a label and an error message")
+  Component(crumb, "BreadcrumbComponent", "Angular presentational component", "Renders the trail back to the programme and condenses it at XS")
 }
 
 Container_Boundary(api, "Stewardship API") {
@@ -25,6 +26,7 @@ Container_Boundary(api, "Stewardship API") {
 }
 
 Rel(page, editor, "Composes")
+Rel(page, crumb, "Composes")
 Rel(editor, steps, "Composes")
 Rel(editor, prompts, "Composes")
 Rel(editor, textarea, "Composes")

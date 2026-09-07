@@ -83,6 +83,12 @@ interface ICurriculumStore {
   +Transaction<T>(operation, token: CancellationToken): Task<T>
 }
 
+class CurriculumOptions {
+  +int TitleMaxLength
+  +int ReadingMaxLength
+  +int PracticeStepMaxLength
+}
+
 class OrdinalSequence {
   +{static} Compact<T>(items: IReadOnlyList<T>): void
 }
@@ -98,5 +104,6 @@ CurriculumModule "1" o-- "*" Note : attached to
 RemoveSectionCommandHandler ..> ProgrammeException : raises when dependent
 RemoveSectionCommandHandler ..> OrdinalSequence : compacts the order with
 RemoveSectionCommandHandler --> ICurriculumStore : reads and writes through
+AddSectionCommandHandler ..> CurriculumOptions : bounds authored length with
 ReviseSectionCommand ..> ModuleSection : revises
 @enduml
