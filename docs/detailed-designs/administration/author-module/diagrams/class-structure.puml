@@ -1,0 +1,135 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Author a module
+
+class CurriculumModule {
+  +Guid Id
+  +Guid Revision
+  +Guid CurriculumId
+  +int Ordinal
+  +string Title
+  +string Summary
+  +string EffortEstimate
+  +List<string> PracticeSteps
+  +PublicationState State
+}
+
+class ModuleSection {
+  +Guid Id
+  +Guid ModuleId
+  +int Ordinal
+  +string Title
+  +string Reading
+  +DateTimeOffset CreatedAt
+}
+
+class PreparationPrompt {
+  +Guid Id
+  +Guid ModuleId
+  +int Ordinal
+  +string Text
+}
+
+class Note {
+  +Guid Id
+  +Guid EnrollmentId
+  +Guid? PromptId
+  +string Body
+}
+
+class AddModuleCommand {
+  +Guid CurriculumId
+  +string Title
+  +string Summary
+}
+
+class ReviseModuleCommand {
+  +Guid ModuleId
+  +string Title
+  +string Summary
+  +string EffortEstimate
+  +IReadOnlyList<string> PracticeSteps
+}
+
+class ReviseModuleCommandHandler {
+  -ICurriculumStore _store
+  +Handle(command: ReviseModuleCommand, token: CancellationToken): Task<Unit>
+}
+
+class RemoveModuleCommand {
+  +Guid ModuleId
+}
+
+class RemoveModuleCommandHandler {
+  -ICurriculumStore _store
+  +Handle(command: RemoveModuleCommand, token: CancellationToken): Task<Unit>
+}
+
+class RevisePromptCommand {
+  +Guid PromptId
+  +string Text
+}
+
+class RevisePromptCommandHandler {
+  -ICurriculumStore _store
+  +Handle(command: RevisePromptCommand, token: CancellationToken): Task<Unit>
+}
+
+class ModuleDraftResponse {
+  +Guid Id
+  +Guid Revision
+  +int Ordinal
+  +string Title
+  +string Summary
+  +string EffortEstimate
+  +PublicationState State
+  +Guid CurriculumId
+  +string CurriculumTitle
+  +int CurriculumModuleCount
+  +int CompletionCount
+  +bool IsRemovable
+  +IReadOnlyList<string> PracticeSteps
+  +IReadOnlyList<SectionDraftSummary> Sections
+  +IReadOnlyList<PromptDraftSummary> Prompts
+}
+
+class SectionDraftSummary {
+  +Guid Id
+  +int Ordinal
+  +string Title
+  +int WordCount
+  +int CompletionCount
+  +bool IsRemovable
+}
+
+class PromptDraftSummary {
+  +Guid Id
+  +int Ordinal
+  +string Text
+  +int AnswerCount
+  +bool IsRemovable
+}
+
+CurriculumModule "1" *-- "*" ModuleSection : owns
+CurriculumModule "1" *-- "*" PreparationPrompt : owns
+PreparationPrompt "1" o-- "*" Note : answered by
+ReviseModuleCommandHandler ..> ReviseModuleCommand : handles
+ReviseModuleCommandHandler --> CurriculumModule : applies authored values to
+RemoveModuleCommandHandler ..> RemoveModuleCommand : handles
+RemoveModuleCommandHandler --> CurriculumModule : removes
+RevisePromptCommandHandler ..> RevisePromptCommand : handles
+RevisePromptCommandHandler --> PreparationPrompt : changes the text of
+ModuleDraftResponse --> CurriculumModule : projects
+ModuleDraftResponse *-- SectionDraftSummary : holds one per section
+ModuleDraftResponse *-- PromptDraftSummary : holds one per prompt
+AddModuleCommand ..> CurriculumModule : creates
+@enduml

@@ -1,0 +1,52 @@
+@startuml
+title UML sequence behaviour — Publish a programme
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Administrator" as actor
+box "Frontend — Stewardship web client" #E0F2FE
+  participant "PublishPanelComponent" as panel
+  participant "AuthoringService" as client
+end box
+box "Backend — Stewardship API application" #D1FADF
+  participant "CurriculaController" as controller
+end box
+box "Backend — Stewardship Application and Domain" #ECFDF3
+  participant "PublishCurriculumCommandHandler" as handler
+  participant "CurriculumReadiness" as readiness
+  participant "Curriculum" as curriculum
+end box
+box "Backend — Stewardship Infrastructure" #FFF4E5
+  database "Stewardship database" as db
+end box
+
+actor -> panel : Publish the programme
+panel -> client : Build the typed request
+client -> controller : POST /administration/curricula/{id}/publication
+controller -> handler : Send PublishCurriculumCommand
+handler -> db : Open one transaction and load the programme with its modules
+db --> handler : Programme, modules, and their sections
+handler -> readiness : Evaluate whether the programme may be published (L2-054)
+readiness -> readiness : Require at least one module, each carrying a section
+readiness --> handler : Publishable
+handler -> curriculum : Publish the programme and stamp the publication time (L2-055 criterion 4)
+curriculum -> curriculum : Publish every module it holds (L2-054 criterion 3)
+curriculum --> handler : Published programme
+handler -> db : Save changes in one unit of work
+db --> handler : Commit result
+handler --> controller : PublicationResponse
+controller --> client : 200 with the publication time
+client --> panel : Published
+panel --> actor : Present the programme as published
+@enduml

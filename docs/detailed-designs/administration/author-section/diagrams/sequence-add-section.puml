@@ -1,0 +1,55 @@
+@startuml
+title UML sequence behaviour — Add a section
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Administrator" as actor
+box "Frontend — Stewardship web client" #E0F2FE
+  participant "SectionListComponent" as list
+  participant "SectionEditorComponent" as editor
+  participant "AuthoringService" as client
+end box
+box "Backend — Stewardship API application" #D1FADF
+  participant "SectionsController" as controller
+  participant "ValidationBehavior" as behavior
+end box
+box "Backend — Stewardship Application and Domain" #ECFDF3
+  participant "AddSectionCommandValidator" as validator
+  participant "AddSectionCommandHandler" as handler
+  participant "ModuleSection" as section
+end box
+box "Backend — Stewardship Infrastructure" #FFF4E5
+  database "Stewardship database" as db
+end box
+
+actor -> list : Add a section to the module
+list -> editor : Open the empty editor
+actor -> editor : Enter a title and reading content
+editor -> client : Build the typed request
+client -> controller : POST /administration/modules/{id}/sections
+controller -> behavior : Send AddSectionCommand
+behavior -> validator : Check the title and the reading content (L2-051)
+validator --> behavior : Valid command
+behavior -> handler : Admit the validated command
+handler -> db : Read the highest section ordinal of the module
+db --> handler : Current highest ordinal
+handler -> section : Create at the next free ordinal and stamp CreatedAt (L2-048 criterion 1)
+section --> handler : New section with its identifier
+handler -> db : Insert within the transaction
+db --> handler : Commit result
+handler --> controller : Section identifier
+controller --> client : 201 with the identifier
+client --> list : Created section
+list --> actor : Present the section last in the module order
+@enduml

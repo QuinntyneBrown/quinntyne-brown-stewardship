@@ -35,9 +35,17 @@ The design system owns the breakpoints and the layout tokens, and the front end 
 them. A component stylesheet that hard-codes a width or a gutter is a defect; the fix is
 to add the token to `design-system/` first.
 
+The administration screens obey the same rule and the same tokens. An administrator
+authors from a phone as readily as from a desktop: the programme list, the module editor,
+and the ordering controls each hold their content at XS without the page body scrolling
+sideways, and the set of authoring actions offered at XS equals the set offered at XL
+(L2-059). Authoring adds no breakpoint of its own, because the layout tokens the shell
+already reads cover it.
+
 Content parity within a single screen — the practice steps and the effort estimate
 staying whole at every width — belongs to `modules/read-module`. Contrast, target size,
-and keyboard operation belong to `platform/accessible-interaction`.
+and keyboard operation belong to `platform/accessible-interaction`. What the authoring
+screens contain belongs to the `administration` subsystem.
 
 ## Description
 
@@ -83,6 +91,7 @@ refines a level-1 (L1) requirement, cited by identifier. Requirement text is quo
 |-------|--------------|-------------|
 | `L2-029` | `L1-007` | Layouts adapt across the breakpoints without loss of content or horizontal scrolling of the page body. |
 | `L2-030` | `L1-007` | Curriculum, Sessions, and Notes are reachable at XS as they are at XL. |
+| `L2-059` | `L1-007` | Authoring is usable on a phone as it is on a desktop. |
 
 ## Diagrams
 

@@ -2,7 +2,8 @@
 
 Stewardship is a .NET 10 API serving an Angular 21 single-page application from
 its own origin, backed by SQL Server, with an independent design system and a
-command-line tool for administration.
+command-line tool for operator tasks. The application serves two audiences: a
+participant reading a published curriculum, and an administrator authoring it.
 
 The governing principle is stated in [AGENTS.md](../AGENTS.md) and repeated here
 because it explains most of what follows: implement requirements _radically
@@ -27,8 +28,12 @@ Simple in design, never reduced in scope.
                     └──────────────▲───────────────┘
                                    │  migrations, provisioning, import
                     ┌──────────────┴───────────────┐
-   Administrator ─► │  Stewardship CLI             │
+   Operator ──────► │  Stewardship CLI             │
    (terminal)       └──────────────────────────────┘
+
+   An administrator authors curriculum through the web client above, over the
+   same session cookie a participant uses. The CLI provisions that account and
+   manages cohorts, enrollment, mentors, and availability.
 ```
 
 The design system is a fourth, wholly separate deliverable: a static catalogue
@@ -109,6 +114,33 @@ All endpoints require an authenticated participant except `/authentication/csrf`
 | `POST`   | `/notes`                     | Create or revise a note                           |
 | `GET`    | `/health`                    | Application and database readiness (200 or 503)   |
 
+Every route below requires administrator authority and is refused with `403` without
+it.
+
+| Method   | Route                                          | Purpose                                         |
+| -------- | ---------------------------------------------- | ----------------------------------------------- |
+| `GET`    | `/administration/curricula`                    | Every programme with its module count and state |
+| `POST`   | `/administration/curricula`                    | Create a programme in draft                     |
+| `GET`    | `/administration/curricula/{id}`               | One authored programme, whatever its state      |
+| `PUT`    | `/administration/curricula/{id}`               | Revise the programme title                      |
+| `DELETE` | `/administration/curricula/{id}`               | Remove a programme no cohort follows            |
+| `PUT`    | `/administration/curricula/{id}/key`           | Correct the key while no cohort follows         |
+| `PUT`    | `/administration/curricula/{id}/modules/order` | Reorder the modules of a programme              |
+| `POST`   | `/administration/curricula/{id}/publication`   | Publish the programme and its modules           |
+| `POST`   | `/administration/curricula/{id}/modules`       | Add a module in draft                           |
+| `GET`    | `/administration/sections/{id}`                | One authored section with its reading content   |
+| `GET`    | `/administration/modules/{id}`                 | One authored module                             |
+| `PUT`    | `/administration/modules/{id}`                 | Revise title, summary, effort, practice steps   |
+| `DELETE` | `/administration/modules/{id}`                 | Remove a module nothing recorded depends on     |
+| `PUT`    | `/administration/modules/{id}/sections/order`  | Reorder the sections of a module                |
+| `POST`   | `/administration/modules/{id}/sections`        | Add a section                                   |
+| `POST`   | `/administration/modules/{id}/prompts`         | Add a preparation prompt                        |
+| `PUT`    | `/administration/modules/{id}/prompts/order`   | Reorder the preparation prompts of a module     |
+| `PUT`    | `/administration/sections/{id}`                | Revise a section                                |
+| `DELETE` | `/administration/sections/{id}`                | Remove a section                                |
+| `PUT`    | `/administration/prompts/{id}`                 | Revise a prompt, preserving its identifier      |
+| `DELETE` | `/administration/prompts/{id}`                 | Remove a prompt                                 |
+
 ## Front end
 
 `frontend/` is an Angular workspace. The `api`, `components`, and `domain`
@@ -171,6 +203,15 @@ implementations, so `domain` types carry no HTTP dependency.
 | `/notes`        | Paginated notes                               |
 | `/notes/new`    | Note editor                                   |
 | `/notes/:id`    | Note editor with unsaved-change guard         |
+
+Authoring routes sit behind an administrator guard in addition to the auth guard.
+
+| Route                        | Screen                                                   |
+| ---------------------------- | -------------------------------------------------------- |
+| `/admin/programmes`          | Programme index with publication state                   |
+| `/admin/programmes/:id`      | Programme editor, module list, publish panel             |
+| `/admin/modules/:id`         | Module editor with unsaved-change guard                  |
+| `/admin/modules/:id/preview` | The module as a participant reads it, before publication |
 
 Everything under the programme shell is behind an auth guard that preserves the
 deep link through sign-in.
@@ -240,4 +281,4 @@ identifier. `/health` reports application and database readiness with 200 or 503
 Per-feature designs, with C4 container and component diagrams, class structures,
 and sequence diagrams, live under
 [`docs/detailed-designs/`](detailed-designs/), organized by subsystem: access,
-enrollment, curriculum, modules, sessions, notes, and platform.
+enrollment, curriculum, modules, sessions, notes, administration, and platform.

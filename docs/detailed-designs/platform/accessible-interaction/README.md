@@ -2,7 +2,7 @@
 
 ## Overview
 
-Stewardship is read closely, on small screens, over twelve weeks. Some participants
+Stewardship is read closely, on small screens, over the weeks of a cohort. Some participants
 navigate by keyboard, some use a screen reader, and some read with reduced vision. This
 feature owns what the application does to remain operable for all of them: contrast,
 target size, keyboard operation, and the rule that meaning is never carried by colour
@@ -39,9 +39,40 @@ named token rather than a property of a screen nobody re-checked. The tokens dra
 the current screen mockups include several whose measured ratio falls below the minimum;
 their replacement values are `<TO SUPPLY>` and are settled in the mockup correction pass.
 
+One class of control is smaller than the general minimum, and the exemption is narrow.
+A reorder control is drawn stacked against its opposite: move-up directly above move-down,
+each occupying the full width and half the height of one 44px square. Requiring 44px of
+height for each would double the height of every row in a list an author scrolls through
+constantly, so a stacked pair is exempt from the 44px minimum on three conditions, all of
+which the mockups meet: each control is at least 24px in both directions, which is the
+target-size minimum of WCAG 2.2 at level AA; the pair together fills a full 44px square, so
+the region a thumb aims at is unchanged; and each carries an accessible name naming the
+direction and the position, so the two are told apart without seeing which is uppermost
+(L2-032 criteria 4 and 5). The exemption reaches no other control. Every action that is not
+half of such a pair holds the full 44px square.
+
+One measured value falls below the minimum by design rather than by oversight. The glyph of
+a move control that cannot act, on the first or last item of a set, sits at roughly 1.5:1
+against the page. WCAG 2.1 places no contrast requirement on an inactive component, and the
+control states its condition in its accessible name, so a reader who cannot see the glyph is
+told that the item is first of twelve and cannot move up. The low ratio is the signal that
+the control is inert, and `--qbs-disabled-opacity` stays at `1` because the colour carries
+that distinction instead of a dimming.
+
+The authoring screens carry the same obligations, and two of them bite harder there than
+anywhere in the participant experience (L2-060). Ordering is the first: a control that
+moves a module or a section shall be operable by keyboard alone, and the resulting
+arrangement shall be announced, because an administrator who cannot see the list move has
+no other evidence the move happened. Validation is the second: a refused field shall
+announce its message and take focus, so the failure is not left as a colour beside a
+control the keyboard has already passed. Publication state follows the same rule as every
+other state and is conveyed as text rather than by colour alone.
+
 Layout across breakpoints belongs to `platform/responsive-shell`. The states themselves
 are defined in `curriculum/view-path`, `modules/read-module`, and
-`sessions/view-availability`; this feature governs how they are conveyed.
+`sessions/view-availability`; this feature governs how they are conveyed. The authoring
+controls it governs are designed in `administration/order-curriculum` and the sibling
+authoring features.
 
 ## Description
 
@@ -96,6 +127,7 @@ refines a level-1 (L1) requirement, cited by identifier. Requirement text is quo
 | `L2-032` | `L1-008` | Every interactive target is large enough to hit reliably on a touch screen. |
 | `L2-033` | `L1-008` | Every action is reachable and operable without a pointing device. |
 | `L2-034` | `L1-008` | Module state, section state, and slot state are each available in text or shape. |
+| `L2-060` | `L1-008` | Authoring is reachable by keyboard and legible to assistive technology. |
 
 ## Diagrams
 

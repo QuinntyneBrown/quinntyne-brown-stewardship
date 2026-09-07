@@ -179,10 +179,12 @@ The API serves its built Angular assets from its own origin, so **re-run
 ### Run a full programme
 
 A participant with no cohort correctly sees the "awaiting enrollment" screen. To
-run an enrolled programme, import a curriculum, provision a mentor, create a
-cohort, enroll the participant, and publish availability:
+run an enrolled programme, provision an administrator, import a curriculum,
+publish it from the authoring screens, provision a mentor, create a cohort, enroll
+the participant, and publish availability:
 
 ```powershell
+dotnet run --project backend/src/QuinntyneBrownStewardship.Cli -- provision-administrator admin@example.com
 dotnet run --project backend/src/QuinntyneBrownStewardship.Cli -- import-curriculum backend/src/QuinntyneBrownStewardship.Cli/Content/starter-curriculum.json
 dotnet run --project backend/src/QuinntyneBrownStewardship.Cli -- provision-mentor mentor@example.com "Quinntyne Brown"
 dotnet run --project backend/src/QuinntyneBrownStewardship.Cli -- create-cohort .local/cohort.json
@@ -194,8 +196,9 @@ The [development guide](docs/development.md) gives the JSON shapes for
 `cohort.json` and `availability.json`, the full CLI reference, and guidance on
 revising a curriculum without discarding recorded work.
 
-Cohort and content administration use this CLI. **The participant application
-contains no administrator screens.**
+Curriculum authoring has screens in the application, reachable only by an account
+holding administrator authority; this CLI provisions that account. Cohorts,
+enrollment, mentors, and availability remain CLI tasks.
 
 ## Repository layout
 
@@ -232,7 +235,7 @@ quinntyne-brown-stewardship/
 | [Deployment](docs/deployment.md)         | Artifacts, configuration, TLS, health checks, operations.        |
 | [Design system](design-system/README.md) | Tokens, fonts, catalogue, publishing.                            |
 | [Live walkthrough](docs/live-demo.md)    | Five-minute feature demonstration, recording, and verification.  |
-| [Requirements](docs/specs/L1.md)         | Ten high-level and forty detailed requirements.                  |
+| [Requirements](docs/specs/L1.md)         | Fourteen high-level and sixty-six detailed requirements.         |
 
 ## Testing
 
@@ -275,10 +278,12 @@ Stewardship is pre-1.0 and under active development. The participant experience
 described in [`docs/specs/L1.md`](docs/specs/L1.md) is complete and covered by the
 acceptance suite.
 
-The mentor and administrator experience — authoring curriculum, managing cohorts,
-setting availability, reviewing participant progress — is deliberately out of
-scope for the current requirement set and is served by the CLI. It will arrive as
-a later set of high-level requirements.
+Curriculum authoring is specified by `L1-011` through `L1-014` and designed under
+[`docs/detailed-designs/administration`](docs/detailed-designs/administration/). Nothing
+of it is built yet: the requirements and the designs are complete and no source file has
+changed, so the curriculum is still imported through the CLI. The remaining administrator tasks — managing
+cohorts, enrolling participants, setting mentor availability, provisioning mentors —
+stay out of scope for the current requirement set and are served by the CLI.
 
 Breaking changes may occur in minor versions before 1.0. They are announced in
 [CHANGELOG.md](CHANGELOG.md).

@@ -1,0 +1,54 @@
+@startuml
+title UML sequence behaviour — Create a programme
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Administrator" as actor
+box "Frontend — Stewardship web client" #E0F2FE
+  participant "ProgrammeListPageComponent" as page
+  participant "ProgrammeFormComponent" as form
+  participant "AuthoringService" as client
+end box
+box "Backend — Stewardship API application" #D1FADF
+  participant "CurriculaController" as controller
+  participant "ValidationBehavior" as behavior
+end box
+box "Backend — Stewardship Application and Domain" #ECFDF3
+  participant "CreateCurriculumCommandValidator" as validator
+  participant "CreateCurriculumCommandHandler" as handler
+  participant "Curriculum" as entity
+end box
+box "Backend — Stewardship Infrastructure" #FFF4E5
+  database "Stewardship database" as db
+end box
+
+actor -> page : Open the programme index
+page -> form : Offer the creation form
+actor -> form : Enter a key and a title
+form -> client : Build the typed request
+client -> controller : POST /administration/curricula
+controller -> behavior : Send CreateCurriculumCommand
+behavior -> validator : Check the key and the title (L2-051)
+validator --> behavior : Valid command
+behavior -> handler : Admit the validated command
+handler -> entity : Create the programme in draft (L2-044)
+entity --> handler : New programme with its identifier
+handler -> db : Insert under the unique key index
+db --> handler : Insert accepted
+handler --> controller : Programme identifier
+controller --> client : 201 with the identifier
+client --> page : Created programme
+page -> page : Reload the programme list
+page --> actor : Present the programme in the list
+@enduml

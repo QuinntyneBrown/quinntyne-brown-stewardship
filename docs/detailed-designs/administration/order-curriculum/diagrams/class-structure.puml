@@ -1,0 +1,80 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Order a curriculum
+
+interface IOrdered {
+  +int Ordinal
+}
+
+class CurriculumModule {
+  +Guid Id
+  +Guid CurriculumId
+  +int Ordinal
+}
+
+class ModuleSection {
+  +Guid Id
+  +Guid ModuleId
+  +int Ordinal
+}
+
+class OrdinalSequence {
+  +{static} Stage<T>(items: IReadOnlyList<T>): void
+  +{static} Assign<T>(items: IReadOnlyList<T>, ordered: IReadOnlyList<Guid>): void
+  +{static} Compact<T>(items: IReadOnlyList<T>): void
+}
+
+class ReorderModulesCommand {
+  +Guid CurriculumId
+  +IReadOnlyList<Guid> OrderedModuleIds
+}
+
+class ReorderModulesCommandValidator {
+  +ReorderModulesCommandValidator()
+}
+
+class ReorderModulesCommandHandler {
+  -ICurriculumStore _store
+  +Handle(command: ReorderModulesCommand, token: CancellationToken): Task<Unit>
+}
+
+class ReorderSectionsCommand {
+  +Guid ModuleId
+  +IReadOnlyList<Guid> OrderedSectionIds
+}
+
+class ReorderSectionsCommandHandler {
+  -ICurriculumStore _store
+  +Handle(command: ReorderSectionsCommand, token: CancellationToken): Task<Unit>
+}
+
+class ProgrammeException {
+  +int StatusCode
+  +string Message
+}
+
+interface ICurriculumStore {
+  +Transaction<T>(operation, token: CancellationToken): Task<T>
+  +Flush(token: CancellationToken): Task
+}
+
+CurriculumModule ..|> IOrdered : implements
+ModuleSection ..|> IOrdered : implements
+OrdinalSequence ..> IOrdered : reassigns
+ReorderModulesCommandValidator ..> ReorderModulesCommand : validates
+ReorderModulesCommandHandler ..> ReorderModulesCommand : handles
+ReorderModulesCommandHandler ..> OrdinalSequence : stages and assigns with
+ReorderModulesCommandHandler --> ICurriculumStore : opens one transaction through
+ReorderModulesCommandHandler ..> ProgrammeException : raises when not a permutation
+ReorderSectionsCommandHandler ..> ReorderSectionsCommand : handles
+ReorderSectionsCommandHandler ..> OrdinalSequence : stages and assigns with
+@enduml

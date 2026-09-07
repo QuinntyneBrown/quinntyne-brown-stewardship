@@ -1,0 +1,142 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Author a programme
+
+enum PublicationState {
+  Draft
+  Published
+}
+
+class Curriculum {
+  +Guid Id
+  +string Key
+  +string Title
+  +PublicationState State
+  +DateTimeOffset? PublishedAt
+}
+
+class CurriculumModule {
+  +Guid Id
+  +Guid CurriculumId
+  +int Ordinal
+  +string Title
+  +string Summary
+  +PublicationState State
+}
+
+class Cohort {
+  +Guid Id
+  +Guid CurriculumId
+  +DateOnly StartDate
+  +int DurationWeeks
+  +int SessionCadenceWeeks
+}
+
+class CreateCurriculumCommand {
+  +string Key
+  +string Title
+}
+
+class CreateCurriculumCommandValidator {
+  +CreateCurriculumCommandValidator()
+}
+
+class CreateCurriculumCommandHandler {
+  -ICurriculumStore _store
+  +Handle(command: CreateCurriculumCommand, token: CancellationToken): Task<Guid>
+}
+
+class RenameCurriculumCommand {
+  +Guid Id
+  +string Title
+}
+
+class ChangeCurriculumKeyCommand {
+  +Guid Id
+  +string Key
+}
+
+class ChangeCurriculumKeyCommandHandler {
+  -ICurriculumStore _store
+  +Handle(command: ChangeCurriculumKeyCommand, token: CancellationToken): Task<Unit>
+}
+
+class RemoveCurriculumCommand {
+  +Guid Id
+}
+
+class RemoveCurriculumCommandHandler {
+  -ICurriculumStore _store
+  +Handle(command: RemoveCurriculumCommand, token: CancellationToken): Task<Unit>
+}
+
+class GetCurriculaQuery {
+}
+
+class CurriculumSummary {
+  +Guid Id
+  +string Key
+  +string Title
+  +PublicationState State
+  +int ModuleCount
+  +int CohortCount
+}
+
+class ModuleDraftSummary {
+  +Guid Id
+  +int Ordinal
+  +string Title
+  +string Summary
+  +PublicationState State
+  +int SectionCount
+  +int PracticeStepCount
+  +int PromptCount
+}
+
+class CurriculumDraftResponse {
+  +Guid Id
+  +string Key
+  +string Title
+  +PublicationState State
+  +IReadOnlyList<ModuleDraftSummary> Modules
+}
+
+interface ICurriculumStore {
+  +Curriculum(id: Guid, token: CancellationToken): Task<Curriculum?>
+  +Curricula(token: CancellationToken): Task<List<Curriculum>>
+  +CohortCount(curriculumId: Guid, token: CancellationToken): Task<int>
+  +CohortsFollowing(curriculumId: Guid, token: CancellationToken): Task<List<Cohort>>
+  +Add<T>(entity: T): void
+  +Remove<T>(entity: T): void
+  +Transaction<T>(operation, token: CancellationToken): Task<T>
+}
+
+Curriculum "1" *-- "*" CurriculumModule : owns
+Curriculum --> PublicationState : holds
+CurriculumModule --> PublicationState : holds
+Cohort --> Curriculum : follows
+CreateCurriculumCommandValidator ..> CreateCurriculumCommand : validates
+CreateCurriculumCommandHandler ..> CreateCurriculumCommand : handles
+CreateCurriculumCommandHandler --> ICurriculumStore : persists through
+CreateCurriculumCommandHandler --> Curriculum : creates
+GetCurriculaQuery ..> CurriculumSummary : yields
+CurriculumDraftResponse --> Curriculum : projects
+CurriculumDraftResponse *-- ModuleDraftSummary : holds one per module
+CurriculumSummary --> Cohort : counts the followers of
+RenameCurriculumCommand ..> Curriculum : revises the title of
+ChangeCurriculumKeyCommandHandler ..> ChangeCurriculumKeyCommand : handles
+ChangeCurriculumKeyCommandHandler --> Curriculum : writes the key of
+ChangeCurriculumKeyCommandHandler --> ICurriculumStore : counts followers through
+RemoveCurriculumCommandHandler ..> RemoveCurriculumCommand : handles
+RemoveCurriculumCommandHandler --> Curriculum : removes when no cohort follows
+RemoveCurriculumCommandHandler --> Cohort : counts the followers of
+@enduml

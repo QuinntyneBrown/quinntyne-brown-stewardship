@@ -2,12 +2,12 @@
 
 ## Overview
 
-The curriculum is the spine of a Stewardship cohort: twelve learning modules taken one
-per week over twelve weeks. The curriculum screen shows the whole path at once, so a
-participant sees not only what to read next but where that sits in the twelve.
+The curriculum is the spine of a Stewardship cohort: the published modules of its
+programme, taken one per week. The curriculum screen shows the whole path at once, so a
+participant sees not only what to read next but where that sits in the programme.
 
-**module path** — ordered display of the twelve modules of a cohort, each carrying its
-state
+**module path** — ordered display of the published modules of a cohort's programme, each
+carrying its state
 
 **module state** — one of three values a module holds for a given participant:
 `Complete`, `Current`, or `Locked`
@@ -17,8 +17,9 @@ participant is
 
 Every marker on the path carries exactly one state. Modules already finished are
 `Complete`, the earliest unfinished module is `Current`, and everything after it is
-`Locked`. A participant who has finished all twelve sees twelve complete markers and no
-current one, which is the end state of the path rather than a special case.
+`Locked`. A participant who has finished every module of their programme sees only
+complete markers and no current one, which is the end state of the path rather than a
+special case.
 
 The rule that shapes this design most is that every figure about progress is derived.
 The completed count, the remaining count, and the proportion are computed from
@@ -31,9 +32,10 @@ State reaches the participant as text and not by colour alone. A marker's state 
 rendered in its accessible name, so it survives greyscale, screen readers, and a
 participant who does not distinguish the palette.
 
-Which modules a participant is permitted to open, and where the continue action leads,
-belong to `curriculum/unlock-and-resume`. What a module contains belongs to
-`modules/read-module`.
+How many modules the path holds, and which of them are published, belong to
+`administration/publish-curriculum`. Which modules a participant is permitted to open, and
+where the continue action leads, belong to `curriculum/unlock-and-resume`. What a module
+contains belongs to `modules/read-module`.
 
 ## Description
 
@@ -60,13 +62,13 @@ belong to `curriculum/unlock-and-resume`. What a module contains belongs to
   MediatR handler. The handler reads the cohort's modules in ordinal order, reads the
   acting participant's completion records, resolves each module to one state, and
   derives the summary.
-- **`CurriculumResponse`** — carries the twelve `ModulePathItem` values, the
+- **`CurriculumResponse`** — carries one `ModulePathItem` per published module, the
   `ProgressSummary`, and the ordinal of the current module.
 - **`ModulePathItem`** — one marker, carrying its ordinal, title, state, and the state
   label the client renders as text.
 - **`ModuleState`** — enumeration of `Complete`, `Current`, and `Locked`. A module holds
   exactly one, so no marker can render in two states or none.
-- **`CurriculumModule`** — domain entity for one of the twelve modules, owning its
+- **`CurriculumModule`** — domain entity for one module of the programme, owning its
   ordinal, title, summary, and its sections.
 - **`ModuleSection`** — domain entity for one ordered section of a module.
 - **`SectionCompletion`** — domain entity recording that one participant completed one
@@ -87,8 +89,8 @@ refines a level-1 (L1) requirement, cited by identifier. Requirement text is quo
 
 | L2 ID | Refines (L1) | Requirement |
 |-------|--------------|-------------|
-| `L2-008` | `L1-003` | The curriculum path shows all 12 modules in order, each in exactly one of three states: complete, current, or locked. |
-| `L2-009` | `L1-003` | Counts, remainders, and proportions displayed about progress must be computed from completion records. No progress figure is authored as content. |
+| `L2-008` | `L1-003` | The curriculum path shows every published module of the participant's programme in order, each in exactly one of three states: complete, current, or locked. |
+| `L2-009` | `L1-003` | Counts, remainders, and proportions displayed about progress must be computed from completion records against the module count of the participant's programme. No progress figure is authored as content. |
 
 ## Diagrams
 
@@ -111,9 +113,9 @@ domain component injects the service, and the marker takes inputs only. Inside t
 ### Class structure
 
 A `CurriculumModule` owns its `ModuleSection` values, and each section accumulates
-`SectionCompletion` records. `CurriculumResponse` holds twelve `ModulePathItem` values
-and one `ProgressSummary`, so the path and its figures travel together and are computed
-together.
+`SectionCompletion` records. `CurriculumResponse` holds one `ModulePathItem` per published
+module and one `ProgressSummary`, so the path and its figures travel together and are
+computed together.
 
 ![Class diagram for viewing the curriculum path](diagrams/class-structure.png)
 

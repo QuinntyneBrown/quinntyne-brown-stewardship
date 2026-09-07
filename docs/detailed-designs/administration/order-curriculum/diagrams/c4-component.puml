@@ -1,0 +1,38 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Order a curriculum
+
+Container_Boundary(spa, "Stewardship web client") {
+  Component(order, "OrderListComponent", "Angular domain component", "Injects AUTHORING_SERVICE and applies a move optimistically")
+  Component(control, "OrderControlComponent", "Angular presentational component", "Emits a move and carries the position in its accessible name")
+  Component(status, "StatusMessageComponent", "Angular presentational component", "Announces the new arrangement")
+}
+
+Container_Boundary(api, "Stewardship API") {
+  Component(curricula, "CurriculaController", "ASP.NET Core controller", "Exposes the module ordering endpoint")
+  Component(modules, "ModulesController", "ASP.NET Core controller", "Exposes the section ordering endpoint")
+  Component(modvalidator, "ReorderModulesCommandValidator", "FluentValidation validator", "Requires a permutation of the current children")
+  Component(modhandler, "ReorderModulesCommandHandler", "MediatR handler", "Reassigns module positions")
+  Component(sechandler, "ReorderSectionsCommandHandler", "MediatR handler", "Reassigns section positions")
+  Component(sequence, "OrdinalSequence", "Domain service", "Stages to a negative position and then writes final positions")
+  Component(module, "CurriculumModule", "Domain entity", "Holds its position within its programme")
+  Component(section, "ModuleSection", "Domain entity", "Holds its position within its module")
+  Component(store, "ICurriculumStore", "Application abstraction", "Wraps both passes in one transaction")
+  ComponentDb(db, "Stewardship database", "SQL Server", "Enforces the unique index over parent and position")
+}
+
+Rel(order, control, "Renders one per item")
+Rel(order, status, "Announces the arrangement through")
+Rel(order, curricula, "Sends the ordered module identifiers", "JSON/HTTPS")
+Rel(order, modules, "Sends the ordered section identifiers", "JSON/HTTPS")
+Rel(curricula, modvalidator, "Passes the command through")
+Rel(modvalidator, modhandler, "Admits the validated command to")
+Rel(modules, sechandler, "Sends ReorderSectionsCommand")
+Rel(modhandler, sequence, "Reassigns positions with")
+Rel(sechandler, sequence, "Reassigns positions with")
+Rel(sequence, module, "Writes the position of")
+Rel(sequence, section, "Writes the position of")
+Rel(modhandler, store, "Opens one transaction through")
+Rel(store, db, "Stages and writes", "EF Core")
+@enduml

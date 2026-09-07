@@ -1,0 +1,110 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam class {
+  BorderColor #344054
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+title Class structure — Publish a curriculum
+
+enum PublicationState {
+  Draft
+  Published
+}
+
+class Curriculum {
+  +Guid Id
+  +string Key
+  +string Title
+  +PublicationState State
+  +DateTimeOffset? PublishedAt
+  +Publish(at: DateTimeOffset): void
+}
+
+class CurriculumModule {
+  +Guid Id
+  +Guid CurriculumId
+  +int Ordinal
+  +PublicationState State
+  +Publish(): void
+}
+
+class ModuleSection {
+  +Guid Id
+  +Guid ModuleId
+  +int Ordinal
+}
+
+class CurriculumReadiness {
+  +bool IsPublishable
+  +string? Reason
+  +{static} Evaluate(curriculum: Curriculum): CurriculumReadiness
+}
+
+class ReadinessResponse {
+  +bool IsPublishable
+  +string? Reason
+  +int ActiveCohortCount
+  +int ParticipantsMovedBack
+  +int UnpublishedModuleCount
+}
+
+class Cohort {
+  +Guid Id
+  +Guid CurriculumId
+  +DateOnly StartDate
+  +int DurationWeeks
+  +int SessionCadenceWeeks
+  +int SessionAllowance()
+  +DateOnly EndDate()
+  +int CurrentWeek(today: DateOnly): int
+}
+
+class PublishCurriculumCommand {
+  +Guid CurriculumId
+}
+
+class PublishCurriculumCommandHandler {
+  -ICurriculumStore _store
+  -ISystemClock _clock
+  +Handle(command: PublishCurriculumCommand, token: CancellationToken): Task<PublicationResponse>
+}
+
+class PublicationResponse {
+  +bool IsPublished
+  +string? Reason
+  +DateTimeOffset? PublishedAt
+}
+
+class ProgrammeReader {
+  +PublishedModules(cohort: Cohort, token: CancellationToken): Task<List<CurriculumModule>>
+  +Curriculum(cohort: Cohort, token: CancellationToken): Task<CurriculumResponse>
+}
+
+class ProgressSummary {
+  +int CompletedCount
+  +int TotalCount
+  +int RemainingCount()
+  +int Percentage()
+}
+
+Curriculum "1" *-- "*" CurriculumModule : owns
+CurriculumModule "1" *-- "*" ModuleSection : owns
+Curriculum --> PublicationState : holds
+CurriculumModule --> PublicationState : holds
+Cohort --> Curriculum : follows
+CurriculumReadiness ..> Curriculum : evaluates
+ReadinessResponse --> CurriculumReadiness : carries the verdict of
+ReadinessResponse --> Cohort : counts the followers of
+PublishCurriculumCommandHandler ..> PublishCurriculumCommand : handles
+PublishCurriculumCommandHandler ..> CurriculumReadiness : asks
+PublishCurriculumCommandHandler --> Curriculum : publishes
+PublishCurriculumCommandHandler --> PublicationResponse : returns
+ProgrammeReader --> CurriculumModule : filters to published
+ProgrammeReader --> Cohort : derives shape from
+ProgrammeReader --> ProgressSummary : derives figures with
+@enduml

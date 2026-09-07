@@ -1,0 +1,37 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Publish a curriculum
+
+Container_Boundary(spa, "Stewardship web client") {
+  Component(panel, "PublishPanelComponent", "Angular domain component", "Injects AUTHORING_SERVICE and offers the publication action")
+  Component(pill, "StatePillComponent", "Angular presentational component", "Renders the publication state as text")
+  Component(overview, "CurriculumOverviewComponent", "Angular domain component", "Renders the participant path from derived figures only")
+}
+
+Container_Boundary(api, "Stewardship API") {
+  Component(controller, "CurriculaController", "ASP.NET Core controller", "Exposes POST /administration/curricula/{id}/publication")
+  Component(handler, "PublishCurriculumCommandHandler", "MediatR handler", "Publishes the programme and its modules in one transaction")
+  Component(readiness, "CurriculumReadiness", "Domain value object", "Decides whether a programme may be published and names an empty module")
+  Component(curriculum, "Curriculum", "Domain entity", "Owns the publication state and the publication time")
+  Component(module, "CurriculumModule", "Domain entity", "Owns its own publication state")
+  Component(cohort, "Cohort", "Domain entity", "Stores duration and cadence and derives the session allowance")
+  Component(reader, "ProgrammeReader", "Application read helper", "Filters modules to the published state for every participant screen")
+  Component(curquery, "GetCurriculumQueryHandler", "MediatR handler", "Assembles the participant path")
+  ComponentDb(db, "Stewardship database", "SQL Server", "Persists publication state and cohort shape")
+}
+
+Rel(panel, pill, "Renders the state with")
+Rel(panel, controller, "Requests publication", "JSON/HTTPS")
+Rel(overview, curquery, "Requests the participant path", "JSON/HTTPS")
+Rel(controller, handler, "Sends PublishCurriculumCommand")
+Rel(handler, readiness, "Asks whether the programme may be published")
+Rel(readiness, module, "Inspects the sections of")
+Rel(handler, curriculum, "Publishes")
+Rel(handler, module, "Publishes each")
+Rel(curquery, reader, "Assembles the path through")
+Rel(reader, module, "Filters to published")
+Rel(reader, cohort, "Derives duration, cadence, and allowance from")
+Rel(reader, db, "Reads", "EF Core")
+Rel(handler, db, "Writes publication state", "EF Core")
+@enduml

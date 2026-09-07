@@ -1,0 +1,40 @@
+@startuml
+!include <C4/C4_Component>
+LAYOUT_WITH_LEGEND()
+title Components — Author a section
+
+Container_Boundary(spa, "Stewardship web client") {
+  Component(list, "SectionListComponent", "Angular domain component", "Renders the sections of a module and offers removal")
+  Component(editor, "SectionEditorComponent", "Angular domain component", "Injects AUTHORING_SERVICE and saves the section")
+  Component(textarea, "TextAreaFieldComponent", "Angular presentational component", "Wraps the reading content textarea")
+  Component(dialog, "ConfirmDialogComponent", "Angular presentational component", "Confirms a removal before it is sent")
+  Component(error, "ErrorMessageComponent", "Angular presentational component", "Renders a refused removal")
+}
+
+Container_Boundary(api, "Stewardship API") {
+  Component(controller, "SectionsController", "ASP.NET Core controller", "Exposes the administration section endpoints")
+  Component(add, "AddSectionCommandHandler", "MediatR handler", "Appends a section at the next free ordinal")
+  Component(revise, "ReviseSectionCommandHandler", "MediatR handler", "Applies the title and the reading content")
+  Component(remove, "RemoveSectionCommandHandler", "MediatR handler", "Counts completion records and refuses a dependent removal")
+  Component(section, "ModuleSection", "Domain entity", "One ordered section with its reading content")
+  Component(completion, "SectionCompletion", "Domain entity", "One record per section a participant has completed")
+  Component(exception, "ProgrammeException", "Application exception", "Carries the 409 and the refusal message")
+  Component(store, "ICurriculumStore", "Application abstraction", "Supplies CompletionCount and Remove")
+  ComponentDb(db, "Stewardship database", "SQL Server", "Restricts deletes on every curriculum foreign key")
+}
+
+Rel(list, dialog, "Confirms a removal with")
+Rel(list, error, "Reports a refusal through")
+Rel(list, editor, "Opens")
+Rel(editor, textarea, "Composes")
+Rel(editor, controller, "Saves the authored section", "JSON/HTTPS")
+Rel(list, controller, "Requests a removal", "JSON/HTTPS")
+Rel(controller, add, "Sends AddSectionCommand")
+Rel(controller, revise, "Sends ReviseSectionCommand")
+Rel(controller, remove, "Sends RemoveSectionCommand")
+Rel(remove, completion, "Counts records against the section")
+Rel(remove, exception, "Raises when a record depends on the section")
+Rel(remove, section, "Removes when nothing depends on it")
+Rel(remove, store, "Reads and writes through")
+Rel(store, db, "Reads and writes", "EF Core")
+@enduml

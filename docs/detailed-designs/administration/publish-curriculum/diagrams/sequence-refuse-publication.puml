@@ -1,0 +1,47 @@
+@startuml
+title UML sequence behaviour — Refuse an incomplete publication
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Administrator" as actor
+box "Frontend — Stewardship web client" #E0F2FE
+  participant "PublishPanelComponent" as panel
+  participant "AuthoringService" as client
+end box
+box "Backend — Stewardship API application" #D1FADF
+  participant "CurriculaController" as controller
+  participant "ProblemDetailsExceptionHandler" as problem
+end box
+box "Backend — Stewardship Application and Domain" #ECFDF3
+  participant "PublishCurriculumCommandHandler" as handler
+  participant "CurriculumReadiness" as readiness
+end box
+box "Backend — Stewardship Infrastructure" #FFF4E5
+  database "Stewardship database" as db
+end box
+
+actor -> panel : Publish a programme holding an empty module
+panel -> client : Build the typed request
+client -> controller : POST /administration/curricula/{id}/publication
+controller -> handler : Send PublishCurriculumCommand
+handler -> db : Load the programme with its modules and sections
+db --> handler : One module carries no section
+handler -> readiness : Evaluate whether the programme may be published (L2-054)
+readiness --> handler : Not publishable, naming the empty module
+handler -> problem : Raise ProgrammeException 409 with the reason
+problem --> client : 409 ProblemDetails naming the empty module (L2-054 criterion 2)
+note over db : Nothing is published; what participants read is unchanged
+client --> panel : Service error carrying the reason
+panel --> actor : Present the refusal against the named module
+@enduml

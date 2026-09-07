@@ -3,7 +3,7 @@
 ## Overview
 
 Stewardship runs as a series of cohorts. A participant joins one, follows its curriculum
-for twelve weeks, and meets its mentor. Almost every other feature needs to know which
+for the duration that cohort records, and meets its mentor. Almost every other feature needs to know which
 cohort is in play before it can answer anything, so resolving the cohort is the first
 read the application performs after identifying the participant.
 
@@ -18,12 +18,13 @@ exactly one active instance
 **session allowance** — number of 1-on-1 sessions a cohort includes, derived from its
 duration and cadence rather than authored
 
-A cohort carries a start date, a duration of twelve weeks, a cadence of one session
-every other week, and exactly one mentor. Three figures follow from those four facts and
-are computed rather than stored: the current week, the cohort end date, and the session
-allowance of six. Deriving them is what keeps the programme shape consistent — a change
-to the duration or the cadence moves every dependent figure at once, and no screen can
-drift from the cohort it describes.
+A cohort carries a start date, an authored duration in weeks, an authored cadence in
+weeks, and exactly one mentor. The duration and the cadence are stored on the cohort
+record rather than fixed in code, so two cohorts may differ in both. Three figures follow
+from those facts and are computed rather than stored: the current week, the cohort end
+date, and the session allowance. Deriving them is what keeps the programme shape
+consistent — a change to the duration or the cadence moves every dependent figure at once,
+and no screen can drift from the cohort it describes.
 
 A participant who belongs to no cohort is told so explicitly. The application presents a
 notice rather than a curriculum with nothing in it, because an empty path is
@@ -82,7 +83,7 @@ refines a level-1 (L1) requirement, cited by identifier. Requirement text is quo
 | L2 ID | Refines (L1) | Requirement |
 |-------|--------------|-------------|
 | `L2-005` | `L1-002` | Enrollment places a participant in exactly one cohort, which supplies their curriculum, programme dates, session cadence, and mentor. |
-| `L2-006` | `L1-002` | A cohort carries a start date, a 12-week duration, a session cadence of one session every other week, and exactly one mentor. |
+| `L2-006` | `L1-002` | A cohort carries a start date, an authored duration in weeks, an authored session cadence in weeks, and exactly one mentor. The duration and the cadence are properties of the cohort record, not constants. |
 | `L2-007` | `L1-002` | A participant not yet in a cohort must be told so, not shown an empty programme. |
 
 ## Diagrams

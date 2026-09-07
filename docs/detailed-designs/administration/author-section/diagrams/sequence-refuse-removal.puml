@@ -1,0 +1,61 @@
+@startuml
+title UML sequence behaviour — Refuse a section removal
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Administrator" as actor
+box "Frontend — Stewardship web client" #E0F2FE
+  participant "SectionListComponent" as list
+  participant "ConfirmDialogComponent" as dialog
+  participant "AuthoringService" as client
+end box
+box "Backend — Stewardship API application" #D1FADF
+  participant "SectionsController" as controller
+  participant "ProblemDetailsExceptionHandler" as problem
+end box
+box "Backend — Stewardship Application and Domain" #ECFDF3
+  participant "RemoveSectionCommandHandler" as handler
+  participant "ProgrammeException" as exception
+end box
+box "Backend — Stewardship Infrastructure" #FFF4E5
+  database "Stewardship database" as db
+end box
+
+actor -> list : Remove a section
+list -> dialog : Ask for confirmation
+actor -> dialog : Confirm
+dialog -> client : Build the typed request
+client -> controller : DELETE /administration/sections/{id}
+controller -> handler : Send RemoveSectionCommand
+
+alt A participant record depends on the content
+  handler -> db : Count completions, attached notes, and answered prompts (L2-050)
+  db --> handler : One or more dependent records
+  handler -> exception : Raise 409 naming what depends on the content
+  exception -> problem : Carry the status and the reason, never a constraint failure (L2-050 criterion 7)
+  problem --> client : 409 ProblemDetails
+  note over db : The section remains and recorded progress is unchanged (L2-050 criterion 4)
+  client --> list : Service error carrying the refusal
+  list --> actor : Present the refusal against the section
+else No dependent record exists
+  handler -> db : Count completions, attached notes, and answered prompts
+  db --> handler : No dependent records
+  handler -> db : Remove the section and close the gap in the module order
+  db --> handler : Commit result
+  handler --> controller : Removal applied
+  controller --> client : 204
+  client --> list : Removed
+  list --> actor : Present the module without the section
+end
+@enduml

@@ -1,0 +1,63 @@
+@startuml
+title UML sequence behaviour — Two administrators save the same module
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Administrator A" as first
+actor "Administrator B" as second
+box "Frontend — Stewardship web client" #E0F2FE
+  participant "ModuleEditorComponent" as editor
+  participant "StatusMessageComponent" as status
+end box
+box "Backend — Stewardship API application" #D1FADF
+  participant "ModulesController" as controller
+end box
+box "Backend — Stewardship Application and Domain" #ECFDF3
+  participant "ReviseModuleCommandHandler" as handler
+  participant "CurriculumModule" as module
+end box
+box "Backend — Stewardship Infrastructure" #FFF4E5
+  database "Stewardship database" as db
+end box
+
+first -> editor : Open the module
+editor -> db : GET the module draft
+db --> editor : Module with revision R1
+second -> editor : Open the same module
+editor -> db : GET the module draft
+db --> editor : Module with revision R1
+
+first -> controller : PUT the module carrying revision R1
+controller -> handler : Send ReviseModuleCommand
+handler -> module : Apply the authored values
+handler -> db : Save where the stored revision is still R1
+db --> handler : One row written, revision becomes R2
+handler --> first : 204, the revision stands
+
+second -> controller : PUT the module carrying revision R1
+controller -> handler : Send ReviseModuleCommand
+handler -> db : Save where the stored revision is still R1
+db --> handler : No row matched, the revision moved to R2 (L2-065)
+handler -> handler : Translate the concurrency failure to 409
+handler --> controller : Refusal naming the change
+controller --> editor : 409 ProblemDetails
+note over db : A's revision stands; nothing of B's was written
+editor -> db : GET the module draft again
+db --> editor : Module with revision R2
+editor -> status : State that the module changed since it was opened
+status --> second : Present the current content beside the refusal (L2-065 criterion 2)
+second -> editor : Apply the change again and save
+editor -> controller : PUT the module carrying revision R2
+controller --> second : 204, the second revision stands (L2-065 criterion 3)
+@enduml

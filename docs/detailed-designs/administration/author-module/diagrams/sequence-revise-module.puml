@@ -1,0 +1,58 @@
+@startuml
+title UML sequence behaviour — Revise a module
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName Arial
+skinparam ArrowColor #344054
+skinparam rectangle {
+  BorderColor #344054
+  FontColor #101828
+}
+skinparam package {
+  BorderColor #667085
+  FontColor #101828
+  BackgroundColor #F9FAFB
+}
+actor "Administrator" as actor
+box "Frontend — Stewardship web client" #E0F2FE
+  participant "ModuleEditorPageComponent" as page
+  participant "ModuleEditorComponent" as editor
+  participant "AuthoringService" as client
+end box
+box "Backend — Stewardship API application" #D1FADF
+  participant "ModulesController" as controller
+  participant "ValidationBehavior" as behavior
+end box
+box "Backend — Stewardship Application and Domain" #ECFDF3
+  participant "ReviseModuleCommandValidator" as validator
+  participant "ReviseModuleCommandHandler" as handler
+  participant "CurriculumModule" as module
+end box
+box "Backend — Stewardship Infrastructure" #FFF4E5
+  database "Stewardship database" as db
+end box
+
+actor -> page : Open the module editor
+page -> editor : Load the authored module
+editor -> client : GET /administration/modules/{id}
+client --> editor : Authored module held in a signal
+actor -> editor : Revise the title, summary, effort estimate, and practice steps
+editor -> client : Build the typed request
+client -> controller : PUT /administration/modules/{id}
+controller -> behavior : Send ReviseModuleCommand
+behavior -> validator : Check every authored field (L2-051)
+validator --> behavior : Valid command
+behavior -> handler : Admit the validated command
+handler -> db : Load the module within a transaction
+db --> handler : Authored module
+handler -> module : Apply the title, summary, and effort estimate (L2-046)
+handler -> module : Replace the ordered practice steps (L2-046 criterion 2)
+module --> handler : Revised module
+handler -> db : Save changes in one unit of work
+db --> handler : Commit result
+handler --> controller : Revision applied
+controller --> client : 204
+client --> editor : Saved
+editor --> actor : Present the saved module
+@enduml
