@@ -147,8 +147,13 @@ to `administration/authorise-administrator`.
 - **`PublicationState`** — enumeration of `Draft` and `Published`. A programme holds
   exactly one.
 - **`ICurriculumStore`** — application abstraction over reads and writes of authored
-  curriculum. It extends the store abstraction the participant features already use with
-  the lookups and the removal this subsystem needs.
+  curriculum. It extends the store abstraction the participant features already use with the
+  lookups and the removal this subsystem needs, among them a count of the cohorts following a
+  programme. Four things want that count and none could have had it otherwise: the two
+  refusals that guard a key change and a removal, the programme list that shows which
+  programmes are still free of one, and the publication panel that reports who a publication
+  reaches. It also returns the cohorts themselves, because the panel names their durations
+  rather than only counting them.
 - **`CurriculumSummary`**, **`CurriculumDraftResponse`**, and **`ModuleDraftSummary`** —
   the response records the two queries return. `CurriculumSummary` carries a count of the
   cohorts following the programme as well as its module count, because the list states it on
